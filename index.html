@@ -51,28 +51,35 @@
             display: none !important;
         }
 
-        /* Toast Notifications - Updated */
+        /* Toast Notifications - Updated with bottom animation */
         .toast-container {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
 
         .toast {
-            padding: 12px 20px;
-            margin-bottom: 10px;
-            border-radius: var(--radius);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
             display: flex;
             align-items: center;
-            gap: 10px;
-            animation: slideInRight 0.3s ease-out;
+            gap: 12px;
+            animation: slideInUp 0.3s ease-out;
             max-width: 350px;
             font-size: 14px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
+            min-width: 250px;
+            text-align: center;
+            justify-content: center;
         }
 
         .toast-success { 
@@ -93,14 +100,25 @@
             border-left: 4px solid #17a2b8;
         }
 
-        @keyframes slideInRight {
+        @keyframes slideInUp {
             from { 
-                transform: translateX(100%);
+                transform: translateY(100px);
                 opacity: 0;
             }
             to { 
-                transform: translateX(0);
+                transform: translateY(0);
                 opacity: 1;
+            }
+        }
+
+        @keyframes slideOutDown {
+            from { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to { 
+                transform: translateY(100px);
+                opacity: 0;
             }
         }
 
@@ -109,9 +127,9 @@
             to { opacity: 1; }
         }
 
-        @keyframes slideInUp {
+        @keyframes slideInDown {
             from { 
-                transform: translateY(20px);
+                transform: translateY(-100%);
                 opacity: 0;
             }
             to { 
@@ -528,17 +546,6 @@
             animation: slideInDown 0.5s ease;
         }
 
-        @keyframes slideInDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
         .header-left {
             display: flex;
             align-items: center;
@@ -636,10 +643,17 @@
             cursor: pointer;
             border: 2px solid var(--primary);
             transition: all 0.3s;
+            overflow: hidden;
         }
 
         .profile-icon-header:hover {
             transform: scale(1.05);
+        }
+
+        .profile-icon-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         /* Notice Card */
@@ -842,6 +856,7 @@
             font-weight: 600;
             z-index: 2;
         }
+        
         /* Recharge Item Design */
         .recharge-grid {
             display: grid;
@@ -1097,10 +1112,11 @@
             border-top: 1px solid var(--border);
         }
 
-        /* App Pages */
+        /* App Pages - Updated with bottom padding for navigation */
         .app-page {
             padding: 20px;
             padding-top: 20px;
+            padding-bottom: 80px; /* Added for bottom navigation */
         }
 
         .page-title {
@@ -1201,6 +1217,13 @@
             color: white;
             border: 4px solid white;
             box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .profile-name {
@@ -1917,6 +1940,7 @@
             
             .app-page {
                 padding: 15px;
+                padding-bottom: 80px; /* Maintain bottom padding */
             }
             
             .recharge-grid {
@@ -2879,29 +2903,6 @@
             }
         };
         
-        // ফিক্সড প্রোডাক্টের জন্য ডিফল্ট রিচার্জ আইটেম
-        const fixedProductDefaults = {
-            'fixed-uid-topup': [
-                { id: 'uid-10', name: '60 Diamonds', price: '10', cost: '10' },
-                { id: 'uid-20', name: '120 Diamonds', price: '20', cost: '20' },
-                { id: 'uid-50', name: '300 Diamonds', price: '50', cost: '50' },
-                { id: 'uid-100', name: '600 Diamonds', price: '100', cost: '100' }
-            ],
-            'fixed-level-up': [
-                { id: 'level-100', name: 'Level Up Pass', price: '100', cost: '100' },
-                { id: 'level-200', name: 'Premium Pass', price: '200', cost: '200' }
-            ],
-            'fixed-unipin': [
-                { id: 'unipin-50', name: 'Unipin 50', price: '50', cost: '50' },
-                { id: 'unipin-100', name: 'Unipin 100', price: '100', cost: '100' },
-                { id: 'unipin-200', name: 'Unipin 200', price: '200', cost: '200' }
-            ],
-            'fixed-weekly-offer': [
-                { id: 'weekly-50', name: 'Weekly Offer', price: '50', cost: '50' },
-                { id: 'weekly-100', name: 'Monthly Offer', price: '100', cost: '100' }
-            ]
-        };
-        
         // --- UTILITY FUNCTIONS ---
         function generateOrderId() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -2912,7 +2913,7 @@
             return result;
         }
 
-        // Updated showToast function with better animations
+        // Updated showToast function with bottom animation
         function showToast(message, type = 'info') {
             const toastContainer = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -2929,13 +2930,46 @@
             `;
             toastContainer.appendChild(toast);
             
-            // Auto remove after 4 seconds
+            // Auto remove after 3 seconds
             setTimeout(() => {
-                toast.style.animation = 'slideInRight 0.3s ease reverse';
+                toast.style.animation = 'slideOutDown 0.3s ease-out';
                 setTimeout(() => {
-                    toast.remove();
+                    if (toast.parentNode === toastContainer) {
+                        toast.remove();
+                    }
                 }, 300);
-            }, 4000);
+            }, 3000);
+        }
+
+        // Google Profile Picture Function
+        function updateProfilePicture() {
+            if (currentUser && currentUser.photoURL) {
+                // Header Profile Icon
+                const headerProfileIcon = document.getElementById('profile-icon-header');
+                if (headerProfileIcon) {
+                    headerProfileIcon.innerHTML = `<img src="${currentUser.photoURL}" alt="Profile" 
+                        style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                }
+                
+                // Account Page Profile Avatar
+                const accountAvatar = document.getElementById('user-avatar');
+                if (accountAvatar) {
+                    accountAvatar.innerHTML = `<img src="${currentUser.photoURL}" alt="Profile" 
+                        style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                }
+            } else {
+                // Reset to default icon if no photo
+                const headerProfileIcon = document.getElementById('profile-icon-header');
+                if (headerProfileIcon) {
+                    headerProfileIcon.innerHTML = '<i class="fas fa-user"></i>';
+                }
+                
+                const accountAvatar = document.getElementById('user-avatar');
+                if (accountAvatar) {
+                    const firstName = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : 'U';
+                    accountAvatar.innerHTML = firstName;
+                }
+            }
         }
 
         function copyNumber(method) {
@@ -3163,11 +3197,14 @@
                         });
                     }
                     
+                    // Update profile picture
+                    updateProfilePicture();
+                    
                     // Reset button
                     googleBtn.innerHTML = originalContent;
                     googleBtn.disabled = false;
                     
-                    showToast('Successfully signed in with Google!', 'success');
+                    showToast('Successfully signed in!', 'success');
                 })
                 .catch((error) => {
                     // Reset button
@@ -3214,6 +3251,9 @@
                     }
                     
                     currentUser = user;
+                    
+                    // Update profile picture
+                    updateProfilePicture();
                     
                     // অ্যানিমেশন সহ অ্যাপ শো
                     const authContainer = document.querySelector('.auth-container');
@@ -3340,6 +3380,7 @@
                 });
                 
                 // Success will be handled by auth state change
+                showToast('Account created successfully! Welcome to TOPUP HUB', 'success');
                 
             } catch(error) {
                 console.error("Signup error details:", error);
@@ -3537,7 +3578,7 @@
             }
         }
 
-        // ফিক্সড প্রোডাক্ট ইনিশিয়ালাইজেশন
+        // ফিক্সড প্রোডাক্ট ইনিশিয়ালাইজেশন (ডিফল্ট রিচার্জ আইটেম ছাড়া)
         async function initializeFixedProducts() {
             try {
                 // 1. ফিক্সড ক্যাটাগরি চেক/ক্রিয়েট
@@ -3583,27 +3624,7 @@
                             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                         });
                     }
-                    
-                    // ডিফল্ট রিচার্জ আইটেমস যোগ করুন
-                    if (fixedProductDefaults[productId]) {
-                        for (const defaultItem of fixedProductDefaults[productId]) {
-                            const itemQuery = await db.collection('product_items')
-                                .where('name', '==', defaultItem.name)
-                                .where('productId', '==', productId)
-                                .get();
-                            
-                            if (itemQuery.empty) {
-                                await db.collection('product_items').add({
-                                    ...defaultItem,
-                                    productId: productId,
-                                    productName: productData.name,
-                                    status: 'In Stock',
-                                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                                });
-                            }
-                        }
-                    }
+                    // ডিফল্ট রিচার্জ আইটেমস যোগ করা হবে না
                 }
                 
             } catch (error) {
@@ -3752,40 +3773,18 @@
             }
         }
 
-        // প্রোডাক্ট ডিটেইল পেজে রিচার্জ অপশন জেনারেট করবে
+        // প্রোডাক্ট ডিটেইল পেজে রিচার্জ অপশন জেনারেট করবে (Firestore থেকে)
         function generateRechargeOptions(productId, isFixed = false) {
             const rechargeOptionsEl = document.getElementById('recharge-options');
             rechargeOptionsEl.innerHTML = '';
             
-            let cardProductItems = [];
-            
-            if (isFixed) {
-                // ফিক্সড প্রোডাক্টের জন্য: productId দিয়ে ফিল্টার করি
-                cardProductItems = productItems.filter(item => {
-                    return item.productId === productId || 
-                           item.productCardId === productId ||
-                           (item.productName && fixedProductsData[productId] && 
-                            item.productName.includes(fixedProductsData[productId].name));
-                });
-                
-                // যদি কোনো আইটেম না পাওয়া যায়, ডিফল্ট আইটেমস ব্যবহার করুন
-                if (cardProductItems.length === 0 && fixedProductDefaults[productId]) {
-                    cardProductItems = fixedProductDefaults[productId].map(item => ({
-                        ...item,
-                        id: item.id,
-                        name: item.name,
-                        price: item.price,
-                        cost: item.cost,
-                        status: 'In Stock'
-                    }));
-                }
-            } else {
-                // ডাইনামিক প্রোডাক্টের জন্য: সরাসরি productId দিয়ে ফিল্টার করুন
-                cardProductItems = productItems.filter(item => {
-                    return item.productId === productId || 
-                           item.productCardId === productId;
-                });
-            }
+            // Firestore থেকে রিচার্জ আইটেম লোড করুন (ফিক্সড এবং ডাইনামিক উভয়ের জন্য)
+            let cardProductItems = productItems.filter(item => {
+                return item.productId === productId || 
+                       item.productCardId === productId ||
+                       (item.productName && currentProduct && 
+                        item.productName.toLowerCase().includes(currentProduct.name.toLowerCase()));
+            });
             
             if (cardProductItems.length === 0) {
                 rechargeOptionsEl.innerHTML = `
