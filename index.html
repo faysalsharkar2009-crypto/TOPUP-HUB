@@ -51,6 +51,38 @@
             display: none !important;
         }
 
+        /* Initial Loader */
+        #initial-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .loader-text {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+        }
+
         /* Toast Notifications - Updated with bottom animation */
         .toast-container {
             position: fixed;
@@ -98,6 +130,11 @@
         .toast-info { 
             background: linear-gradient(135deg, rgba(23, 162, 184, 0.95), rgba(19, 132, 150, 0.95));
             border-left: 4px solid #17a2b8;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         @keyframes slideInUp {
@@ -148,11 +185,6 @@
             0%, 20%, 60%, 100% { transform: translateY(0); }
             40% { transform: translateY(-10px); }
             80% { transform: translateY(-5px); }
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
         }
 
         /* Ban Screen */
@@ -549,9 +581,10 @@
         .header-left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
             flex: 1;
             min-width: 0;
+            position: relative;
         }
 
         .back-button-header {
@@ -560,15 +593,17 @@
             font-size: 18px;
             color: var(--primary);
             cursor: pointer;
-            padding: 5px;
+            padding: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             transition: all 0.3s;
             flex-shrink: 0;
+            z-index: 2;
+            position: relative;
         }
 
         .back-button-header:hover {
@@ -589,7 +624,7 @@
 
         .app-logo img {
             height: 100%;
-            width: 100%;
+            width: 80%;
             object-fit: cover;
             border-radius: 0px;
             background: linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%);
@@ -608,22 +643,30 @@
             gap: 10px;
             flex-shrink: 0;
         }
-
         /* Ensure auth view doesn't show header */
         #auth-view .app-header {
             display: none !important;
         }
 
+        /* Make wallet balance more prominent */
         .wallet-balance {
             display: flex;
             align-items: center;
-            background: var(--primary-light);
-            padding: 8px 12px;
+            background: linear-gradient(135deg, var(--primary-light), rgba(255, 107, 53, 0.15));
+            padding: 8px 15px;
             border-radius: 20px;
-            font-weight: 600;
+            font-weight: 700;
             border: 1px solid var(--primary);
-            color: var(--primary);
+            color: var(--primary-dark);
             font-size: 14px;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
+        }
+
+        .wallet-balance:hover {
+            background: rgba(255, 107, 53, 0.2);
+            transform: translateY(-1px);
         }
 
         .wallet-balance i {
@@ -634,7 +677,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2034,6 +2077,12 @@
     </style>
 </head>
 <body>
+    <!-- Initial Loader -->
+    <div id="initial-loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Loading TOPUP HUB...</div>
+    </div>
+
     <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
     <div id="toast">Number copied!</div>
@@ -2051,7 +2100,7 @@
     </div>
 
     <!-- Authentication Views -->
-    <div id="auth-view">
+    <div id="auth-view" class="d-none">
         <!-- Login View -->
         <div id="login-view">
             <div class="auth-container">
@@ -2180,7 +2229,7 @@
             <div class="header-right">
                 <div class="wallet-balance">
                     <i class="fas fa-wallet"></i>
-                    <span id="wallet-balance-value">0</span>
+                    <span id="wallet-balance-value">৳ 0.00</span>
                 </div>
                 <div class="profile-icon-header" id="profile-icon-header">
                     <i class="fas fa-user"></i>
@@ -2941,33 +2990,41 @@
             }, 3000);
         }
 
-        // Google Profile Picture Function
+        // Updated Google Profile Picture Function
         function updateProfilePicture() {
-            if (currentUser && currentUser.photoURL) {
-                // Header Profile Icon
-                const headerProfileIcon = document.getElementById('profile-icon-header');
-                if (headerProfileIcon) {
+            if (!currentUser) return;
+            
+            // Header Profile Icon
+            const headerProfileIcon = document.getElementById('profile-icon-header');
+            if (headerProfileIcon) {
+                if (currentUser.photoURL) {
                     headerProfileIcon.innerHTML = `<img src="${currentUser.photoURL}" alt="Profile" 
                         style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                } else {
+                    // Use first letter of name if no photo
+                    const firstName = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : 'U';
+                    headerProfileIcon.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-radius: 50%;">${firstName}</div>`;
                 }
-                
-                // Account Page Profile Avatar
-                const accountAvatar = document.getElementById('user-avatar');
-                if (accountAvatar) {
+            }
+            
+            // Account Page Profile Avatar
+            const accountAvatar = document.getElementById('user-avatar');
+            if (accountAvatar) {
+                if (currentUser.photoURL) {
                     accountAvatar.innerHTML = `<img src="${currentUser.photoURL}" alt="Profile" 
                         style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-                }
-            } else {
-                // Reset to default icon if no photo
-                const headerProfileIcon = document.getElementById('profile-icon-header');
-                if (headerProfileIcon) {
-                    headerProfileIcon.innerHTML = '<i class="fas fa-user"></i>';
-                }
-                
-                const accountAvatar = document.getElementById('user-avatar');
-                if (accountAvatar) {
+                } else {
+                    // Use first letter of name if no photo
                     const firstName = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : 'U';
-                    accountAvatar.innerHTML = firstName;
+                    accountAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 40px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-radius: 50%;">${firstName}</div>`;
+                }
+            }
+            
+            // Also update profile name in account page if available
+            if (userData.fullName) {
+                const userNameElement = document.getElementById('user-fullname');
+                if (userNameElement) {
+                    userNameElement.textContent = userData.fullName;
                 }
             }
         }
@@ -3218,6 +3275,8 @@
 
         // --- AUTHENTICATION ---
         auth.onAuthStateChanged(async user => {
+            const initialLoader = document.getElementById('initial-loader');
+            
             if (user) {
                 try {
                     const userDoc = await db.collection('users').doc(user.uid).get();
@@ -3244,6 +3303,7 @@
                     }
                     
                     if (userData.banned) {
+                        initialLoader.style.display = 'none';
                         document.getElementById('auth-view').classList.add('d-none');
                         document.getElementById('app-view').classList.add('d-none');
                         document.getElementById('ban-screen').classList.remove('d-none');
@@ -3255,20 +3315,31 @@
                     // Update profile picture
                     updateProfilePicture();
                     
-                    // অ্যানিমেশন সহ অ্যাপ শো
-                    const authContainer = document.querySelector('.auth-container');
-                    showAuthSuccessAnimation(authContainer, async () => {
-                        await initializeApp();
-                        switchAppPage('home-page');
-                    });
+                    // Hide initial loader
+                    initialLoader.style.display = 'none';
+                    
+                    // Show app view immediately
+                    document.getElementById('auth-view').classList.add('d-none');
+                    document.getElementById('app-view').classList.remove('d-none');
+                    
+                    // Initialize app
+                    await initializeApp();
+                    
+                    // Switch to home page
+                    switchAppPage('home-page');
+                    
+                    // Show welcome toast
+                    showToast('Welcome back!', 'success');
                     
                 } catch (error) {
                     console.error("Error checking user:", error);
+                    initialLoader.style.display = 'none';
                     showToast('Error loading user data', 'error');
                     await auth.signOut();
                 }
             } else {
                 currentUser = null;
+                initialLoader.style.display = 'none';
                 document.getElementById('auth-view').classList.remove('d-none');
                 document.getElementById('app-view').classList.add('d-none');
                 document.getElementById('ban-screen').classList.add('d-none');
@@ -3730,7 +3801,7 @@
             }
         }
 
-        // প্রোডাক্ট আইটেম লোড করবে
+        // প্রোডাক্ট আইটেম লোড করবে - আপডেট করা ভার্সন
         async function loadProductItems() {
             try {
                 const snapshot = await db.collection('product_items').get();
@@ -3739,10 +3810,12 @@
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     
+                    // শুধুমাত্র "In Stock" স্ট্যাটাসের আইটেম যোগ করুন
                     const status = data.status || '';
                     const isInStock = status.toLowerCase() === 'in stock';
                     
                     if (isInStock) {
+                        // অফার ক্যালকুলেশন
                         if (data.isSpecialOffer && data.offerStartDate && data.offerDuration) {
                             try {
                                 const startDate = data.offerStartDate.toDate();
@@ -3758,6 +3831,7 @@
                                     isActiveOffer: remainingDays > 0
                                 });
                             } catch (dateError) {
+                                console.error("Date calculation error:", dateError);
                                 productItems.push({ id: doc.id, ...data });
                             }
                         } else {
@@ -3766,6 +3840,8 @@
                     }
                 });
                 
+                console.log(`Total product items loaded: ${productItems.length}`);
+                
             } catch (error) {
                 console.error("Error loading product items: ", error);
                 productItems = [];
@@ -3773,51 +3849,91 @@
             }
         }
 
-        // প্রোডাক্ট ডিটেইল পেজে রিচার্জ অপশন জেনারেট করবে (Firestore থেকে)
+        // প্রোডাক্ট ডিটেইল পেজে রিচার্জ অপশন জেনারেট করবে - আপডেট করা ভার্সন
         function generateRechargeOptions(productId, isFixed = false) {
             const rechargeOptionsEl = document.getElementById('recharge-options');
             rechargeOptionsEl.innerHTML = '';
             
-            // Firestore থেকে রিচার্জ আইটেম লোড করুন (ফিক্সড এবং ডাইনামিক উভয়ের জন্য)
+            // ডিবাগিং এর জন্য
+            console.log(`Generating recharge options for product: ${productId}, isFixed: ${isFixed}`);
+            console.log(`Current product name: ${currentProduct?.name}`);
+            console.log(`Total product items available: ${productItems.length}`);
+            
+            // ফিল্টারিং লজিক
             let cardProductItems = productItems.filter(item => {
-                return item.productId === productId || 
-                       item.productCardId === productId ||
-                       (item.productName && currentProduct && 
-                        item.productName.toLowerCase().includes(currentProduct.name.toLowerCase()));
+                // কেস ১: সরাসরি productId মিলে (productCardId)
+                if (item.productCardId === productId) {
+                    console.log(`Found by productCardId: ${item.productCardId}`);
+                    return true;
+                }
+                
+                // কেস ২: productName মিলে (ফিক্সড প্রোডাক্টের জন্য)
+                if (currentProduct?.name && item.productName) {
+                    const itemNameLower = item.productName.toLowerCase();
+                    const currentProductNameLower = currentProduct.name.toLowerCase();
+                    
+                    // নামের মিল চেক করুন
+                    if (itemNameLower.includes(currentProductNameLower) || 
+                        currentProductNameLower.includes(itemNameLower)) {
+                        console.log(`Found by product name match: ${item.productName} for ${currentProduct.name}`);
+                        return true;
+                    }
+                }
+                
+                // কেস ৩: category মিলে
+                if (currentProduct?.category && item.category) {
+                    if (item.category.toLowerCase() === currentProduct.category.toLowerCase()) {
+                        console.log(`Found by category match: ${item.category}`);
+                        return true;
+                    }
+                }
+                
+                return false;
             });
             
+            // ডিবাগিং ইনফো
+            console.log(`Found ${cardProductItems.length} items for this product`);
+            
+            // যদি কোনো আইটেম না পাওয়া যায়
             if (cardProductItems.length === 0) {
                 rechargeOptionsEl.innerHTML = `
                     <div class="text-center" style="grid-column: 1 / -1; padding: 20px; color: var(--text-light);">
                         <i class="fas fa-box-open" style="margin-right: 8px;"></i>
-                        No recharge options available yet. Coming soon!
+                        No recharge options available for this product yet. Please check back later!
                     </div>
                 `;
                 return;
             }
             
+            // প্রাইস অনুযায়ী সাজান
+            cardProductItems.sort((a, b) => (a.price || 0) - (b.price || 0));
+            
+            // HTML জেনারেট করুন
             cardProductItems.forEach(item => {
                 const isOutOfStock = item.status === 'Out of Stock' || (item.stock !== undefined && item.stock <= 0);
                 const hasOffer = item.isSpecialOffer === true && item.isActiveOffer === true;
                 const offerPercentage = item.offerPercentage || '';
                 const remainingDays = item.remainingDays || 0;
+                const price = item.price || 0;
+                const cost = item.cost || 0;
                 
                 rechargeOptionsEl.innerHTML += `
                     <div class="recharge-item ${isOutOfStock ? 'out-of-stock' : ''}" 
                          data-id="${item.id}" 
-                         data-cost="${item.cost || 0}"
-                         data-price="${item.price || 0}">
+                         data-cost="${cost}"
+                         data-price="${price}"
+                         data-name="${item.name}">
                         ${hasOffer ? `
                             ${offerPercentage ? `<div class="offer-badge offer-percentage">${offerPercentage}% OFF</div>` : ''}
-                            ${remainingDays > 0 ? `<div class="offer-badge offer-duration">${remainingDays} Day</div>` : ''}
+                            ${remainingDays > 0 ? `<div class="offer-badge offer-duration">${remainingDays} DAY</div>` : ''}
                         ` : ''}
                         <span class="diamond-info">${item.name}</span>
-                        <span class="price-info">৳${item.price}</span>
+                        <span class="price-info">৳${price}</span>
                     </div>
                 `;
             });
             
-            // রিচার্জ আইটেম ক্লিক ইভেন্ট যোগ করুন
+            // ক্লিক ইভেন্ট যোগ করুন
             document.querySelectorAll('.recharge-item:not(.out-of-stock)').forEach(item => {
                 item.addEventListener('click', () => {
                     document.querySelectorAll('.recharge-item').forEach(i => {
@@ -4360,8 +4476,9 @@
                 if (userDoc.exists) {
                     userData = userDoc.data();
                     
-                    const firstName = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : 'U';
-                    document.getElementById('user-avatar').textContent = firstName;
+                    // Update profile picture
+                    updateProfilePicture();
+                    
                     document.getElementById('user-fullname').textContent = userData.fullName || 'User';
                     document.getElementById('user-email-display').textContent = userData.email || 'N/A';
                     document.getElementById('user-id-display').textContent = `#${userData.userNumber || '000000'}`;
@@ -4719,8 +4836,7 @@
         // Initialize when DOM is loaded
         window.addEventListener('load', () => {
             console.log("App initialized successfully");
-            // Auth view is visible by default
-            document.getElementById('auth-view').classList.remove('d-none');
+            // লোডার দৃশ্যমান থাকবে, Firebase authentication চেক করার পর আপনা-আপনি hide হবে
         });
     });
     </script>
