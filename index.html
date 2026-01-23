@@ -8,7 +8,9 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <!-- New Ad Script 1: Social Bar -->
+    <!-- Monetag SDK -->
+    <script src='//libtl.com/sdk.js' data-zone='10135149' data-sdk='show_10135149'></script>
+    <!-- New Social Bar Ad Script -->
     <script src="https://pl28551976.effectivegatecpm.com/0c/27/7d/0c277dfb94991988efc9209e87227361.js"></script>
     <style>
         * {
@@ -24,8 +26,6 @@
             --primary-dark: #2667cc;
             --secondary: #8338ec;
             --accent: #ff006e;
-            --gold: #ffd700;
-            --gold-dark: #ffaa00;
             --light: #ffffff;
             --light-gray: #f8f9fa;
             --medium-gray: #e9ecef;
@@ -38,6 +38,7 @@
             --error: #dc3545;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
+            --price: #ff6b35;
         }
 
         body {
@@ -53,7 +54,7 @@
             padding: 15px;
         }
 
-        /* Header Styles */
+        /* Header Styles - Clean and Bright */
         header {
             text-align: center;
             margin-bottom: 20px;
@@ -179,26 +180,7 @@
             color: #1877F2;
         }
 
-        /* Wallet Section */
-        .wallet-section {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px 15px;
-            border-radius: 10px;
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .wallet-amount {
-            font-weight: bold;
-            color: var(--gold);
-            font-size: 16px;
-        }
-
-        /* Search Box */
+        /* Search Box - Clean Design */
         .search-box {
             margin-bottom: 25px;
             position: relative;
@@ -258,11 +240,6 @@
             overflow: hidden;
         }
 
-        .file-card.paid {
-            border: 2px solid var(--gold);
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
-        }
-
         .file-card::before {
             content: '';
             position: absolute;
@@ -275,10 +252,6 @@
             transition: transform 0.3s ease;
         }
 
-        .file-card.paid::before {
-            background: linear-gradient(to right, var(--gold), var(--gold-dark));
-        }
-
         .file-card:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-hover);
@@ -286,19 +259,6 @@
 
         .file-card:hover::before {
             transform: scaleX(1);
-        }
-
-        .file-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--gold);
-            color: #000;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            z-index: 2;
         }
 
         .file-image {
@@ -354,6 +314,10 @@
             gap: 12px;
         }
 
+        .file-meta i {
+            margin-right: 5px;
+        }
+
         .file-actions {
             display: flex;
             justify-content: center;
@@ -390,9 +354,12 @@
             background: linear-gradient(135deg, var(--success), #218838);
         }
 
-        .btn-purchase {
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            color: #000;
+        .btn-price {
+            background: linear-gradient(135deg, var(--price), #e55c2b);
+        }
+
+        .btn-processing {
+            background: linear-gradient(135deg, var(--warning), #e0a800);
         }
 
         .btn-disabled {
@@ -405,6 +372,20 @@
         .btn-disabled:hover {
             transform: none;
             box-shadow: none;
+        }
+
+        .paid-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, var(--price), #e55c2b);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            z-index: 2;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
         }
 
         /* Loading Spinner */
@@ -496,85 +477,204 @@
             flex: 1;
         }
 
-        /* Payment Modal */
-        .payment-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-        }
-
-        .payment-content {
-            background: var(--light);
-            border-radius: 15px;
-            width: 100%;
-            max-width: 400px;
-            overflow: hidden;
-            color: var(--text);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--medium-gray);
-        }
-
-        .payment-header {
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            color: #000;
-            padding: 18px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        .payment-body {
-            padding: 25px;
-            text-align: center;
-        }
-
-        .payment-amount {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--gold-dark);
-            margin: 15px 0;
-        }
-
-        .payment-methods {
+        /* Payment Modal Styles */
+        .payment-method {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin: 20px 0;
+            margin-bottom: 20px;
         }
 
-        .payment-method {
+        .method-option {
+            border: 2px solid var(--medium-gray);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 12px;
+        }
+
+        .method-option:hover {
+            border-color: var(--primary);
+            background: var(--light-gray);
+        }
+
+        .method-option.selected {
+            border-color: var(--primary);
+            background: rgba(58, 134, 255, 0.1);
+        }
+
+        .method-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .method-icon.bkash {
+            background: linear-gradient(135deg, #E2136E, #B10D5A);
+        }
+
+        .method-icon.nagad {
+            background: linear-gradient(135deg, #E61225, #B30E1D);
+        }
+
+        .method-icon.rocket {
+            background: linear-gradient(135deg, #5D2D91, #4A2473);
+        }
+
+        .payment-details {
+            background: var(--light-gray);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid var(--medium-gray);
+        }
+
+        .payment-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 2px dashed var(--primary);
+        }
+
+        .payment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .form-group input {
+            padding: 12px 15px;
             border: 1px solid var(--medium-gray);
             border-radius: 8px;
-            cursor: pointer;
+            font-size: 14px;
             transition: all 0.3s ease;
         }
 
-        .payment-method:hover {
-            background: var(--light-gray);
+        .form-group input:focus {
+            outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.1);
         }
 
-        .payment-method.selected {
-            background: var(--light-gray);
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.2);
+        .payment-instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #856404;
         }
 
-        .payment-method i {
-            font-size: 20px;
-            color: var(--primary);
+        .payment-instructions ol {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .payment-instructions li {
+            margin-bottom: 5px;
+        }
+
+        /* Processing Modal Styles */
+        .processing-content {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .processing-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--medium-gray);
+            border-left: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .processing-status {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .processing-note {
+            font-size: 14px;
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+        }
+
+        .processing-time {
+            font-size: 12px;
+            color: var(--dark-gray);
+            font-style: italic;
+        }
+
+        /* Admin Approval Modal */
+        .admin-approval-content {
+            padding: 20px;
+        }
+
+        .payment-info {
+            background: var(--light-gray);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .info-value {
+            color: var(--dark-gray);
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-approve {
+            background: linear-gradient(135deg, var(--success), #218838);
+        }
+
+        .btn-reject {
+            background: linear-gradient(135deg, var(--error), #c82333);
         }
 
         /* Notification */
@@ -665,31 +765,6 @@
             font-size: 16px;
         }
 
-        /* Section Headers */
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 30px 0 15px 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--medium-gray);
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--text);
-        }
-
-        .section-badge {
-            background: var(--primary);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
         footer {
             text-align: center;
             margin-top: 30px;
@@ -714,7 +789,7 @@
                 text-align: center;
             }
             
-            .ad-actions, .payment-methods {
+            .ad-actions, .admin-actions {
                 flex-direction: column;
             }
             
@@ -724,9 +799,9 @@
                 max-width: calc(100% - 30px);
             }
             
-            .wallet-section {
-                margin-left: 0;
-                margin-top: 10px;
+            .method-option {
+                flex-direction: column;
+                text-align: center;
             }
         }
 
@@ -738,6 +813,10 @@
             .file-card {
                 padding: 15px;
             }
+            
+            .payment-number {
+                font-size: 18px;
+            }
         }
 
         /* Ad Banner Styles */
@@ -746,27 +825,6 @@
             justify-content: center;
             margin: 15px 0;
             width: 100%;
-        }
-
-        .new-ad-banner {
-            width: 100%;
-            height: 90px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
-            border: 1px dashed var(--primary);
-            color: var(--dark-gray);
-            font-size: 14px;
-        }
-
-        /* New Ad Script Container */
-        .new-ad-container {
-            width: 100%;
-            text-align: center;
-            margin: 20px 0;
         }
 
         /* Special Ad Notification Styles */
@@ -822,6 +880,20 @@
     </style>
 </head>
 <body>
+    <!-- Ad Banner - Top (Above Header) -->
+    <div class="ad-banner">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '00d25c3c353995d46d51bf532af984d3',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/00d25c3c353995d46d51bf532af984d3/invoke.js"></script>
+    </div>
+
     <div class="container">
         <header>
             <div class="header-content">
@@ -831,72 +903,52 @@
                     </div>
                     <div class="title-section">
                         <h1 id="siteTitle">AI DEVELOPER RABBI</h1>
-                        <p id="siteDescription">Download Free & Paid Files - Watch Ads or Purchase!</p>
+                        <p id="siteDescription">Watch Ads, Unlock, and Download Files for Free!</p>
                     </div>
                 </div>
                 <div class="social-stats" id="socialStats">
                     <!-- Social media icons will be loaded here -->
                 </div>
-                <div class="wallet-section" id="walletSection" style="display: none;">
-                    <i class="fas fa-wallet"></i>
-                    <span>Balance: $<span id="walletBalance">0.00</span></span>
-                </div>
             </div>
         </header>
-
-        <!-- New Ad Banner 1 -->
-        <div class="new-ad-container">
-            <div id="newAd1">
-                <!-- New ad script 1 will be loaded here -->
-                <div class="new-ad-banner">
-                    <div>
-                        <i class="fas fa-ad" style="font-size: 24px; margin-bottom: 5px;"></i>
-                        <p>Ad loading...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="search-box">
             <div class="search-icon"><i class="fas fa-search"></i></div>
             <input type="text" placeholder="Search for files..." id="searchInput">
         </div>
 
-        <!-- Free Files Section -->
-        <div class="section-header">
-            <div class="section-title">Free Files</div>
-            <div class="section-badge">Watch Ads to Unlock</div>
+        <!-- Ad Banner - Below Search Bar -->
+        <div class="ad-banner">
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '00d25c3c353995d46d51bf532af984d3',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="//www.highperformanceformat.com/00d25c3c353995d46d51bf532af984d3/invoke.js"></script>
         </div>
 
-        <div class="files-grid" id="freeFilesContainer">
+        <div class="files-grid" id="filesContainer">
             <div class="loading">
                 <div class="spinner"></div>
             </div>
         </div>
 
-        <!-- Paid Files Section -->
-        <div class="section-header">
-            <div class="section-title">Paid Files</div>
-            <div class="section-badge">Premium Content</div>
-        </div>
-
-        <div class="files-grid" id="paidFilesContainer">
-            <div class="loading">
-                <div class="spinner"></div>
-            </div>
-        </div>
-
-        <!-- New Ad Banner 2 -->
-        <div class="new-ad-container">
-            <div id="newAd2">
-                <!-- New ad script 2 will be loaded here -->
-                <div class="new-ad-banner">
-                    <div>
-                        <i class="fas fa-ad" style="font-size: 24px; margin-bottom: 5px;"></i>
-                        <p>Ad loading...</p>
-                    </div>
-                </div>
-            </div>
+        <!-- Ad Banner - Above Footer -->
+        <div class="ad-banner">
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '00d25c3c353995d46d51bf532af984d3',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="//www.highperformanceformat.com/00d25c3c353995d46d51bf532af984d3/invoke.js"></script>
         </div>
 
         <footer>
@@ -925,49 +977,122 @@
     </div>
 
     <!-- Payment Modal -->
-    <div class="payment-modal" id="paymentModal">
-        <div class="payment-content">
-            <div class="payment-header">
-                <i class="fas fa-shopping-cart"></i>
-                Purchase File
-            </div>
-            <div class="payment-body">
-                <h3 id="paymentFileName">File Name</h3>
-                <div class="payment-amount" id="paymentAmount">$0.00</div>
-                <p>Select payment method:</p>
+    <div class="ad-modal" id="paymentModal">
+        <div class="ad-content">
+            <div class="ad-header">Purchase File</div>
+            <div class="ad-body">
+                <div class="payment-method" id="paymentMethods">
+                    <!-- Payment methods loaded here -->
+                </div>
                 
-                <div class="payment-methods">
-                    <div class="payment-method" id="methodCard" onclick="selectPaymentMethod('card')">
-                        <i class="fas fa-credit-card"></i>
-                        <div>
-                            <strong>Credit/Debit Card</strong>
-                            <p>Pay with Visa, MasterCard, etc.</p>
-                        </div>
+                <div class="payment-details" id="paymentDetails" style="display: none;">
+                    <h3 id="selectedMethodName">Payment Method</h3>
+                    <p>Send <span id="paymentAmount" class="payment-number">0 BDT</span> to:</p>
+                    <div id="paymentNumber" class="payment-number">Loading...</div>
+                    <p id="paymentNote">Reference: <strong id="paymentReference">FILE-123</strong></p>
+                </div>
+                
+                <div class="payment-instructions" id="paymentInstructions" style="display: none;">
+                    <strong><i class="fas fa-info-circle"></i> Payment Instructions:</strong>
+                    <ol>
+                        <li>Send exact amount to the number above</li>
+                        <li>Use the reference number as payment note</li>
+                        <li>Take a screenshot of successful payment</li>
+                        <li>Submit transaction details below</li>
+                    </ol>
+                </div>
+                
+                <div class="payment-form" id="paymentForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="transactionId"><i class="fas fa-receipt"></i> Transaction ID:</label>
+                        <input type="text" id="transactionId" placeholder="Enter transaction ID (TrxID)">
                     </div>
-                    <div class="payment-method" id="methodBkash" onclick="selectPaymentMethod('bkash')">
-                        <i class="fas fa-mobile-alt"></i>
-                        <div>
-                            <strong>bKash</strong>
-                            <p>Pay via bKash Mobile Banking</p>
-                        </div>
+                    <div class="form-group">
+                        <label for="senderNumber"><i class="fas fa-mobile-alt"></i> Sender Number:</label>
+                        <input type="text" id="senderNumber" placeholder="Your phone number">
                     </div>
-                    <div class="payment-method" id="methodNagad" onclick="selectPaymentMethod('nagad')">
-                        <i class="fas fa-wallet"></i>
-                        <div>
-                            <strong>Nagad</strong>
-                            <p>Pay via Nagad Mobile Banking</p>
-                        </div>
+                    <div class="ad-actions">
+                        <button class="btn" id="submitPaymentBtn">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Submit Payment Details</span>
+                        </button>
+                        <button class="btn btn-disabled" id="cancelPaymentBtn">
+                            <i class="fas fa-times"></i>
+                            <span>Cancel</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing Modal -->
+    <div class="ad-modal" id="processingModal">
+        <div class="ad-content">
+            <div class="ad-header">Payment Processing</div>
+            <div class="processing-content">
+                <div class="processing-spinner"></div>
+                <div class="processing-status" id="processingStatus">Checking Payment Status...</div>
+                <div class="processing-note" id="processingNote">
+                    Your payment is being verified by our team. This may take a few minutes.
+                </div>
+                <div class="processing-time" id="processingTime">
+                    Submitted: <span id="submissionTime">Just now</span>
+                </div>
+                <div class="ad-actions" style="margin-top: 20px;">
+                    <button class="btn" id="refreshStatusBtn">
+                        <i class="fas fa-sync"></i>
+                        <span>Refresh Status</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Approval Modal -->
+    <div class="ad-modal" id="adminApprovalModal">
+        <div class="ad-content">
+            <div class="ad-header">Payment Approval Required</div>
+            <div class="admin-approval-content">
+                <div class="payment-info">
+                    <div class="info-item">
+                        <span class="info-label">File Name:</span>
+                        <span class="info-value" id="adminFileName">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">User ID:</span>
+                        <span class="info-value" id="adminUserId">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Amount:</span>
+                        <span class="info-value" id="adminAmount">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Transaction ID:</span>
+                        <span class="info-value" id="adminTrxId">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Payment Method:</span>
+                        <span class="info-value" id="adminMethod">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Submitted:</span>
+                        <span class="info-value" id="adminSubmitted">Loading...</span>
                     </div>
                 </div>
                 
-                <div class="ad-actions">
-                    <button class="btn btn-purchase" id="confirmPurchaseBtn">
-                        <i class="fas fa-lock"></i>
-                        <span>Pay Now</span>
+                <div class="admin-actions">
+                    <button class="btn btn-approve" id="approvePaymentBtn">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Approve Payment</span>
                     </button>
-                    <button class="btn" id="cancelPurchaseBtn" style="background: var(--medium-gray); color: var(--dark-gray);">
+                    <button class="btn btn-reject" id="rejectPaymentBtn">
+                        <i class="fas fa-times-circle"></i>
+                        <span>Reject Payment</span>
+                    </button>
+                    <button class="btn btn-disabled" id="closeAdminModalBtn">
                         <i class="fas fa-times"></i>
-                        <span>Cancel</span>
+                        <span>Close</span>
                     </button>
                 </div>
             </div>
@@ -982,17 +1107,6 @@
             <div class="notification-message" id="notificationMessage">File unlocked successfully! You can now download it.</div>
         </div>
     </div>
-
-    <!-- New Ad Script 2: Direct Link -->
-    <script type="text/javascript">
-        // Direct Link Ad Script
-        (function() {
-            var script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = '//otieu.com/4/10509139';
-            document.body.appendChild(script);
-        })();
-    </script>
 
     <script>
         // Firebase Configuration
@@ -1011,17 +1125,11 @@
         const db = firebase.firestore();
 
         // DOM Elements
-        const freeFilesContainer = document.getElementById('freeFilesContainer');
-        const paidFilesContainer = document.getElementById('paidFilesContainer');
+        const filesContainer = document.getElementById('filesContainer');
         const searchInput = document.getElementById('searchInput');
         const adModal = document.getElementById('adModal');
         const adTimer = document.getElementById('adTimer');
         const closeAdBtn = document.getElementById('closeAdBtn');
-        const paymentModal = document.getElementById('paymentModal');
-        const paymentFileName = document.getElementById('paymentFileName');
-        const paymentAmount = document.getElementById('paymentAmount');
-        const confirmPurchaseBtn = document.getElementById('confirmPurchaseBtn');
-        const cancelPurchaseBtn = document.getElementById('cancelPurchaseBtn');
         const notification = document.getElementById('notification');
         const notificationTitle = document.getElementById('notificationTitle');
         const notificationMessage = document.getElementById('notificationMessage');
@@ -1029,67 +1137,64 @@
         const siteDescription = document.getElementById('siteDescription');
         const socialStats = document.getElementById('socialStats');
         const siteLogo = document.getElementById('siteLogo');
-        const walletSection = document.getElementById('walletSection');
-        const walletBalance = document.getElementById('walletBalance');
+        
+        // Payment elements
+        const paymentModal = document.getElementById('paymentModal');
+        const paymentMethods = document.getElementById('paymentMethods');
+        const paymentDetails = document.getElementById('paymentDetails');
+        const paymentInstructions = document.getElementById('paymentInstructions');
+        const paymentForm = document.getElementById('paymentForm');
+        const selectedMethodName = document.getElementById('selectedMethodName');
+        const paymentAmount = document.getElementById('paymentAmount');
+        const paymentNumber = document.getElementById('paymentNumber');
+        const paymentReference = document.getElementById('paymentReference');
+        const transactionId = document.getElementById('transactionId');
+        const senderNumber = document.getElementById('senderNumber');
+        const submitPaymentBtn = document.getElementById('submitPaymentBtn');
+        const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
+        
+        // Processing modal elements
+        const processingModal = document.getElementById('processingModal');
+        const processingStatus = document.getElementById('processingStatus');
+        const processingNote = document.getElementById('processingNote');
+        const submissionTime = document.getElementById('submissionTime');
+        const refreshStatusBtn = document.getElementById('refreshStatusBtn');
+        
+        // Admin approval modal elements
+        const adminApprovalModal = document.getElementById('adminApprovalModal');
+        const adminFileName = document.getElementById('adminFileName');
+        const adminUserId = document.getElementById('adminUserId');
+        const adminAmount = document.getElementById('adminAmount');
+        const adminTrxId = document.getElementById('adminTrxId');
+        const adminMethod = document.getElementById('adminMethod');
+        const adminSubmitted = document.getElementById('adminSubmitted');
+        const approvePaymentBtn = document.getElementById('approvePaymentBtn');
+        const rejectPaymentBtn = document.getElementById('rejectPaymentBtn');
+        const closeAdminModalBtn = document.getElementById('closeAdminModalBtn');
 
         // Current state
         let currentFile = null;
-        let freeFilesData = [];
-        let paidFilesData = [];
+        let filesData = [];
         let userId = '';
         let socialLinks = {};
         let specialAdNumbers = [3, 7, 10];
         let specialAdTime = 25;
         let adStartTime = 0;
         let appSettings = {};
-        let userWallet = 0;
-        let selectedPaymentMethod = 'card';
+        let selectedPaymentMethod = null;
+        let currentPayment = null;
 
         // Initialize the app
         function initApp() {
+            // Generate or get user ID
             userId = getUserId();
+            
+            // Load site settings
             loadSiteSettings();
+            
+            // Load files from Firebase
             loadFiles();
-            loadUserWallet();
             setupEventListeners();
-            loadNewAds();
-        }
-
-        // Load new ads
-        function loadNewAds() {
-            // The first ad is already loaded via script in head
-            // The second ad is loaded via script at bottom of body
-            // We'll update the containers to show the ads
-            setTimeout(() => {
-                // Check if ads loaded
-                const ad1 = document.getElementById('newAd1');
-                const ad2 = document.getElementById('newAd2');
-                
-                if (ad1.innerHTML.includes('Ad loading')) {
-                    // If ad didn't load, show a fallback
-                    ad1.innerHTML = `
-                        <div class="new-ad-banner" style="cursor: pointer;" onclick="window.open('https://example.com', '_blank')">
-                            <div>
-                                <i class="fas fa-ad" style="font-size: 24px; margin-bottom: 5px; color: var(--primary);"></i>
-                                <p>Advertisement</p>
-                                <small>Click to visit our sponsor</small>
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                if (ad2.innerHTML.includes('Ad loading')) {
-                    ad2.innerHTML = `
-                        <div class="new-ad-banner" style="cursor: pointer;" onclick="window.open('https://example.com', '_blank')">
-                            <div>
-                                <i class="fas fa-ad" style="font-size: 24px; margin-bottom: 5px; color: var(--primary);"></i>
-                                <p>Advertisement</p>
-                                <small>Click to visit our sponsor</small>
-                            </div>
-                        </div>
-                    `;
-                }
-            }, 2000);
         }
 
         // Get or create user ID
@@ -1111,6 +1216,7 @@
                     const data = doc.data();
                     appSettings = data;
                     
+                    // Update site title and description
                     if (data.title) {
                         siteTitle.textContent = data.title;
                     }
@@ -1119,23 +1225,28 @@
                         siteDescription.textContent = data.description;
                     }
                     
+                    // Load special ad numbers from admin
                     if (data.specialAdNumbers && Array.isArray(data.specialAdNumbers)) {
                         specialAdNumbers = data.specialAdNumbers;
                     }
                     
+                    // Load special ad time from admin
                     if (data.specialAdTime && typeof data.specialAdTime === 'number') {
                         specialAdTime = data.specialAdTime;
                     }
                     
+                    // Load logo from admin
                     if (data.logoUrl) {
                         siteLogo.innerHTML = `<img src="${data.logoUrl}" alt="Site Logo">`;
                     }
                     
+                    // Load social links
                     if (data.socialLinks) {
                         socialLinks = data.socialLinks;
                         renderSocialLinks();
                     }
                 } else {
+                    // Use default values
                     loadDefaultSettings();
                 }
             }).catch((error) => {
@@ -1147,6 +1258,7 @@
 
         // Load default settings
         function loadDefaultSettings() {
+            // Default social links
             socialLinks = {
                 youtube: { visible: true, url: 'https://youtube.com', name: 'YouTube', followers: '15K' },
                 telegram: { visible: true, url: 'https://telegram.org', name: 'Telegram', followers: '8.5K' },
@@ -1157,26 +1269,11 @@
             renderSocialLinks();
         }
 
-        // Load user wallet balance
-        function loadUserWallet() {
-            const userRef = db.collection('users').doc(userId);
-            
-            userRef.get().then((doc) => {
-                if (doc.exists) {
-                    const userData = doc.data();
-                    userWallet = userData.wallet || 0;
-                    walletBalance.textContent = userWallet.toFixed(2);
-                    walletSection.style.display = 'flex';
-                }
-            }).catch((error) => {
-                console.error("Error loading wallet: ", error);
-            });
-        }
-
         // Render social links
         function renderSocialLinks() {
             socialStats.innerHTML = '';
             
+            // Create YouTube stat if visible
             if (socialLinks.youtube && socialLinks.youtube.visible) {
                 const youtubeStat = document.createElement('div');
                 youtubeStat.className = 'social-stat youtube';
@@ -1187,6 +1284,7 @@
                 socialStats.appendChild(youtubeStat);
             }
             
+            // Create Telegram stat if visible
             if (socialLinks.telegram && socialLinks.telegram.visible) {
                 const telegramStat = document.createElement('div');
                 telegramStat.className = 'social-stat telegram';
@@ -1197,6 +1295,7 @@
                 socialStats.appendChild(telegramStat);
             }
             
+            // Create TikTok stat if visible
             if (socialLinks.tiktok && socialLinks.tiktok.visible) {
                 const tiktokStat = document.createElement('div');
                 tiktokStat.className = 'social-stat tiktok';
@@ -1207,6 +1306,7 @@
                 socialStats.appendChild(tiktokStat);
             }
             
+            // Create Facebook stat if visible
             if (socialLinks.facebook && socialLinks.facebook.visible) {
                 const facebookStat = document.createElement('div');
                 facebookStat.className = 'social-stat facebook';
@@ -1220,25 +1320,21 @@
 
         // Set up event listeners
         function setupEventListeners() {
+            // Search input
             searchInput.addEventListener('input', filterFiles);
+            
+            // Ad modal buttons
             closeAdBtn.addEventListener('click', closeAdModal);
-            confirmPurchaseBtn.addEventListener('click', processPayment);
-            cancelPurchaseBtn.addEventListener('click', () => {
-                paymentModal.style.display = 'none';
-            });
-        }
-
-        // Select payment method
-        function selectPaymentMethod(method) {
-            selectedPaymentMethod = method;
             
-            // Remove selected class from all
-            document.getElementById('methodCard').classList.remove('selected');
-            document.getElementById('methodBkash').classList.remove('selected');
-            document.getElementById('methodNagad').classList.remove('selected');
+            // Payment buttons
+            submitPaymentBtn.addEventListener('click', submitPayment);
+            cancelPaymentBtn.addEventListener('click', closePaymentModal);
+            refreshStatusBtn.addEventListener('click', checkPaymentStatus);
             
-            // Add selected class to chosen method
-            document.getElementById('method' + method.charAt(0).toUpperCase() + method.slice(1)).classList.add('selected');
+            // Admin approval buttons
+            approvePaymentBtn.addEventListener('click', adminApprovePayment);
+            rejectPaymentBtn.addEventListener('click', adminRejectPayment);
+            closeAdminModalBtn.addEventListener('click', closeAdminApprovalModal);
         }
 
         // Load files from Firebase
@@ -1246,20 +1342,14 @@
             showLoading();
             
             db.collection('files').get().then((querySnapshot) => {
-                freeFilesData = [];
-                paidFilesData = [];
-                
+                filesData = [];
                 querySnapshot.forEach((doc) => {
                     const fileData = doc.data();
                     fileData.id = doc.id;
-                    
-                    if (fileData.isPaid) {
-                        paidFilesData.push(fileData);
-                    } else {
-                        freeFilesData.push(fileData);
-                    }
+                    filesData.push(fileData);
                 });
                 
+                // Load user progress for each file
                 loadUserProgress();
             }).catch((error) => {
                 console.error("Error loading files: ", error);
@@ -1276,59 +1366,63 @@
                 if (doc.exists) {
                     const userData = doc.data();
                     
-                    // Update free files with user progress
-                    freeFilesData.forEach(file => {
+                    // Update files with user progress
+                    filesData.forEach(file => {
                         if (userData[file.id]) {
                             file.adsWatched = userData[file.id].adsWatched || 0;
                             file.unlocked = userData[file.id].unlocked || false;
+                            
+                            // For paid files
+                            if (file.isPaid && userData[file.id].paymentStatus) {
+                                file.paymentStatus = userData[file.id].paymentStatus;
+                                file.paidUnlocked = userData[file.id].paidUnlocked || false;
+                            }
                         } else {
                             file.adsWatched = 0;
                             file.unlocked = false;
-                        }
-                    });
-                    
-                    // Update paid files with user progress
-                    paidFilesData.forEach(file => {
-                        if (userData[file.id]) {
-                            file.unlocked = userData[file.id].unlocked || false;
-                            file.purchased = userData[file.id].purchased || false;
-                        } else {
-                            file.unlocked = false;
-                            file.purchased = false;
+                            
+                            // For paid files
+                            if (file.isPaid) {
+                                file.paymentStatus = 'none';
+                                file.paidUnlocked = false;
+                            }
                         }
                     });
                 } else {
-                    freeFilesData.forEach(file => {
+                    // Initialize user data if doesn't exist
+                    filesData.forEach(file => {
                         file.adsWatched = 0;
                         file.unlocked = false;
-                    });
-                    
-                    paidFilesData.forEach(file => {
-                        file.unlocked = false;
-                        file.purchased = false;
+                        
+                        // For paid files
+                        if (file.isPaid) {
+                            file.paymentStatus = 'none';
+                            file.paidUnlocked = false;
+                        }
                     });
                 }
                 
-                renderFiles();
+                renderFiles(filesData);
             }).catch((error) => {
                 console.error("Error loading user progress: ", error);
-                freeFilesData.forEach(file => {
+                // Set default values
+                filesData.forEach(file => {
                     file.adsWatched = 0;
                     file.unlocked = false;
+                    
+                    // For paid files
+                    if (file.isPaid) {
+                        file.paymentStatus = 'none';
+                        file.paidUnlocked = false;
+                    }
                 });
-                
-                paidFilesData.forEach(file => {
-                    file.unlocked = false;
-                    file.purchased = false;
-                });
-                
-                renderFiles();
+                renderFiles(filesData);
             });
         }
 
         // Show default files if Firebase fails
         function showDefaultFiles() {
-            freeFilesData = [
+            filesData = [
                 {
                     id: "default1",
                     name: "Ethical Hacking Course",
@@ -1352,54 +1446,32 @@
                     downloadLink: "https://drive.google.com/",
                     unlocked: false,
                     isPaid: false
-                }
-            ];
-            
-            paidFilesData = [
-                {
-                    id: "paid1",
-                    name: "Advanced AI Course",
-                    description: "Master advanced AI concepts with hands-on projects and real-world applications.",
-                    size: "450.2 MB",
-                    price: 9.99,
-                    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-                    downloadLink: "https://drive.google.com/",
-                    unlocked: false,
-                    purchased: false,
-                    isPaid: true
                 },
                 {
-                    id: "paid2",
-                    name: "Blockchain Development Pro",
-                    description: "Learn to build enterprise-grade blockchain applications from scratch.",
-                    size: "320.7 MB",
-                    price: 12.99,
-                    image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+                    id: "paid1",
+                    name: "Premium AI Course Bundle",
+                    description: "Advanced AI and machine learning course with real-world projects and certificate.",
+                    size: "2.5 GB",
+                    price: 200,
+                    image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
                     downloadLink: "https://drive.google.com/",
-                    unlocked: false,
-                    purchased: false,
-                    isPaid: true
+                    isPaid: true,
+                    paymentStatus: 'none',
+                    paidUnlocked: false
                 }
             ];
-            
-            renderFiles();
+            renderFiles(filesData);
         }
 
-        // Render files to containers
-        function renderFiles() {
-            renderFreeFiles(freeFilesData);
-            renderPaidFiles(paidFilesData);
-        }
-
-        // Render free files
-        function renderFreeFiles(files) {
-            freeFilesContainer.innerHTML = '';
+        // Render files to the container
+        function renderFiles(files) {
+            filesContainer.innerHTML = '';
 
             if (files.length === 0) {
-                freeFilesContainer.innerHTML = `
+                filesContainer.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-folder-open"></i>
-                        <p>No free files available.</p>
+                        <p>No files found. Try a different search.</p>
                     </div>
                 `;
                 return;
@@ -1408,58 +1480,73 @@
             files.forEach(file => {
                 const fileCard = document.createElement('div');
                 fileCard.className = 'file-card';
-                fileCard.innerHTML = `
-                    <div class="file-image" style="background-image: url('${file.image}')">
-                        ${file.name}
-                    </div>
-                    <div class="file-info">
-                        <div class="file-name">
-                            ${file.name}
-                        </div>
-                        <div class="file-description">${file.description}</div>
-                        <div class="file-meta">
-                            <span><i class="far fa-hdd"></i> ${file.size}</span>
-                            <span><i class="fas fa-ad"></i> ${file.adsRequired} ads required</span>
-                        </div>
-                    </div>
-                    <div class="file-actions">
-                        ${file.unlocked ? 
-                            `<button class="btn btn-download" onclick="downloadFile('${file.id}')">
+                
+                // Check if file is paid
+                const isPaid = file.isPaid === true;
+                
+                // Generate badge if paid
+                const paidBadge = isPaid ? `<div class="paid-badge">PAID</div>` : '';
+                
+                // Generate meta info
+                const metaInfo = isPaid 
+                    ? `<span><i class="far fa-hdd"></i> ${file.size}</span>
+                       <span><i class="fas fa-money-bill-wave"></i> ${file.price || 200} BDT</span>`
+                    : `<span><i class="far fa-hdd"></i> ${file.size}</span>
+                       <span><i class="fas fa-ad"></i> ${file.adsRequired || 0} ads required</span>`;
+                
+                // Generate button based on file type and status
+                let buttonHTML = '';
+                
+                if (isPaid) {
+                    // Paid file
+                    if (file.paidUnlocked) {
+                        // Already unlocked
+                        buttonHTML = `
+                            <button class="btn btn-download" onclick="downloadFile('${file.id}')">
                                 <i class="fas fa-download"></i>
                                 Download File
-                            </button>` :
-                            `<button class="btn btn-unlock" onclick="unlockFile('${file.id}')">
+                            </button>`;
+                    } else if (file.paymentStatus === 'pending') {
+                        // Payment pending
+                        buttonHTML = `
+                            <button class="btn btn-processing" onclick="checkPaymentStatus('${file.id}')">
+                                <i class="fas fa-hourglass-half"></i>
+                                Processing...
+                            </button>`;
+                    } else if (file.paymentStatus === 'rejected') {
+                        // Payment rejected
+                        buttonHTML = `
+                            <button class="btn btn-price" onclick="showPaymentModal('${file.id}')">
+                                <i class="fas fa-money-bill-wave"></i>
+                                ${file.price || 200} BDT (Rejected)
+                            </button>`;
+                    } else {
+                        // Not purchased yet
+                        buttonHTML = `
+                            <button class="btn btn-price" onclick="showPaymentModal('${file.id}')">
+                                <i class="fas fa-money-bill-wave"></i>
+                                ${file.price || 200} BDT
+                            </button>`;
+                    }
+                } else {
+                    // Free file
+                    if (file.unlocked) {
+                        buttonHTML = `
+                            <button class="btn btn-download" onclick="downloadFile('${file.id}')">
+                                <i class="fas fa-download"></i>
+                                Download File
+                            </button>`;
+                    } else {
+                        buttonHTML = `
+                            <button class="btn btn-unlock" onclick="unlockFile('${file.id}')">
                                 <i class="fas fa-unlock"></i>
-                                Unlock File (${file.adsWatched}/${file.adsRequired})
-                            </button>`
-                        }
-                    </div>
-                `;
-                freeFilesContainer.appendChild(fileCard);
-            });
-        }
-
-        // Render paid files
-        function renderPaidFiles(files) {
-            paidFilesContainer.innerHTML = '';
-
-            if (files.length === 0) {
-                paidFilesContainer.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-gem"></i>
-                        <p>No paid files available.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            files.forEach(file => {
-                const fileCard = document.createElement('div');
-                fileCard.className = 'file-card paid';
+                                Unlock File (${file.adsWatched || 0}/${file.adsRequired || 0})
+                            </button>`;
+                    }
+                }
+                
                 fileCard.innerHTML = `
-                    <div class="file-badge">
-                        <i class="fas fa-crown"></i> PREMIUM
-                    </div>
+                    ${paidBadge}
                     <div class="file-image" style="background-image: url('${file.image}')">
                         ${file.name}
                     </div>
@@ -1469,59 +1556,42 @@
                         </div>
                         <div class="file-description">${file.description}</div>
                         <div class="file-meta">
-                            <span><i class="far fa-hdd"></i> ${file.size}</span>
-                            <span><i class="fas fa-dollar-sign"></i> $${file.price}</span>
+                            ${metaInfo}
                         </div>
                     </div>
                     <div class="file-actions">
-                        ${file.unlocked ? 
-                            `<button class="btn btn-download" onclick="downloadFile('${file.id}')">
-                                <i class="fas fa-download"></i>
-                                Download File
-                            </button>` :
-                            `<button class="btn btn-purchase" onclick="purchaseFile('${file.id}')">
-                                <i class="fas fa-shopping-cart"></i>
-                                Purchase File ($${file.price})
-                            </button>`
-                        }
+                        ${buttonHTML}
                     </div>
                 `;
-                paidFilesContainer.appendChild(fileCard);
+                filesContainer.appendChild(fileCard);
             });
         }
 
         // Filter files based on search
         function filterFiles() {
-            const searchTerm = searchInput.value.toLowerCase();
+            let filteredFiles = filesData;
             
-            if (!searchTerm) {
-                renderFreeFiles(freeFilesData);
-                renderPaidFiles(paidFilesData);
-                return;
+            // Filter by search
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                filteredFiles = filteredFiles.filter(file => 
+                    file.name.toLowerCase().includes(searchTerm) || 
+                    file.description.toLowerCase().includes(searchTerm)
+                );
             }
             
-            const filteredFree = freeFilesData.filter(file => 
-                file.name.toLowerCase().includes(searchTerm) || 
-                file.description.toLowerCase().includes(searchTerm)
-            );
-            
-            const filteredPaid = paidFilesData.filter(file => 
-                file.name.toLowerCase().includes(searchTerm) || 
-                file.description.toLowerCase().includes(searchTerm)
-            );
-            
-            renderFreeFiles(filteredFree);
-            renderPaidFiles(filteredPaid);
+            renderFiles(filteredFiles);
         }
 
         // Unlock file function (for free files)
         function unlockFile(fileId) {
-            const file = freeFilesData.find(f => f.id === fileId);
+            const file = filesData.find(f => f.id === fileId);
             if (!file) return;
             
             currentFile = file;
             const currentAdCount = file.adsWatched + 1;
             
+            // Check if this is special ad (from admin settings)
             const isSpecialAd = specialAdNumbers.includes(currentAdCount);
             
             if (isSpecialAd) {
@@ -1531,57 +1601,7 @@
             }
         }
 
-        // Purchase file function (for paid files)
-        function purchaseFile(fileId) {
-            const file = paidFilesData.find(f => f.id === fileId);
-            if (!file) return;
-            
-            currentFile = file;
-            paymentFileName.textContent = file.name;
-            paymentAmount.textContent = `$${file.price}`;
-            paymentModal.style.display = 'flex';
-            
-            // Reset payment method selection
-            selectPaymentMethod('card');
-        }
-
-        // Process payment
-        function processPayment() {
-            if (!currentFile) return;
-            
-            // Simulate payment processing
-            showNotification("Processing Payment", "Please wait while we process your payment...", "info");
-            
-            setTimeout(() => {
-                // Simulate successful payment
-                currentFile.unlocked = true;
-                currentFile.purchased = true;
-                
-                // Save to Firebase
-                const userRef = db.collection('users').doc(userId);
-                const updateData = {};
-                updateData[currentFile.id] = {
-                    unlocked: true,
-                    purchased: true,
-                    purchasedAt: new Date(),
-                    price: currentFile.price,
-                    paymentMethod: selectedPaymentMethod
-                };
-                
-                userRef.set(updateData, { merge: true })
-                    .then(() => {
-                        paymentModal.style.display = 'none';
-                        showNotification("Purchase Successful!", "File purchased successfully! You can now download it.", "success");
-                        renderPaidFiles(paidFilesData);
-                    })
-                    .catch((error) => {
-                        console.error("Error saving purchase: ", error);
-                        showError("Failed to save purchase. Please try again.");
-                    });
-            }, 2000);
-        }
-
-        // Special ad notification
+        // Special ad notification - with reduced height
         function showSpecialAdNotification() {
             const notificationModal = document.createElement('div');
             notificationModal.className = 'ad-modal';
@@ -1623,10 +1643,12 @@
             
             document.body.appendChild(notificationModal);
             
+            // Proceed to actual ad
             document.getElementById('proceedToAdBtn').addEventListener('click', function() {
                 document.body.removeChild(notificationModal);
                 showAdModal();
                 
+                // Track this special ad
                 currentFile.isSpecialAd = true;
                 currentFile.specialAdNumber = currentFile.adsWatched + 1;
             });
@@ -1634,27 +1656,34 @@
 
         // Show ad modal
         function showAdModal() {
-            adStartTime = Date.now();
+            adStartTime = Date.now(); // Start tracking time
             adModal.style.display = 'flex';
             adTimer.textContent = "Loading ad...";
             closeAdBtn.style.display = 'none';
             
-            // Simulate ad display (since we removed Monetag SDK)
-            setTimeout(() => {
-                adTimer.textContent = "Ad playing... Please wait 10 seconds";
-                
-                // Simulate ad completion after 10 seconds
-                setTimeout(() => {
+            // Use Monetag SDK to show the ad
+            if (typeof show_10135149 !== 'undefined') {
+                show_10135149().then(() => {
+                    // Ad completed successfully
                     adComplete();
-                }, 10000);
-                
-            }, 1000);
+                }).catch((error) => {
+                    // Ad failed or was closed by user
+                    console.error("Ad error: ", error);
+                    showError("Ad was not completed. Please try again.");
+                    closeAdModal();
+                });
+            } else {
+                // Fallback if Monetag SDK is not available
+                showError("Ad system is not available. Please try again later.");
+                closeAdModal();
+            }
         }
 
         // Ad completed
         function adComplete() {
-            const adWatchTime = Math.floor((Date.now() - adStartTime) / 1000);
+            const adWatchTime = Math.floor((Date.now() - adStartTime) / 1000); // Calculate time spent in seconds
             
+            // Check if it was special ad and user spent enough time
             if (currentFile.isSpecialAd && adWatchTime < specialAdTime) {
                 adTimer.innerHTML = `
                     <div style="text-align: center; color: var(--error);">
@@ -1673,6 +1702,7 @@
             adTimer.textContent = "Ad completed! Updating your progress...";
             closeAdBtn.style.display = 'flex';
             
+            // Update file progress
             currentFile.adsWatched++;
             
             if (currentFile.adsWatched >= currentFile.adsRequired) {
@@ -1682,8 +1712,9 @@
                 showNotification("Progress Updated!", `You need ${currentFile.adsRequired - currentFile.adsWatched} more ads to unlock this file.`, "success");
             }
             
+            // Save progress to Firebase
             saveUserProgress();
-            renderFreeFiles(freeFilesData);
+            filterFiles();
         }
 
         // Close ad modal
@@ -1691,6 +1722,418 @@
             adModal.style.display = 'none';
             closeAdBtn.style.display = 'none';
             currentFile = null;
+        }
+
+        // Show payment modal for paid files
+        function showPaymentModal(fileId) {
+            const file = filesData.find(f => f.id === fileId);
+            if (!file) return;
+            
+            currentFile = file;
+            selectedPaymentMethod = null;
+            
+            // Clear previous content
+            paymentMethods.innerHTML = '';
+            paymentDetails.style.display = 'none';
+            paymentInstructions.style.display = 'none';
+            paymentForm.style.display = 'none';
+            
+            // Load payment methods from Firebase
+            db.collection('settings').doc('payment').get().then((doc) => {
+                if (doc.exists) {
+                    const paymentData = doc.data();
+                    
+                    // Show available payment methods
+                    const methods = paymentData.methods || ['bkash', 'nagad', 'rocket'];
+                    const numbers = paymentData.numbers || {};
+                    
+                    methods.forEach(method => {
+                        const methodOption = document.createElement('div');
+                        methodOption.className = 'method-option';
+                        methodOption.dataset.method = method;
+                        methodOption.dataset.number = numbers[method] || '';
+                        
+                        let methodName = '';
+                        let iconClass = '';
+                        
+                        switch(method) {
+                            case 'bkash':
+                                methodName = 'bKash';
+                                iconClass = 'fas fa-mobile-alt';
+                                break;
+                            case 'nagad':
+                                methodName = 'Nagad';
+                                iconClass = 'fas fa-wallet';
+                                break;
+                            case 'rocket':
+                                methodName = 'Rocket';
+                                iconClass = 'fas fa-rocket';
+                                break;
+                            default:
+                                methodName = method.charAt(0).toUpperCase() + method.slice(1);
+                                iconClass = 'fas fa-money-bill-wave';
+                        }
+                        
+                        methodOption.innerHTML = `
+                            <div class="method-icon ${method}">
+                                <i class="${iconClass}"></i>
+                            </div>
+                            <div>
+                                <strong>${methodName}</strong>
+                                <p style="font-size: 12px; color: var(--dark-gray); margin-top: 5px;">
+                                    Send ${file.price || 200} BDT to complete payment
+                                </p>
+                            </div>
+                        `;
+                        
+                        methodOption.addEventListener('click', function() {
+                            // Remove selected class from all options
+                            document.querySelectorAll('.method-option').forEach(opt => {
+                                opt.classList.remove('selected');
+                            });
+                            
+                            // Add selected class to clicked option
+                            this.classList.add('selected');
+                            selectedPaymentMethod = {
+                                name: methodName,
+                                code: method,
+                                number: this.dataset.number
+                            };
+                            
+                            // Show payment details
+                            showPaymentDetails();
+                        });
+                        
+                        paymentMethods.appendChild(methodOption);
+                    });
+                    
+                    // Show modal
+                    paymentModal.style.display = 'flex';
+                } else {
+                    showError("Payment system is not configured. Please contact admin.");
+                }
+            }).catch((error) => {
+                console.error("Error loading payment methods: ", error);
+                showError("Failed to load payment methods. Please try again.");
+            });
+        }
+        
+        // Show payment details after selecting method
+        function showPaymentDetails() {
+            if (!selectedPaymentMethod) return;
+            
+            // Generate unique reference
+            const reference = `FILE-${currentFile.id.substring(0, 8)}-${Date.now().toString().substr(-6)}`;
+            
+            // Update payment details
+            selectedMethodName.textContent = `Pay with ${selectedPaymentMethod.name}`;
+            paymentAmount.textContent = `${currentFile.price || 200} BDT`;
+            paymentNumber.textContent = selectedPaymentMethod.number || 'Not available';
+            paymentReference.textContent = reference;
+            
+            // Show sections
+            paymentDetails.style.display = 'block';
+            paymentInstructions.style.display = 'block';
+            paymentForm.style.display = 'block';
+            
+            // Clear form
+            transactionId.value = '';
+            senderNumber.value = '';
+            
+            // Store reference in current file
+            currentFile.paymentReference = reference;
+        }
+        
+        // Submit payment details
+        function submitPayment() {
+            if (!selectedPaymentMethod || !currentFile) {
+                showError("Please select a payment method first.");
+                return;
+            }
+            
+            const trxId = transactionId.value.trim();
+            const sender = senderNumber.value.trim();
+            
+            if (!trxId) {
+                showError("Please enter your transaction ID.");
+                return;
+            }
+            
+            if (!sender) {
+                showError("Please enter your phone number.");
+                return;
+            }
+            
+            // Create payment record
+            const paymentId = 'payment_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            const paymentData = {
+                id: paymentId,
+                userId: userId,
+                fileId: currentFile.id,
+                fileName: currentFile.name,
+                amount: currentFile.price || 200,
+                method: selectedPaymentMethod.code,
+                methodName: selectedPaymentMethod.name,
+                transactionId: trxId,
+                senderNumber: sender,
+                reference: currentFile.paymentReference,
+                status: 'pending',
+                submittedAt: new Date(),
+                updatedAt: new Date()
+            };
+            
+            // Save to Firebase
+            db.collection('payments').doc(paymentId).set(paymentData)
+                .then(() => {
+                    // Update user's file status
+                    const userRef = db.collection('users').doc(userId);
+                    const updateData = {};
+                    updateData[currentFile.id] = {
+                        paymentStatus: 'pending',
+                        paymentId: paymentId,
+                        paidUnlocked: false,
+                        paymentSubmittedAt: new Date()
+                    };
+                    
+                    return userRef.set(updateData, { merge: true });
+                })
+                .then(() => {
+                    // Update local data
+                    currentFile.paymentStatus = 'pending';
+                    currentFile.paymentId = paymentId;
+                    currentPayment = paymentData;
+                    
+                    // Close payment modal
+                    closePaymentModal();
+                    
+                    // Show processing modal
+                    showProcessingModal();
+                    
+                    // Refresh files display
+                    filterFiles();
+                })
+                .catch((error) => {
+                    console.error("Error submitting payment: ", error);
+                    showError("Failed to submit payment. Please try again.");
+                });
+        }
+        
+        // Show processing modal
+        function showProcessingModal() {
+            if (!currentPayment) return;
+            
+            processingStatus.textContent = "Payment Submitted!";
+            processingNote.textContent = "Your payment details have been submitted. Our team will verify your payment and approve it shortly.";
+            submissionTime.textContent = new Date().toLocaleTimeString();
+            
+            processingModal.style.display = 'flex';
+            
+            // Start checking status
+            setTimeout(checkPaymentStatus, 5000);
+        }
+        
+        // Check payment status
+        function checkPaymentStatus(fileId) {
+            let checkFileId = fileId;
+            if (!checkFileId && currentFile) {
+                checkFileId = currentFile.id;
+            }
+            
+            if (!checkFileId) return;
+            
+            // Find the file
+            const file = filesData.find(f => f.id === checkFileId);
+            if (!file || !file.paymentId) return;
+            
+            processingStatus.textContent = "Checking Status...";
+            
+            // Get payment from Firebase
+            db.collection('payments').doc(file.paymentId).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const payment = doc.data();
+                        
+                        switch(payment.status) {
+                            case 'approved':
+                                // Payment approved
+                                processingStatus.textContent = "Payment Approved!";
+                                processingNote.textContent = "Your payment has been verified and approved. The file is now unlocked.";
+                                
+                                // Update user data
+                                const userRef = db.collection('users').doc(userId);
+                                const updateData = {};
+                                updateData[file.id] = {
+                                    paymentStatus: 'approved',
+                                    paidUnlocked: true,
+                                    unlocked: true,
+                                    paymentApprovedAt: payment.updatedAt
+                                };
+                                
+                                userRef.set(updateData, { merge: true })
+                                    .then(() => {
+                                        // Update local data
+                                        file.paymentStatus = 'approved';
+                                        file.paidUnlocked = true;
+                                        file.unlocked = true;
+                                        
+                                        // Close modal after 3 seconds
+                                        setTimeout(() => {
+                                            processingModal.style.display = 'none';
+                                            showNotification("Payment Approved!", "Your payment has been verified. You can now download the file.", "success");
+                                            filterFiles();
+                                        }, 3000);
+                                    });
+                                break;
+                                
+                            case 'rejected':
+                                // Payment rejected
+                                processingStatus.textContent = "Payment Rejected";
+                                processingNote.textContent = payment.rejectReason || "Your payment was rejected. Please contact support or try again.";
+                                
+                                // Update user data
+                                const userRef2 = db.collection('users').doc(userId);
+                                const updateData2 = {};
+                                updateData2[file.id] = {
+                                    paymentStatus: 'rejected',
+                                    paidUnlocked: false,
+                                    paymentRejectedAt: payment.updatedAt
+                                };
+                                
+                                userRef2.set(updateData2, { merge: true })
+                                    .then(() => {
+                                        // Update local data
+                                        file.paymentStatus = 'rejected';
+                                        file.paidUnlocked = false;
+                                        
+                                        // Close modal after 3 seconds
+                                        setTimeout(() => {
+                                            processingModal.style.display = 'none';
+                                            showNotification("Payment Rejected", payment.rejectReason || "Your payment was rejected.", "error");
+                                            filterFiles();
+                                        }, 3000);
+                                    });
+                                break;
+                                
+                            default:
+                                // Still pending
+                                processingStatus.textContent = "Payment Pending";
+                                processingNote.textContent = "Your payment is still being verified. Please check back in a few minutes.";
+                                submissionTime.textContent = new Date(payment.submittedAt).toLocaleTimeString();
+                        }
+                    } else {
+                        processingStatus.textContent = "Payment Not Found";
+                        processingNote.textContent = "Unable to find your payment record. Please contact support.";
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error checking payment status: ", error);
+                    processingStatus.textContent = "Error Checking Status";
+                    processingNote.textContent = "Failed to check payment status. Please try again.";
+                });
+        }
+        
+        // Admin approve payment
+        function adminApprovePayment() {
+            if (!currentPayment) return;
+            
+            // Update payment status
+            db.collection('payments').doc(currentPayment.id).update({
+                status: 'approved',
+                updatedAt: new Date(),
+                approvedBy: 'admin',
+                approvedAt: new Date()
+            })
+            .then(() => {
+                // Update user data
+                const userRef = db.collection('users').doc(currentPayment.userId);
+                const updateData = {};
+                updateData[currentPayment.fileId] = {
+                    paymentStatus: 'approved',
+                    paidUnlocked: true,
+                    unlocked: true,
+                    paymentApprovedAt: new Date()
+                };
+                
+                return userRef.set(updateData, { merge: true });
+            })
+            .then(() => {
+                showNotification("Payment Approved", "Payment has been approved successfully.", "success");
+                closeAdminApprovalModal();
+                
+                // If current user is the one who made payment, update local data
+                if (userId === currentPayment.userId) {
+                    const file = filesData.find(f => f.id === currentPayment.fileId);
+                    if (file) {
+                        file.paymentStatus = 'approved';
+                        file.paidUnlocked = true;
+                        file.unlocked = true;
+                        filterFiles();
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error("Error approving payment: ", error);
+                showError("Failed to approve payment. Please try again.");
+            });
+        }
+        
+        // Admin reject payment
+        function adminRejectPayment() {
+            if (!currentPayment) return;
+            
+            const rejectReason = prompt("Please enter reason for rejection:");
+            if (!rejectReason) return;
+            
+            // Update payment status
+            db.collection('payments').doc(currentPayment.id).update({
+                status: 'rejected',
+                rejectReason: rejectReason,
+                updatedAt: new Date(),
+                rejectedBy: 'admin',
+                rejectedAt: new Date()
+            })
+            .then(() => {
+                // Update user data
+                const userRef = db.collection('users').doc(currentPayment.userId);
+                const updateData = {};
+                updateData[currentPayment.fileId] = {
+                    paymentStatus: 'rejected',
+                    paidUnlocked: false,
+                    paymentRejectedAt: new Date()
+                };
+                
+                return userRef.set(updateData, { merge: true });
+            })
+            .then(() => {
+                showNotification("Payment Rejected", "Payment has been rejected.", "error");
+                closeAdminApprovalModal();
+                
+                // If current user is the one who made payment, update local data
+                if (userId === currentPayment.userId) {
+                    const file = filesData.find(f => f.id === currentPayment.fileId);
+                    if (file) {
+                        file.paymentStatus = 'rejected';
+                        file.paidUnlocked = false;
+                        filterFiles();
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error("Error rejecting payment: ", error);
+                showError("Failed to reject payment. Please try again.");
+            });
+        }
+        
+        // Close payment modal
+        function closePaymentModal() {
+            paymentModal.style.display = 'none';
+            selectedPaymentMethod = null;
+        }
+        
+        // Close admin approval modal
+        function closeAdminApprovalModal() {
+            adminApprovalModal.style.display = 'none';
+            currentPayment = null;
         }
 
         // Save user progress to Firebase
@@ -1721,6 +2164,7 @@
             notificationTitle.textContent = title;
             notificationMessage.textContent = message;
             
+            // Update icon based on type
             const icon = notification.querySelector('i');
             if (type === "success") {
                 icon.className = "fas fa-check-circle";
@@ -1743,13 +2187,7 @@
 
         // Show loading state
         function showLoading() {
-            freeFilesContainer.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                </div>
-            `;
-            
-            paidFilesContainer.innerHTML = `
+            filesContainer.innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
                 </div>
@@ -1758,22 +2196,66 @@
 
         // Download file
         function downloadFile(fileId) {
-            let file = freeFilesData.find(f => f.id === fileId);
-            if (!file) {
-                file = paidFilesData.find(f => f.id === fileId);
-            }
-            
+            const file = filesData.find(f => f.id === fileId);
             if (!file) return;
             
-            if (file.unlocked) {
+            // Check if file is unlocked (free or paid)
+            const isUnlocked = file.unlocked || (file.isPaid && file.paidUnlocked);
+            
+            if (isUnlocked) {
+                // Open the download link in a new tab
                 window.open(file.downloadLink, '_blank');
+            } else if (file.isPaid) {
+                showError("This paid file is still locked. Please complete the payment.");
             } else {
-                showError("This file is still locked. Please watch ads or purchase to unlock it.");
+                showError("This file is still locked. Please watch ads to unlock it.");
             }
+        }
+
+        // Admin function to view pending payments
+        function viewPendingPayments() {
+            // This would typically be in an admin panel
+            // For now, we'll just log to console
+            db.collection('payments').where('status', '==', 'pending').get()
+                .then((querySnapshot) => {
+                    console.log("Pending payments:", querySnapshot.size);
+                    querySnapshot.forEach((doc) => {
+                        const payment = doc.data();
+                        console.log(payment);
+                        
+                        // Show admin modal for first pending payment
+                        if (!currentPayment) {
+                            currentPayment = payment;
+                            showAdminApprovalModal();
+                        }
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error fetching pending payments: ", error);
+                });
+        }
+        
+        // Show admin approval modal
+        function showAdminApprovalModal() {
+            if (!currentPayment) return;
+            
+            adminFileName.textContent = currentPayment.fileName;
+            adminUserId.textContent = currentPayment.userId;
+            adminAmount.textContent = `${currentPayment.amount} BDT`;
+            adminTrxId.textContent = currentPayment.transactionId;
+            adminMethod.textContent = currentPayment.methodName;
+            adminSubmitted.textContent = new Date(currentPayment.submittedAt).toLocaleString();
+            
+            adminApprovalModal.style.display = 'flex';
         }
 
         // Initialize the app when the page loads
         document.addEventListener('DOMContentLoaded', initApp);
+        
+        // For admin testing - remove in production
+        window.viewPendingPayments = viewPendingPayments;
+        window.adminApprovePayment = adminApprovePayment;
+        window.adminRejectPayment = adminRejectPayment;
     </script>
 </body>
 </html>
