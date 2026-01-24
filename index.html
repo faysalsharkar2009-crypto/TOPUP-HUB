@@ -3,1110 +3,996 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI File Unlocker</title>
+    <title>Manual Add Money - AI File Unlocker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <!-- Monetag SDK -->
-    <script src='//libtl.com/sdk.js' data-zone='10135149' data-sdk='show_10135149'></script>
-    <!-- New Social Bar Ad Script -->
-    <script src="https://pl28551976.effectivegatecpm.com/0c/27/7d/0c277dfb94991988efc9209e87227361.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E55A28;
+            --primary-light: #FFF0EB;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --card-bg: #ffffff;
+            --body-bg: #f9f9f9;
+            --text: #2d3748;
+            --text-light: #64748b;
+            --border: #FFD9CC;
+            --shadow: 0 4px 6px -1px rgba(255, 107, 53, 0.1), 0 2px 4px -1px rgba(255, 107, 53, 0.06);
+            --radius: 12px;
+            --bkash-color: #E2136E;
+            --nagad-color: #F15A22;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        :root {
-            --primary: #3a86ff;
-            --primary-light: #5d9cff;
-            --primary-dark: #2667cc;
-            --secondary: #8338ec;
-            --accent: #ff006e;
-            --light: #ffffff;
-            --light-gray: #f8f9fa;
-            --medium-gray: #e9ecef;
-            --dark-gray: #6c757d;
-            --text: #212529;
-            --text-light: #495057;
-            --card-bg: #ffffff;
-            --success: #28a745;
-            --warning: #ffc107;
-            --error: #dc3545;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
-            --price: #ff6b35;
         }
 
         body {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--body-bg);
             color: var(--text);
+            font-size: 14px;
+            padding-top: 60px;
             min-height: 100vh;
-            line-height: 1.6;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 15px;
+        .d-none {
+            display: none !important;
         }
 
-        /* Header Styles - Clean and Bright */
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-            color: white;
-        }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(to right, var(--light), rgba(255,255,255,0.5), var(--light));
-        }
-
-        .header-content {
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1100;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo {
-            width: 45px;
-            height: 45px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            overflow: hidden;
-        }
-
-        .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .logo i {
-            color: white;
-        }
-
-        .title-section h1 {
-            font-size: 22px;
-            font-weight: 700;
-            text-align: left;
-            color: white;
-        }
-
-        .title-section p {
-            font-size: 14px;
-            opacity: 0.9;
-            text-align: left;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .social-stats {
-            display: flex;
             gap: 10px;
-            flex-wrap: wrap;
         }
 
-        .social-stat {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 15px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 13px;
+        .toast {
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInUp 0.3s ease-out;
+            max-width: 350px;
+            font-size: 14px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-            cursor: pointer;
             color: white;
-        }
-
-        .social-stat:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        .social-stat i {
-            font-size: 14px;
-        }
-
-        .social-stat.youtube i {
-            color: #FF0000;
-        }
-
-        .social-stat.telegram i {
-            color: #0088cc;
-        }
-
-        .social-stat.tiktok i {
-            color: #000000;
-        }
-
-        .social-stat.facebook i {
-            color: #1877F2;
-        }
-
-        /* Search Box - Clean Design */
-        .search-box {
-            margin-bottom: 25px;
-            position: relative;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 15px 20px 15px 50px;
-            border: 1px solid var(--medium-gray);
-            border-radius: 12px;
-            background: var(--light);
-            color: var(--text);
-            font-size: 16px;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-        }
-
-        .search-box input::placeholder {
-            color: var(--dark-gray);
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 4px 15px rgba(58, 134, 255, 0.2);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
-            font-size: 18px;
-            z-index: 2;
-        }
-
-        /* Files Grid */
-        .files-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .file-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--medium-gray);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .file-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .file-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .file-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .file-image {
-            width: 100%;
-            height: 160px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .file-image::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
-        }
-
-        .file-info {
-            margin-bottom: 15px;
-        }
-
-        .file-name {
-            font-weight: 700;
-            font-size: 18px;
-            margin-bottom: 8px;
-            color: var(--text);
-        }
-
-        .file-description {
-            font-size: 14px;
-            color: var(--text-light);
-            line-height: 1.5;
-            margin-bottom: 12px;
-        }
-
-        .file-meta {
-            display: flex;
-            font-size: 13px;
-            color: var(--dark-gray);
-            gap: 12px;
-        }
-
-        .file-meta i {
-            margin-right: 5px;
-        }
-
-        .file-actions {
-            display: flex;
+            min-width: 250px;
+            text-align: center;
             justify-content: center;
         }
 
-        .btn {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
+        .toast-success { 
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.95), rgba(33, 136, 56, 0.95));
+            border-left: 4px solid #28a745;
+        }
+        .toast-error { 
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.95), rgba(200, 35, 51, 0.95));
+            border-left: 4px solid #dc3545;
+        }
+        .toast-warning { 
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.95), rgba(224, 168, 0, 0.95));
+            border-left: 4px solid #ffc107;
+            color: var(--dark);
+        }
+        .toast-info { 
+            background: linear-gradient(135deg, rgba(23, 162, 184, 0.95), rgba(19, 132, 150, 0.95));
+            border-left: 4px solid #17a2b8;
+        }
+
+        @keyframes slideInUp {
+            from { 
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutDown {
+            from { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to { 
+                transform: translateY(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        .app-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 4px 15px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(58, 134, 255, 0.3);
-            width: 100%;
-            justify-content: center;
-            font-size: 14px;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(58, 134, 255, 0.4);
-        }
-
-        .btn-unlock {
-            background: linear-gradient(135deg, var(--accent), #e0005e);
-        }
-
-        .btn-download {
-            background: linear-gradient(135deg, var(--success), #218838);
-        }
-
-        .btn-price {
-            background: linear-gradient(135deg, var(--price), #e55c2b);
-        }
-
-        .btn-processing {
-            background: linear-gradient(135deg, var(--warning), #e0a800);
-        }
-
-        .btn-disabled {
-            background: var(--medium-gray);
-            color: var(--dark-gray);
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .btn-disabled:hover {
-            transform: none;
-            box-shadow: none;
-        }
-
-        .paid-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: linear-gradient(135deg, var(--price), #e55c2b);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            z-index: 2;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Loading Spinner */
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-            grid-column: 1 / -1;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--medium-gray);
-            border-left: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Ad Modal */
-        .ad-modal {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            right: 0;
             z-index: 1000;
+            border-bottom: 1px solid rgba(255, 107, 53, 0.1);
+            height: 60px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .back-button-header {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 15px;
-        }
-
-        .ad-content {
-            background: var(--light);
-            border-radius: 15px;
-            width: 100%;
-            max-width: 450px;
-            overflow: hidden;
-            color: var(--text);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--medium-gray);
-        }
-
-        .ad-header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 18px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        .ad-body {
-            padding: 25px;
-            text-align: center;
-        }
-
-        .ad-body img {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .ad-timer {
-            font-size: 15px;
-            margin-bottom: 15px;
-            color: var(--text);
-            background: var(--light-gray);
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--medium-gray);
-        }
-
-        .ad-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .ad-actions .btn {
-            flex: 1;
-        }
-
-        /* Payment Modal Styles */
-        .payment-method {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .method-option {
-            border: 2px solid var(--medium-gray);
-            border-radius: 10px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .method-option:hover {
-            border-color: var(--primary);
-            background: var(--light-gray);
-        }
-
-        .method-option.selected {
-            border-color: var(--primary);
-            background: rgba(58, 134, 255, 0.1);
-        }
-
-        .method-icon {
             width: 40px;
             height: 40px;
-            border-radius: 8px;
+            border-radius: 50%;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .back-button-header:hover {
+            background: rgba(255, 107, 53, 0.1);
+            transform: translateX(-2px);
+        }
+
+        .app-logo {
+            height: 45px;
+            width: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            color: white;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
         }
 
-        .method-icon.bkash {
-            background: linear-gradient(135deg, #E2136E, #B10D5A);
+        .app-logo img {
+            height: 100%;
+            width: 80%;
+            object-fit: cover;
+            border-radius: 0px;
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%);
+            padding: 0px;
+            box-sizing: border-box;
+            transition: transform 0.3s ease;
         }
 
-        .method-icon.nagad {
-            background: linear-gradient(135deg, #E61225, #B30E1D);
+        .app-logo img:hover {
+            transform: scale(1.05);
         }
 
-        .method-icon.rocket {
-            background: linear-gradient(135deg, #5D2D91, #4A2473);
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
         }
 
-        .payment-details {
-            background: var(--light-gray);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-            border: 1px solid var(--medium-gray);
-        }
-
-        .payment-number {
-            font-size: 24px;
-            font-weight: bold;
+        .wallet-balance {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary-light), rgba(255, 107, 53, 0.15));
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            border: 1px solid var(--primary);
             color: var(--primary-dark);
-            margin: 10px 0;
-            padding: 10px;
-            background: white;
-            border-radius: 8px;
-            border: 2px dashed var(--primary);
+            font-size: 14px;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
         }
 
-        .payment-form {
+        .wallet-balance:hover {
+            background: rgba(255, 107, 53, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .wallet-balance i {
+            margin-right: 8px;
+        }
+
+        /* Main Page */
+        .app-page {
+            padding: 20px;
+            padding-top: 80px;
+            padding-bottom: 30px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .product-detail-header {
             display: flex;
-            flex-direction: column;
+            align-items: center;
             gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .form-group {
+        .back-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 8px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text);
+        }
+
+        /* Payment Tabs */
+        .payment-tabs {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .payment-tab {
+            flex: 1;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            background: var(--light);
+        }
+
+        .payment-tab.active {
+            border-bottom: 3px solid var(--primary);
+            background: var(--card-bg);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .payment-tab img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        /* Payment Forms */
+        .payment-form {
+            display: none;
+        }
+
+        .payment-form.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .payment-box {
+            width: 100%;
+            margin: 0 auto 20px auto;
+            border-radius: var(--radius);
+            color: #fff;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .bkash-box { 
+            background: linear-gradient(135deg, var(--bkash-color), #D1116D);
+        }
+
+        .nagad-box { 
+            background: linear-gradient(135deg, var(--nagad-color), #D14A1A);
+        }
+
+        .payment-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .payment-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .payment-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .payment-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
         }
 
         .form-group label {
+            display: block;
             font-weight: 600;
-            color: var(--text);
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.9);
             font-size: 14px;
         }
 
         .form-group input {
-            padding: 12px 15px;
-            border: 1px solid var(--medium-gray);
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s ease;
+            width: 100%;
+            padding: 14px 15px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            outline: none;
+            transition: all 0.3s;
+            border: 2px solid transparent;
         }
 
         .form-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.1);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
-        .payment-instructions {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            color: #856404;
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
         }
 
-        .payment-instructions ol {
-            margin-left: 20px;
-            margin-top: 10px;
+        /* Payment Guide */
+        .payment-guide {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 4px solid rgba(255, 255, 255, 0.3);
         }
 
-        .payment-instructions li {
-            margin-bottom: 5px;
-        }
-
-        /* Processing Modal Styles */
-        .processing-content {
-            text-align: center;
-            padding: 30px;
-        }
-
-        .processing-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid var(--medium-gray);
-            border-left: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        .processing-status {
+        .payment-guide-title {
             font-size: 16px;
             font-weight: 600;
-            color: var(--text);
-            margin-bottom: 10px;
-        }
-
-        .processing-note {
-            font-size: 14px;
-            color: var(--dark-gray);
             margin-bottom: 20px;
-        }
-
-        .processing-time {
-            font-size: 12px;
-            color: var(--dark-gray);
-            font-style: italic;
-        }
-
-        /* Admin Approval Modal */
-        .admin-approval-content {
-            padding: 20px;
-        }
-
-        .payment-info {
-            background: var(--light-gray);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .info-item {
             display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .payment-guide-title i {
+            font-size: 18px;
+        }
+
+        .payment-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .payment-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .step-number {
+            background: rgba(255, 255, 255, 0.2);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .number-copy {
+            display: flex;
+            align-items: center;
             justify-content: space-between;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px 15px;
+            border-radius: var(--radius);
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #fff;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--dark);
+            border: none;
+            border-radius: var(--radius);
+            padding: 8px 15px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .copy-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .copy-btn i {
+            font-size: 12px;
+        }
+
+        /* Form Footer */
+        .form-footer {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .minimum-amount {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius);
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .minimum-amount strong {
+            font-size: 16px;
+            color: #FFD700;
+        }
+
+        .verify-btn {
+            width: 100%;
+            background: white;
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 16px;
+            border: none;
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .verify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .verify-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Important Notes */
+        .important-notes {
+            margin-top: 25px;
+        }
+
+        .note-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+        }
+
+        .note-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .note-content h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .note-content ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .note-content li {
             margin-bottom: 8px;
             font-size: 14px;
-        }
-
-        .info-label {
-            font-weight: 600;
             color: var(--text);
+            position: relative;
+            padding-left: 20px;
         }
 
-        .info-value {
-            color: var(--dark-gray);
+        .note-content li:before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
         }
 
-        .admin-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
+        /* File Info */
+        .file-info-box {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary);
         }
 
-        .btn-approve {
-            background: linear-gradient(135deg, var(--success), #218838);
-        }
-
-        .btn-reject {
-            background: linear-gradient(135deg, var(--error), #c82333);
-        }
-
-        /* Notification */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: var(--shadow-hover);
-            transform: translateX(150%);
-            transition: transform 0.5s ease;
-            z-index: 1001;
+        .file-info-header {
             display: flex;
             align-items: center;
             gap: 10px;
-            max-width: 350px;
-            font-size: 14px;
-            background: white;
-            border-left: 4px solid var(--success);
+            margin-bottom: 15px;
         }
 
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success {
-            border-left-color: var(--success);
-            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.2);
-        }
-
-        .notification.error {
-            border-left-color: var(--error);
-            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.2);
-        }
-
-        .notification.info {
-            border-left-color: var(--primary);
-            box-shadow: 0 8px 20px rgba(58, 134, 255, 0.2);
-        }
-
-        .notification i {
+        .file-info-header i {
+            color: var(--primary);
             font-size: 20px;
         }
 
-        .notification.success i {
-            color: var(--success);
+        .file-info-header h3 {
+            color: var(--text);
+            font-size: 18px;
         }
 
-        .notification.error i {
-            color: var(--error);
+        .file-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
         }
 
-        .notification.info i {
-            color: var(--primary);
-        }
-
-        .notification-content {
+        .file-detail-item {
             display: flex;
             flex-direction: column;
         }
 
-        .notification-title {
-            font-weight: bold;
+        .file-detail-label {
+            font-size: 12px;
+            color: var(--text-light);
             margin-bottom: 4px;
+        }
+
+        .file-detail-value {
+            font-size: 14px;
+            font-weight: 600;
             color: var(--text);
         }
 
-        .notification-message {
-            font-size: 13px;
-            color: var(--text-light);
+        .file-price {
+            color: var(--primary);
+            font-size: 18px;
+            font-weight: 700;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 50px 15px;
-            color: var(--dark-gray);
-            grid-column: 1 / -1;
+        /* Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
-        .empty-state i {
-            font-size: 60px;
-            margin-bottom: 15px;
-            color: var(--medium-gray);
-        }
-
-        .empty-state p {
-            font-size: 16px;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            font-size: 14px;
-            color: var(--dark-gray);
-            border-top: 1px solid var(--medium-gray);
-        }
-
-        /* Responsive */
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .files-grid {
+            .app-page {
+                padding: 15px;
+                padding-top: 70px;
+                padding-bottom: 20px;
+            }
+            
+            .payment-box {
+                padding: 20px;
+            }
+            
+            .payment-header h2 {
+                font-size: 20px;
+            }
+            
+            .payment-icon {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .verify-btn {
+                padding: 14px;
+                font-size: 15px;
+            }
+            
+            .file-details {
                 grid-template-columns: 1fr;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .title-section h1, .title-section p {
-                text-align: center;
-            }
-            
-            .ad-actions, .admin-actions {
-                flex-direction: column;
-            }
-            
-            .notification {
-                right: 15px;
-                left: 15px;
-                max-width: calc(100% - 30px);
-            }
-            
-            .method-option {
-                flex-direction: column;
-                text-align: center;
             }
         }
 
         @media (max-width: 480px) {
-            .social-stats {
-                justify-content: center;
+            .app-header {
+                padding: 4px 10px;
+                height: 56px;
             }
             
-            .file-card {
-                padding: 15px;
+            .app-page {
+                padding-top: 65px;
             }
             
-            .payment-number {
-                font-size: 18px;
+            .page-title {
+                font-size: 20px;
             }
-        }
-
-        /* Ad Banner Styles */
-        .ad-banner {
-            display: flex;
-            justify-content: center;
-            margin: 15px 0;
-            width: 100%;
-        }
-
-        /* Special Ad Notification Styles */
-        .special-notification {
-            background: linear-gradient(135deg, #ff006e, #e0005e);
-        }
-
-        .requirement-list {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            text-align: left;
-        }
-
-        .requirement-list li {
-            margin-bottom: 8px;
-            color: #856404;
-        }
-
-        .time-requirement {
-            background: #e7f3ff;
-            border: 1px solid #b3d9ff;
-            border-radius: 8px;
-            padding: 10px;
-            margin: 10px 0;
-            font-weight: bold;
-            color: var(--primary-dark);
-        }
-
-        /* Special Ad Image - Reduced Height */
-        .special-ad-image {
-            width: 100%;
-            height: 120px;
-            max-width: 100%;
-            object-fit: cover;
-            border-radius: 10px;
-            margin: 10px auto;
-            display: block;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Special Ad Modal Body - Adjusted for reduced image */
-        .special-ad-body {
-            padding: 15px;
-        }
-        
-        /* Special Ad Content - More compact layout */
-        .special-ad-content {
-            max-width: 400px;
+            
+            .payment-tab {
+                padding: 12px 8px;
+                font-size: 13px;
+            }
+            
+            .payment-tab img {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .form-group input {
+                padding: 12px;
+                font-size: 15px;
+            }
+            
+            .highlight {
+                font-size: 14px;
+            }
+            
+            .copy-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Ad Banner - Top (Above Header) -->
-    <div class="ad-banner">
-        <script type="text/javascript">
-            atOptions = {
-                'key' : '00d25c3c353995d46d51bf532af984d3',
-                'format' : 'iframe',
-                'height' : 50,
-                'width' : 320,
-                'params' : {}
-            };
-        </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/00d25c3c353995d46d51bf532af984d3/invoke.js"></script>
-    </div>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-left">
+            <button class="back-button-header" id="header-back-button">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="app-logo">
+                <img src="https://i.ibb.co.com/BH4jgFWW/1767122546090.png" 
+                     alt="AI File Unlocker Logo" 
+                     id="app-logo-img">
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="wallet-balance">
+                <i class="fas fa-wallet"></i>
+                <span id="wallet-balance-value">৳ 0.00</span>
+            </div>
+        </div>
+    </header>
 
-    <div class="container">
-        <header>
-            <div class="header-content">
-                <div class="logo-section">
-                    <div class="logo" id="siteLogo">
-                        <i class="fas fa-robot"></i>
+    <!-- Manual Add Money Page -->
+    <main class="app-page" id="manual-add-money-page">
+        <div class="product-detail-header">
+            <button class="back-button" id="manual-back-button">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="page-title">Add Money</h1>
+        </div>
+        
+        <!-- File Info -->
+        <div class="file-info-box" id="fileInfoBox" style="display: none;">
+            <div class="file-info-header">
+                <i class="fas fa-file-alt"></i>
+                <h3>File Purchase</h3>
+            </div>
+            <div class="file-details">
+                <div class="file-detail-item">
+                    <span class="file-detail-label">File Name</span>
+                    <span class="file-detail-value" id="fileNameDisplay">Loading...</span>
+                </div>
+                <div class="file-detail-item">
+                    <span class="file-detail-label">File Size</span>
+                    <span class="file-detail-value" id="fileSizeDisplay">Loading...</span>
+                </div>
+                <div class="file-detail-item">
+                    <span class="file-detail-label">Amount to Pay</span>
+                    <span class="file-detail-value file-price" id="filePriceDisplay">0 BDT</span>
+                </div>
+                <div class="file-detail-item">
+                    <span class="file-detail-label">Payment Type</span>
+                    <span class="file-detail-value" id="paymentTypeDisplay">File Purchase</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment Method Tabs -->
+        <div class="payment-tabs">
+            <div class="payment-tab active" data-method="bkash">
+                <img src="https://i.ibb.co.com/HTH88vtj/images.png" alt="বিকাশ">
+                <span>বিকাশ</span>
+            </div>
+            <div class="payment-tab" data-method="nagad">
+                <img src="https://i.ibb.co.com/GQ61SV5S/images.jpg" alt="নগদ">
+                <span>নগদ</span>
+            </div>
+        </div>
+        
+        <!-- Bkash Payment Form -->
+        <div id="bkash-payment" class="payment-form active">
+            <div class="payment-box bkash-box">
+                <div class="payment-header">
+                    <div class="payment-icon">
+                        <img src="https://i.ibb.co.com/HTH88vtj/images.png" alt="বিকাশ">
                     </div>
-                    <div class="title-section">
-                        <h1 id="siteTitle">AI DEVELOPER RABBI</h1>
-                        <p id="siteDescription">Watch Ads, Unlock, and Download Files for Free!</p>
-                    </div>
-                </div>
-                <div class="social-stats" id="socialStats">
-                    <!-- Social media icons will be loaded here -->
-                </div>
-            </div>
-        </header>
-
-        <div class="search-box">
-            <div class="search-icon"><i class="fas fa-search"></i></div>
-            <input type="text" placeholder="Search for files..." id="searchInput">
-        </div>
-
-        <!-- Ad Banner - Below Search Bar -->
-        <div class="ad-banner">
-            <script type="text/javascript">
-                atOptions = {
-                    'key' : '00d25c3c353995d46d51bf532af984d3',
-                    'format' : 'iframe',
-                    'height' : 50,
-                    'width' : 320,
-                    'params' : {}
-                };
-            </script>
-            <script type="text/javascript" src="//www.highperformanceformat.com/00d25c3c353995d46d51bf532af984d3/invoke.js"></script>
-        </div>
-
-        <div class="files-grid" id="filesContainer">
-            <div class="loading">
-                <div class="spinner"></div>
-            </div>
-        </div>
-
-        <!-- Ad Banner - Above Footer -->
-        <div class="ad-banner">
-            <script type="text/javascript">
-                atOptions = {
-                    'key' : '00d25c3c353995d46d51bf532af984d3',
-                    'format' : 'iframe',
-                    'height' : 50,
-                    'width' : 320,
-                    'params' : {}
-                };
-            </script>
-            <script type="text/javascript" src="//www.highperformanceformat.com/00d25c3c353995d46d51bf532af984d3/invoke.js"></script>
-        </div>
-
-        <footer>
-            <p>© 2025 AI DEVELOPER RABBI. All rights reserved.</p>
-        </footer>
-    </div>
-
-    <!-- Ad Modal -->
-    <div class="ad-modal" id="adModal">
-        <div class="ad-content">
-            <div class="ad-header">Watch Ad to Unlock File</div>
-            <div class="ad-body">
-                <div id="adDisplay">
-                    <p>Please watch the ad to unlock your file. The ad will start automatically.</p>
-                    <p>After watching the ad, you will be able to continue.</p>
-                </div>
-                <div class="ad-timer" id="adTimer">Ad in progress... Please wait</div>
-                <div class="ad-actions">
-                    <button class="btn" id="closeAdBtn" style="display: none;">
-                        <i class="fas fa-check"></i>
-                        <span>Continue</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Payment Modal -->
-    <div class="ad-modal" id="paymentModal">
-        <div class="ad-content">
-            <div class="ad-header">Purchase File</div>
-            <div class="ad-body">
-                <div class="payment-method" id="paymentMethods">
-                    <!-- Payment methods loaded here -->
+                    <h2>বিকাশ পেমেন্ট</h2>
                 </div>
                 
-                <div class="payment-details" id="paymentDetails" style="display: none;">
-                    <h3 id="selectedMethodName">Payment Method</h3>
-                    <p>Send <span id="paymentAmount" class="payment-number">0 BDT</span> to:</p>
-                    <div id="paymentNumber" class="payment-number">Loading...</div>
-                    <p id="paymentNote">Reference: <strong id="paymentReference">FILE-123</strong></p>
+                <div class="form-group">
+                    <label for="bkash-amount">পরিমাণ (৳)</label>
+                    <input type="number" id="bkash-amount" placeholder="টাকার পরিমাণ লিখুন" class="deposit-amount" data-method="Bkash">
                 </div>
                 
-                <div class="payment-instructions" id="paymentInstructions" style="display: none;">
-                    <strong><i class="fas fa-info-circle"></i> Payment Instructions:</strong>
-                    <ol>
-                        <li>Send exact amount to the number above</li>
-                        <li>Use the reference number as payment note</li>
-                        <li>Take a screenshot of successful payment</li>
-                        <li>Submit transaction details below</li>
-                    </ol>
+                <div class="form-group">
+                    <label for="bkash-sender">আপনার বিকাশ নাম্বার</label>
+                    <input type="text" id="bkash-sender" placeholder="যে নাম্বার থেকে টাকা পাঠিয়েছেন" class="sender-number" data-method="Bkash">
                 </div>
                 
-                <div class="payment-form" id="paymentForm" style="display: none;">
-                    <div class="form-group">
-                        <label for="transactionId"><i class="fas fa-receipt"></i> Transaction ID:</label>
-                        <input type="text" id="transactionId" placeholder="Enter transaction ID (TrxID)">
-                    </div>
-                    <div class="form-group">
-                        <label for="senderNumber"><i class="fas fa-mobile-alt"></i> Sender Number:</label>
-                        <input type="text" id="senderNumber" placeholder="Your phone number">
-                    </div>
-                    <div class="ad-actions">
-                        <button class="btn" id="submitPaymentBtn">
-                            <i class="fas fa-paper-plane"></i>
-                            <span>Submit Payment Details</span>
-                        </button>
-                        <button class="btn btn-disabled" id="cancelPaymentBtn">
-                            <i class="fas fa-times"></i>
-                            <span>Cancel</span>
-                        </button>
-                    </div>
+                <div class="form-group">
+                    <label for="bkash-trx">ট্রানজেকশন আইডি (TrxID)</label>
+                    <input type="text" id="bkash-trx" placeholder="ট্রানজেকশন আইডি দিন" class="transaction-id" data-method="Bkash">
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Processing Modal -->
-    <div class="ad-modal" id="processingModal">
-        <div class="ad-content">
-            <div class="ad-header">Payment Processing</div>
-            <div class="processing-content">
-                <div class="processing-spinner"></div>
-                <div class="processing-status" id="processingStatus">Checking Payment Status...</div>
-                <div class="processing-note" id="processingNote">
-                    Your payment is being verified by our team. This may take a few minutes.
-                </div>
-                <div class="processing-time" id="processingTime">
-                    Submitted: <span id="submissionTime">Just now</span>
-                </div>
-                <div class="ad-actions" style="margin-top: 20px;">
-                    <button class="btn" id="refreshStatusBtn">
-                        <i class="fas fa-sync"></i>
-                        <span>Refresh Status</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Approval Modal -->
-    <div class="ad-modal" id="adminApprovalModal">
-        <div class="ad-content">
-            <div class="ad-header">Payment Approval Required</div>
-            <div class="admin-approval-content">
-                <div class="payment-info">
-                    <div class="info-item">
-                        <span class="info-label">File Name:</span>
-                        <span class="info-value" id="adminFileName">Loading...</span>
+                
+                <!-- Payment Guide -->
+                <div class="payment-guide">
+                    <div class="payment-guide-title">
+                        <i class="fas fa-info-circle"></i>
+                        <span>পেমেন্ট করার নিয়ম</span>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label">User ID:</span>
-                        <span class="info-value" id="adminUserId">Loading...</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Amount:</span>
-                        <span class="info-value" id="adminAmount">Loading...</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Transaction ID:</span>
-                        <span class="info-value" id="adminTrxId">Loading...</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Payment Method:</span>
-                        <span class="info-value" id="adminMethod">Loading...</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Submitted:</span>
-                        <span class="info-value" id="adminSubmitted">Loading...</span>
+                    <div class="payment-steps">
+                        <div class="payment-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">*247# ডায়াল করুন অথবা বিকাশ অ্যাপে যান</div>
+                        </div>
+                        <div class="payment-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">"Send Money" এ ক্লিক করুন</div>
+                        </div>
+                        <div class="payment-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                প্রাপক নাম্বার:
+                                <div class="number-copy">
+                                    <span class="highlight" id="bkashNumber">017XXXXXXXX</span>
+                                    <button class="copy-btn" data-method="bkash">
+                                        <i class="fas fa-copy"></i> কপি করুন
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="payment-step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">Reference এ আপনার নাম লিখুন</div>
+                        </div>
+                        <div class="payment-step">
+                            <div class="step-number">5</div>
+                            <div class="step-content">টাকা পাঠানোর পর ট্রানজেকশন আইডি ও আপনার নাম্বার উপরে লিখে Verify বাটনে ক্লিক করুন</div>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="admin-actions">
-                    <button class="btn btn-approve" id="approvePaymentBtn">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Approve Payment</span>
-                    </button>
-                    <button class="btn btn-reject" id="rejectPaymentBtn">
-                        <i class="fas fa-times-circle"></i>
-                        <span>Reject Payment</span>
-                    </button>
-                    <button class="btn btn-disabled" id="closeAdminModalBtn">
-                        <i class="fas fa-times"></i>
-                        <span>Close</span>
+                <div class="form-footer">
+                    <div class="minimum-amount">
+                        <i class="fas fa-exclamation-circle"></i>
+                        সর্বনিম্ন জমা: <strong>৳ 10</strong>
+                    </div>
+                    <button class="verify-btn" data-method="Bkash" id="bkash-verify-btn">
+                        <i class="fas fa-check-circle"></i> VERIFY & ADD MONEY
                     </button>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Notification -->
-    <div class="notification" id="notification">
-        <i class="fas fa-check-circle"></i>
-        <div class="notification-content">
-            <strong class="notification-title" id="notificationTitle">Success!</strong>
-            <div class="notification-message" id="notificationMessage">File unlocked successfully! You can now download it.</div>
+        
+        <!-- Nagad Payment Form -->
+        <div id="nagad-payment" class="payment-form d-none">
+            <div class="payment-box nagad-box">
+                <div class="payment-header">
+                    <div class="payment-icon">
+                        <img src="https://i.ibb.co.com/GQ61SV5S/images.jpg" alt="নগদ">
+                    </div>
+                    <h2>নগদ পেমেন্ট</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nagad-amount">পরিমাণ (৳)</label>
+                    <input type="number" id="nagad-amount" placeholder="টাকার পরিমাণ লিখুন" class="deposit-amount" data-method="Nagad">
+                </div>
+                
+                <div class="form-group">
+                    <label for="nagad-sender">আপনার নগদ নাম্বার</label>
+                    <input type="text" id="nagad-sender" placeholder="যে নাম্বার থেকে টাকা পাঠিয়েছেন" class="sender-number" data-method="Nagad">
+                </div>
+                
+                <div class="form-group">
+                    <label for="nagad-trx">ট্রানজেকশন আইডি (TrxID)</label>
+                    <input type="text" id="nagad-trx" placeholder="ট্রানজেকশন আইডি দিন" class="transaction-id" data-method="Nagad">
+                </div>
+                
+                <!-- Payment Guide -->
+                <div class="payment-guide">
+                    <div class="payment-guide-title">
+                        <i class="fas fa-info-circle"></i>
+                        <span>পেমেন্ট করার নিয়ম</span>
+                    </div>
+                    <div class="payment-steps">
+                        <div class="payment-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">*167# ডায়াল করুন অথবা নগদ অ্যাপে যান</div>
+                        </div>
+                        <div class="payment-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">"Send Money" এ ক্লিক করুন</div>
+                        </div>
+                        <div class="payment-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                প্রাপক নাম্বার:
+                                <div class="number-copy">
+                                    <span class="highlight" id="nagadNumber">017XXXXXXXX</span>
+                                    <button class="copy-btn" data-method="nagad">
+                                        <i class="fas fa-copy"></i> কপি করুন
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="payment-step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">Reference এ আপনার নাম লিখুন</div>
+                        </div>
+                        <div class="payment-step">
+                            <div class="step-number">5</div>
+                            <div class="step-content">টাকা পাঠানোর পর ট্রানজেকশন আইডি ও আপনার নাম্বার উপরে লিখে Verify বাটনে ক্লিক করুন</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-footer">
+                    <div class="minimum-amount">
+                        <i class="fas fa-exclamation-circle"></i>
+                        সর্বনিম্ন জমা: <strong>৳ 10</strong>
+                    </div>
+                    <button class="verify-btn" data-method="Nagad" id="nagad-verify-btn">
+                        <i class="fas fa-check-circle"></i> VERIFY & ADD MONEY
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
+        
+        <!-- Important Notes -->
+        <div class="important-notes">
+            <div class="note-card">
+                <div class="note-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <div class="note-content">
+                    <h4>গুরুত্বপূর্ণ তথ্য</h4>
+                    <ul>
+                        <li>টাকা পাঠানোর আগে অবশ্যই নাম্বার কপি করুন</li>
+                        <li>ট্রানজেকশন আইডি সঠিকভাবে লিখুন</li>
+                        <li>পেমেন্ট ভেরিফিকেশন ৫-১৫ মিনিট সময় নিতে পারে</li>
+                        <li>কোন সমস্যা হলে সাপোর্টে যোগাযোগ করুন</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
 
     <script>
         // Firebase Configuration
@@ -1124,1138 +1010,330 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // DOM Elements
-        const filesContainer = document.getElementById('filesContainer');
-        const searchInput = document.getElementById('searchInput');
-        const adModal = document.getElementById('adModal');
-        const adTimer = document.getElementById('adTimer');
-        const closeAdBtn = document.getElementById('closeAdBtn');
-        const notification = document.getElementById('notification');
-        const notificationTitle = document.getElementById('notificationTitle');
-        const notificationMessage = document.getElementById('notificationMessage');
-        const siteTitle = document.getElementById('siteTitle');
-        const siteDescription = document.getElementById('siteDescription');
-        const socialStats = document.getElementById('socialStats');
-        const siteLogo = document.getElementById('siteLogo');
-        
-        // Payment elements
-        const paymentModal = document.getElementById('paymentModal');
-        const paymentMethods = document.getElementById('paymentMethods');
-        const paymentDetails = document.getElementById('paymentDetails');
-        const paymentInstructions = document.getElementById('paymentInstructions');
-        const paymentForm = document.getElementById('paymentForm');
-        const selectedMethodName = document.getElementById('selectedMethodName');
-        const paymentAmount = document.getElementById('paymentAmount');
-        const paymentNumber = document.getElementById('paymentNumber');
-        const paymentReference = document.getElementById('paymentReference');
-        const transactionId = document.getElementById('transactionId');
-        const senderNumber = document.getElementById('senderNumber');
-        const submitPaymentBtn = document.getElementById('submitPaymentBtn');
-        const cancelPaymentBtn = document.getElementById('cancelPaymentBtn');
-        
-        // Processing modal elements
-        const processingModal = document.getElementById('processingModal');
-        const processingStatus = document.getElementById('processingStatus');
-        const processingNote = document.getElementById('processingNote');
-        const submissionTime = document.getElementById('submissionTime');
-        const refreshStatusBtn = document.getElementById('refreshStatusBtn');
-        
-        // Admin approval modal elements
-        const adminApprovalModal = document.getElementById('adminApprovalModal');
-        const adminFileName = document.getElementById('adminFileName');
-        const adminUserId = document.getElementById('adminUserId');
-        const adminAmount = document.getElementById('adminAmount');
-        const adminTrxId = document.getElementById('adminTrxId');
-        const adminMethod = document.getElementById('adminMethod');
-        const adminSubmitted = document.getElementById('adminSubmitted');
-        const approvePaymentBtn = document.getElementById('approvePaymentBtn');
-        const rejectPaymentBtn = document.getElementById('rejectPaymentBtn');
-        const closeAdminModalBtn = document.getElementById('closeAdminModalBtn');
-
-        // Current state
+        // Global State
         let currentFile = null;
-        let filesData = [];
-        let userId = '';
-        let socialLinks = {};
-        let specialAdNumbers = [3, 7, 10];
-        let specialAdTime = 25;
-        let adStartTime = 0;
-        let appSettings = {};
-        let selectedPaymentMethod = null;
-        let currentPayment = null;
+        let contactInfo = {
+            bkash: "017XXXXXXXX",
+            nagad: "017XXXXXXXX"
+        };
+        
+        // Get query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const fileId = urlParams.get('fileId');
+        const price = urlParams.get('price');
+        const userId = urlParams.get('userId');
 
-        // Initialize the app
-        function initApp() {
-            // Generate or get user ID
-            userId = getUserId();
+        // Toast Notification Function
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
             
-            // Load site settings
-            loadSiteSettings();
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            else if (type === 'error') icon = 'exclamation-triangle';
+            else if (type === 'warning') icon = 'exclamation-circle';
             
-            // Load files from Firebase
-            loadFiles();
-            setupEventListeners();
-        }
-
-        // Get or create user ID
-        function getUserId() {
-            let id = localStorage.getItem('userId');
-            if (!id) {
-                id = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('userId', id);
-            }
-            return id;
-        }
-
-        // Load site settings from Firebase
-        function loadSiteSettings() {
-            showLoading();
-            
-            db.collection('settings').doc('site').get().then((doc) => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    appSettings = data;
-                    
-                    // Update site title and description
-                    if (data.title) {
-                        siteTitle.textContent = data.title;
-                    }
-                    
-                    if (data.description) {
-                        siteDescription.textContent = data.description;
-                    }
-                    
-                    // Load special ad numbers from admin
-                    if (data.specialAdNumbers && Array.isArray(data.specialAdNumbers)) {
-                        specialAdNumbers = data.specialAdNumbers;
-                    }
-                    
-                    // Load special ad time from admin
-                    if (data.specialAdTime && typeof data.specialAdTime === 'number') {
-                        specialAdTime = data.specialAdTime;
-                    }
-                    
-                    // Load logo from admin
-                    if (data.logoUrl) {
-                        siteLogo.innerHTML = `<img src="${data.logoUrl}" alt="Site Logo">`;
-                    }
-                    
-                    // Load social links
-                    if (data.socialLinks) {
-                        socialLinks = data.socialLinks;
-                        renderSocialLinks();
-                    }
-                } else {
-                    // Use default values
-                    loadDefaultSettings();
-                }
-            }).catch((error) => {
-                console.error("Error loading site settings: ", error);
-                showError("Failed to load site settings. Using default settings.");
-                loadDefaultSettings();
-            });
-        }
-
-        // Load default settings
-        function loadDefaultSettings() {
-            // Default social links
-            socialLinks = {
-                youtube: { visible: true, url: 'https://youtube.com', name: 'YouTube', followers: '15K' },
-                telegram: { visible: true, url: 'https://telegram.org', name: 'Telegram', followers: '8.5K' },
-                tiktok: { visible: true, url: 'https://tiktok.com', name: 'TikTok', followers: '12K' },
-                facebook: { visible: true, url: 'https://facebook.com', name: 'Facebook', followers: '25K' }
-            };
-            
-            renderSocialLinks();
-        }
-
-        // Render social links
-        function renderSocialLinks() {
-            socialStats.innerHTML = '';
-            
-            // Create YouTube stat if visible
-            if (socialLinks.youtube && socialLinks.youtube.visible) {
-                const youtubeStat = document.createElement('div');
-                youtubeStat.className = 'social-stat youtube';
-                youtubeStat.innerHTML = `<i class="fab fa-youtube"></i> ${socialLinks.youtube.name} (${socialLinks.youtube.followers || '15K'})`;
-                youtubeStat.addEventListener('click', () => {
-                    window.open(socialLinks.youtube.url, '_blank');
-                });
-                socialStats.appendChild(youtubeStat);
-            }
-            
-            // Create Telegram stat if visible
-            if (socialLinks.telegram && socialLinks.telegram.visible) {
-                const telegramStat = document.createElement('div');
-                telegramStat.className = 'social-stat telegram';
-                telegramStat.innerHTML = `<i class="fab fa-telegram"></i> ${socialLinks.telegram.name} (${socialLinks.telegram.followers || '8.5K'})`;
-                telegramStat.addEventListener('click', () => {
-                    window.open(socialLinks.telegram.url, '_blank');
-                });
-                socialStats.appendChild(telegramStat);
-            }
-            
-            // Create TikTok stat if visible
-            if (socialLinks.tiktok && socialLinks.tiktok.visible) {
-                const tiktokStat = document.createElement('div');
-                tiktokStat.className = 'social-stat tiktok';
-                tiktokStat.innerHTML = `<i class="fab fa-tiktok"></i> ${socialLinks.tiktok.name} (${socialLinks.tiktok.followers || '12K'})`;
-                tiktokStat.addEventListener('click', () => {
-                    window.open(socialLinks.tiktok.url, '_blank');
-                });
-                socialStats.appendChild(tiktokStat);
-            }
-            
-            // Create Facebook stat if visible
-            if (socialLinks.facebook && socialLinks.facebook.visible) {
-                const facebookStat = document.createElement('div');
-                facebookStat.className = 'social-stat facebook';
-                facebookStat.innerHTML = `<i class="fab fa-facebook"></i> ${socialLinks.facebook.name} (${socialLinks.facebook.followers || '25K'})`;
-                facebookStat.addEventListener('click', () => {
-                    window.open(socialLinks.facebook.url, '_blank');
-                });
-                socialStats.appendChild(facebookStat);
-            }
-        }
-
-        // Set up event listeners
-        function setupEventListeners() {
-            // Search input
-            searchInput.addEventListener('input', filterFiles);
-            
-            // Ad modal buttons
-            closeAdBtn.addEventListener('click', closeAdModal);
-            
-            // Payment buttons
-            submitPaymentBtn.addEventListener('click', submitPayment);
-            cancelPaymentBtn.addEventListener('click', closePaymentModal);
-            refreshStatusBtn.addEventListener('click', checkPaymentStatus);
-            
-            // Admin approval buttons
-            approvePaymentBtn.addEventListener('click', adminApprovePayment);
-            rejectPaymentBtn.addEventListener('click', adminRejectPayment);
-            closeAdminModalBtn.addEventListener('click', closeAdminApprovalModal);
-        }
-
-        // Load files from Firebase
-        function loadFiles() {
-            showLoading();
-            
-            db.collection('files').get().then((querySnapshot) => {
-                filesData = [];
-                querySnapshot.forEach((doc) => {
-                    const fileData = doc.data();
-                    fileData.id = doc.id;
-                    filesData.push(fileData);
-                });
-                
-                // Load user progress for each file
-                loadUserProgress();
-            }).catch((error) => {
-                console.error("Error loading files: ", error);
-                showError("Failed to load files. Please check your connection.");
-                showDefaultFiles();
-            });
-        }
-
-        // Load user progress from Firebase
-        function loadUserProgress() {
-            const userRef = db.collection('users').doc(userId);
-            
-            userRef.get().then((doc) => {
-                if (doc.exists) {
-                    const userData = doc.data();
-                    
-                    // Update files with user progress
-                    filesData.forEach(file => {
-                        if (userData[file.id]) {
-                            file.adsWatched = userData[file.id].adsWatched || 0;
-                            file.unlocked = userData[file.id].unlocked || false;
-                            
-                            // For paid files
-                            if (file.isPaid && userData[file.id].paymentStatus) {
-                                file.paymentStatus = userData[file.id].paymentStatus;
-                                file.paidUnlocked = userData[file.id].paidUnlocked || false;
-                            }
-                        } else {
-                            file.adsWatched = 0;
-                            file.unlocked = false;
-                            
-                            // For paid files
-                            if (file.isPaid) {
-                                file.paymentStatus = 'none';
-                                file.paidUnlocked = false;
-                            }
-                        }
-                    });
-                } else {
-                    // Initialize user data if doesn't exist
-                    filesData.forEach(file => {
-                        file.adsWatched = 0;
-                        file.unlocked = false;
-                        
-                        // For paid files
-                        if (file.isPaid) {
-                            file.paymentStatus = 'none';
-                            file.paidUnlocked = false;
-                        }
-                    });
-                }
-                
-                renderFiles(filesData);
-            }).catch((error) => {
-                console.error("Error loading user progress: ", error);
-                // Set default values
-                filesData.forEach(file => {
-                    file.adsWatched = 0;
-                    file.unlocked = false;
-                    
-                    // For paid files
-                    if (file.isPaid) {
-                        file.paymentStatus = 'none';
-                        file.paidUnlocked = false;
-                    }
-                });
-                renderFiles(filesData);
-            });
-        }
-
-        // Show default files if Firebase fails
-        function showDefaultFiles() {
-            filesData = [
-                {
-                    id: "default1",
-                    name: "Ethical Hacking Course",
-                    description: "Complete ethical hacking course from beginner to advanced level with practical examples.",
-                    size: "298.6 MB",
-                    adsRequired: 5,
-                    adsWatched: 0,
-                    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-                    downloadLink: "https://drive.google.com/",
-                    unlocked: false,
-                    isPaid: false
-                },
-                {
-                    id: "default2",
-                    name: "Crypto App Development",
-                    description: "Build a complete cryptocurrency application with React Native and Firebase.",
-                    size: "156.3 MB",
-                    adsRequired: 3,
-                    adsWatched: 0,
-                    image: "https://images.unsplash.com/photo-1621761191319-c6fb62004040?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-                    downloadLink: "https://drive.google.com/",
-                    unlocked: false,
-                    isPaid: false
-                },
-                {
-                    id: "paid1",
-                    name: "Premium AI Course Bundle",
-                    description: "Advanced AI and machine learning course with real-world projects and certificate.",
-                    size: "2.5 GB",
-                    price: 200,
-                    image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-                    downloadLink: "https://drive.google.com/",
-                    isPaid: true,
-                    paymentStatus: 'none',
-                    paidUnlocked: false
-                }
-            ];
-            renderFiles(filesData);
-        }
-
-        // Render files to the container
-        function renderFiles(files) {
-            filesContainer.innerHTML = '';
-
-            if (files.length === 0) {
-                filesContainer.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-folder-open"></i>
-                        <p>No files found. Try a different search.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            files.forEach(file => {
-                const fileCard = document.createElement('div');
-                fileCard.className = 'file-card';
-                
-                // Check if file is paid
-                const isPaid = file.isPaid === true;
-                
-                // Generate badge if paid
-                const paidBadge = isPaid ? `<div class="paid-badge">PAID</div>` : '';
-                
-                // Generate meta info
-                const metaInfo = isPaid 
-                    ? `<span><i class="far fa-hdd"></i> ${file.size}</span>
-                       <span><i class="fas fa-money-bill-wave"></i> ${file.price || 200} BDT</span>`
-                    : `<span><i class="far fa-hdd"></i> ${file.size}</span>
-                       <span><i class="fas fa-ad"></i> ${file.adsRequired || 0} ads required</span>`;
-                
-                // Generate button based on file type and status
-                let buttonHTML = '';
-                
-                if (isPaid) {
-                    // Paid file
-                    if (file.paidUnlocked) {
-                        // Already unlocked
-                        buttonHTML = `
-                            <button class="btn btn-download" onclick="downloadFile('${file.id}')">
-                                <i class="fas fa-download"></i>
-                                Download File
-                            </button>`;
-                    } else if (file.paymentStatus === 'pending') {
-                        // Payment pending
-                        buttonHTML = `
-                            <button class="btn btn-processing" onclick="checkPaymentStatus('${file.id}')">
-                                <i class="fas fa-hourglass-half"></i>
-                                Processing...
-                            </button>`;
-                    } else if (file.paymentStatus === 'rejected') {
-                        // Payment rejected
-                        buttonHTML = `
-                            <button class="btn btn-price" onclick="showPaymentModal('${file.id}')">
-                                <i class="fas fa-money-bill-wave"></i>
-                                ${file.price || 200} BDT (Rejected)
-                            </button>`;
-                    } else {
-                        // Not purchased yet
-                        buttonHTML = `
-                            <button class="btn btn-price" onclick="showPaymentModal('${file.id}')">
-                                <i class="fas fa-money-bill-wave"></i>
-                                ${file.price || 200} BDT
-                            </button>`;
-                    }
-                } else {
-                    // Free file
-                    if (file.unlocked) {
-                        buttonHTML = `
-                            <button class="btn btn-download" onclick="downloadFile('${file.id}')">
-                                <i class="fas fa-download"></i>
-                                Download File
-                            </button>`;
-                    } else {
-                        buttonHTML = `
-                            <button class="btn btn-unlock" onclick="unlockFile('${file.id}')">
-                                <i class="fas fa-unlock"></i>
-                                Unlock File (${file.adsWatched || 0}/${file.adsRequired || 0})
-                            </button>`;
-                    }
-                }
-                
-                fileCard.innerHTML = `
-                    ${paidBadge}
-                    <div class="file-image" style="background-image: url('${file.image}')">
-                        ${file.name}
-                    </div>
-                    <div class="file-info">
-                        <div class="file-name">
-                            ${file.name}
-                        </div>
-                        <div class="file-description">${file.description}</div>
-                        <div class="file-meta">
-                            ${metaInfo}
-                        </div>
-                    </div>
-                    <div class="file-actions">
-                        ${buttonHTML}
-                    </div>
-                `;
-                filesContainer.appendChild(fileCard);
-            });
-        }
-
-        // Filter files based on search
-        function filterFiles() {
-            let filteredFiles = filesData;
-            
-            // Filter by search
-            const searchTerm = searchInput.value.toLowerCase();
-            if (searchTerm) {
-                filteredFiles = filteredFiles.filter(file => 
-                    file.name.toLowerCase().includes(searchTerm) || 
-                    file.description.toLowerCase().includes(searchTerm)
-                );
-            }
-            
-            renderFiles(filteredFiles);
-        }
-
-        // Unlock file function (for free files)
-        function unlockFile(fileId) {
-            const file = filesData.find(f => f.id === fileId);
-            if (!file) return;
-            
-            currentFile = file;
-            const currentAdCount = file.adsWatched + 1;
-            
-            // Check if this is special ad (from admin settings)
-            const isSpecialAd = specialAdNumbers.includes(currentAdCount);
-            
-            if (isSpecialAd) {
-                showSpecialAdNotification();
-            } else {
-                showAdModal();
-            }
-        }
-
-        // Special ad notification - with reduced height
-        function showSpecialAdNotification() {
-            const notificationModal = document.createElement('div');
-            notificationModal.className = 'ad-modal';
-            notificationModal.style.display = 'flex';
-            notificationModal.innerHTML = `
-                <div class="ad-content special-ad-content">
-                    <div class="ad-header special-notification">
-                        <i class="fas fa-exclamation-circle"></i> বিশেষ বিজ্ঞাপনের প্রয়োজনীয়তা
-                    </div>
-                    <div class="ad-body special-ad-body">
-                        <div style="text-align: center; margin-bottom: 15px;">
-                            <i class="fas fa-hand-point-up" style="font-size: 35px; color: #ff006e; margin-bottom: 10px;"></i>
-                            <h3 style="margin-bottom: 8px; color: #ff006e;">গুরুত্বপূর্ণ বিজ্ঞপ্তি</h3>
-                            <p style="font-size: 14px;">এটি একটি <strong>বিশেষ বিজ্ঞাপন (#${currentFile.adsWatched + 1})</strong> অতিরিক্ত প্রয়োজনীয়তা সহ:</p>
-                        </div>
-                        
-                        <div class="requirement-list">
-                            <ul>
-                                <li>আপনাকে <strong>বিজ্ঞাপন দেখার পর অবশ্যই "Continue" বাটনে ক্লিক করতে হবে</strong></li>
-                                <li>পরবর্তী পৃষ্ঠায় <strong>১০-১৫ সেকেন্ড অপেক্ষা করুন</strong></li>
-                                <li>তারপর আনলক প্রক্রিয়া সম্পূর্ণ করতে ফিরে আসুন</li>
-                            </ul>
-                        </div>
-                        
-                        <img src="https://i.ibb.co/S43hxFSj/IMG-20251108-175337-484.jpg" alt="Special Ad Instructions" class="special-ad-image">
-                        
-                        <p style="font-size: 13px; color: var(--dark-gray); margin-bottom: 15px;">
-                            <i class="fas fa-info-circle"></i> এটি আমাদের সত্যিকারের ব্যবহারকারীদের যাচাই করতে এবং পরিষেবা বজায় রাখতে সহায়তা করে
-                        </p>
-                        
-                        <div class="ad-actions">
-                            <button class="btn" id="proceedToAdBtn" style="background: linear-gradient(135deg, #ff006e, #e0005e);">
-                                <i class="fas fa-play"></i> আমি বুঝেছি - বিজ্ঞাপন দেখান
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            toast.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                <span>${message}</span>
             `;
+            toastContainer.appendChild(toast);
             
-            document.body.appendChild(notificationModal);
-            
-            // Proceed to actual ad
-            document.getElementById('proceedToAdBtn').addEventListener('click', function() {
-                document.body.removeChild(notificationModal);
-                showAdModal();
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideOutDown 0.3s ease-out';
+                setTimeout(() => {
+                    if (toast.parentNode === toastContainer) {
+                        toast.remove();
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Copy Number Function
+        function copyNumber(method) {
+            if (contactInfo[method]) {
+                const textToCopy = contactInfo[method];
                 
-                // Track this special ad
-                currentFile.isSpecialAd = true;
-                currentFile.specialAdNumber = currentFile.adsWatched + 1;
-            });
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(textToCopy)
+                        .then(() => {
+                            showToast(`${method === 'bkash' ? 'বিকাশ' : 'নগদ'} নাম্বার কপি করা হয়েছে!`, 'success');
+                        })
+                        .catch(err => {
+                            console.error('Failed to copy: ', err);
+                            fallbackCopyTextToClipboard(textToCopy, method);
+                        });
+                } else {
+                    fallbackCopyTextToClipboard(textToCopy, method);
+                }
+            } else {
+                showToast('ফোন নাম্বার পাওয়া যাচ্ছে না', 'error');
+            }
         }
 
-        // Show ad modal
-        function showAdModal() {
-            adStartTime = Date.now(); // Start tracking time
-            adModal.style.display = 'flex';
-            adTimer.textContent = "Loading ad...";
-            closeAdBtn.style.display = 'none';
+        function fallbackCopyTextToClipboard(text, method) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
             
-            // Use Monetag SDK to show the ad
-            if (typeof show_10135149 !== 'undefined') {
-                show_10135149().then(() => {
-                    // Ad completed successfully
-                    adComplete();
-                }).catch((error) => {
-                    // Ad failed or was closed by user
-                    console.error("Ad error: ", error);
-                    showError("Ad was not completed. Please try again.");
-                    closeAdModal();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast(`${method === 'bkash' ? 'বিকাশ' : 'নগদ'} নাম্বার কপি করা হয়েছে!`, 'success');
+                } else {
+                    showToast('নাম্বার কপি করা যায়নি', 'error');
+                }
+            } catch (err) {
+                console.error('Fallback copy failed: ', err);
+                showToast('নাম্বার কপি করা যায়নি', 'error');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Validation Functions
+        function validatePhoneNumber(phone) {
+            const re = /^(?:\+88|88)?(01[3-9]\d{8})$/;
+            const cleaned = phone.replace(/\s/g, '');
+            return re.test(cleaned);
+        }
+
+        // Load Contact Info from Firestore
+        async function loadContactInfo() {
+            try {
+                const settingsDoc = await db.collection('settings').doc('payment').get();
+                
+                if (settingsDoc.exists) {
+                    const settings = settingsDoc.data();
+                    
+                    if (settings.numbers) {
+                        contactInfo = {
+                            bkash: settings.numbers.bkash || "017XXXXXXXX",
+                            nagad: settings.numbers.nagad || "017XXXXXXXX"
+                        };
+                        updateContactInfoUI();
+                        return;
+                    }
+                }
+                
+                // Try alternative collection
+                const configDoc = await db.collection('configs').doc('contact_info').get();
+                if (configDoc.exists) {
+                    contactInfo = configDoc.data();
+                    updateContactInfoUI();
+                } else {
+                    updateContactInfoUI();
+                }
+            } catch (error) {
+                console.error("Error loading contact info: ", error);
+                updateContactInfoUI();
+            }
+        }
+
+        // Update UI with contact info
+        function updateContactInfoUI() {
+            if (contactInfo.bkash) {
+                const bkashNumberEl = document.getElementById('bkashNumber');
+                if (bkashNumberEl) bkashNumberEl.textContent = contactInfo.bkash;
+            }
+            if (contactInfo.nagad) {
+                const nagadNumberEl = document.getElementById('nagadNumber');
+                if (nagadNumberEl) nagadNumberEl.textContent = contactInfo.nagad;
+            }
+        }
+
+        // Load File Info
+        async function loadFileInfo() {
+            if (!fileId) return;
+            
+            try {
+                const fileDoc = await db.collection('files').doc(fileId).get();
+                if (fileDoc.exists) {
+                    currentFile = fileDoc.data();
+                    currentFile.id = fileId;
+                    
+                    // Update UI
+                    document.getElementById('fileInfoBox').style.display = 'block';
+                    document.getElementById('fileNameDisplay').textContent = currentFile.name || 'Unknown File';
+                    document.getElementById('fileSizeDisplay').textContent = currentFile.size || 'N/A';
+                    document.getElementById('filePriceDisplay').textContent = (price || currentFile.price || 200) + ' BDT';
+                    
+                    // Set amount input to file price
+                    document.getElementById('bkash-amount').value = price || currentFile.price || 200;
+                    document.getElementById('nagad-amount').value = price || currentFile.price || 200;
+                    
+                    // Update button text for file purchase
+                    document.getElementById('bkash-verify-btn').innerHTML = '<i class="fas fa-check-circle"></i> VERIFY & UNLOCK FILE';
+                    document.getElementById('nagad-verify-btn').innerHTML = '<i class="fas fa-check-circle"></i> VERIFY & UNLOCK FILE';
+                } else {
+                    showToast('File not found', 'error');
+                }
+            } catch (error) {
+                console.error("Error loading file info: ", error);
+                showToast('Error loading file information', 'error');
+            }
+        }
+
+        // Payment Tab Switching
+        document.querySelector('.payment-tabs').addEventListener('click', (e) => {
+            const tab = e.target.closest('.payment-tab');
+            if (tab) {
+                document.querySelectorAll('.payment-tab').forEach(t => {
+                    t.classList.remove('active');
                 });
-            } else {
-                // Fallback if Monetag SDK is not available
-                showError("Ad system is not available. Please try again later.");
-                closeAdModal();
+                
+                tab.classList.add('active');
+                
+                document.querySelectorAll('.payment-form').forEach(form => {
+                    form.classList.add('d-none');
+                    form.classList.remove('active');
+                });
+                
+                const method = tab.dataset.method;
+                const paymentForm = document.getElementById(`${method}-payment`);
+                paymentForm.classList.remove('d-none');
+                paymentForm.classList.add('active');
             }
-        }
+        });
 
-        // Ad completed
-        function adComplete() {
-            const adWatchTime = Math.floor((Date.now() - adStartTime) / 1000); // Calculate time spent in seconds
-            
-            // Check if it was special ad and user spent enough time
-            if (currentFile.isSpecialAd && adWatchTime < specialAdTime) {
-                adTimer.innerHTML = `
-                    <div style="text-align: center; color: var(--error);">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <p><strong>বিজ্ঞাপন দেখার সময় খুব কম!</strong></p>
-                        <p>আপনি শুধুমাত্র <strong>${adWatchTime} সেকেন্ড</strong> দেখেছেন।</p>
-                        <p>বিশেষ বিজ্ঞাপন #${currentFile.specialAdNumber} এর জন্য আরও সময় প্রয়োজন।</p>
-                        <button class="btn" onclick="showAdModal()" style="margin-top: 10px; background: var(--error);">
-                            <i class="fas fa-redo"></i> আবার দেখুন
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-            
-            adTimer.textContent = "Ad completed! Updating your progress...";
-            closeAdBtn.style.display = 'flex';
-            
-            // Update file progress
-            currentFile.adsWatched++;
-            
-            if (currentFile.adsWatched >= currentFile.adsRequired) {
-                currentFile.unlocked = true;
-                showNotification("Success!", "File unlocked successfully! You can now download it.", "success");
-            } else {
-                showNotification("Progress Updated!", `You need ${currentFile.adsRequired - currentFile.adsWatched} more ads to unlock this file.`, "success");
-            }
-            
-            // Save progress to Firebase
-            saveUserProgress();
-            filterFiles();
-        }
+        // Copy Button Events
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const method = e.target.dataset.method || e.target.closest('.copy-btn').dataset.method;
+                copyNumber(method);
+            });
+        });
 
-        // Close ad modal
-        function closeAdModal() {
-            adModal.style.display = 'none';
-            closeAdBtn.style.display = 'none';
-            currentFile = null;
-        }
+        // Back Button Event
+        document.getElementById('manual-back-button').addEventListener('click', () => {
+            window.history.back();
+        });
 
-        // Show payment modal for paid files
-        function showPaymentModal(fileId) {
-            const file = filesData.find(f => f.id === fileId);
-            if (!file) return;
-            
-            currentFile = file;
-            selectedPaymentMethod = null;
-            
-            // Clear previous content
-            paymentMethods.innerHTML = '';
-            paymentDetails.style.display = 'none';
-            paymentInstructions.style.display = 'none';
-            paymentForm.style.display = 'none';
-            
-            // Load payment methods from Firebase
-            db.collection('settings').doc('payment').get().then((doc) => {
-                if (doc.exists) {
-                    const paymentData = doc.data();
+        // Header Back Button Event
+        document.getElementById('header-back-button').addEventListener('click', () => {
+            window.history.back();
+        });
+
+        // Deposit Form Submission
+        document.querySelectorAll('.verify-btn').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                e.preventDefault();
+                
+                const method = e.target.dataset.method;
+                const paymentBox = e.target.closest('.payment-box');
+                const amount = parseFloat(paymentBox.querySelector('.deposit-amount').value);
+                const senderNumber = paymentBox.querySelector('.sender-number').value;
+                const transactionId = paymentBox.querySelector('.transaction-id').value;
+
+                // Validation
+                if (isNaN(amount) || amount <= 0) {
+                    showToast('দয়া করে সঠিক টাকার পরিমাণ লিখুন।', 'error');
+                    return;
+                }
+
+                if (!validatePhoneNumber(senderNumber)) {
+                    showToast('দয়া করে সঠিক মোবাইল নাম্বার লিখুন।', 'error');
+                    return;
+                }
+
+                if (!transactionId || transactionId.length < 5) {
+                    showToast('দয়া করে ট্রানজেকশন আইডি লিখুন।', 'error');
+                    return;
+                }
+
+                const minDepositAmount = 10;
+                if (amount < minDepositAmount) {
+                    showToast(`সর্বনিম্ন জমা পরিমাণ ৳${minDepositAmount}।`, 'error');
+                    return;
+                }
+
+                // Show loading state
+                const originalText = button.innerHTML;
+                button.innerHTML = '<div class="spinner"></div>';
+                button.disabled = true;
+
+                // Create payment data
+                const paymentData = {
+                    uid: userId,
+                    fileId: fileId,
+                    fileName: currentFile ? currentFile.name : 'File Purchase',
+                    amount: amount,
+                    method: method,
+                    senderNumber: senderNumber,
+                    transactionId: transactionId,
+                    status: 'pending',
+                    timestamp: new Date(),
+                    type: fileId ? 'file_purchase' : 'wallet_deposit'
+                };
+                
+                try {
+                    // Save to payments collection
+                    const paymentRef = await db.collection('payments').add(paymentData);
                     
-                    // Show available payment methods
-                    const methods = paymentData.methods || ['bkash', 'nagad', 'rocket'];
-                    const numbers = paymentData.numbers || {};
-                    
-                    methods.forEach(method => {
-                        const methodOption = document.createElement('div');
-                        methodOption.className = 'method-option';
-                        methodOption.dataset.method = method;
-                        methodOption.dataset.number = numbers[method] || '';
+                    // Also save to user's subcollection
+                    if (userId) {
+                        await db.collection('users').doc(userId).collection('payments').doc(paymentRef.id).set(paymentData);
                         
-                        let methodName = '';
-                        let iconClass = '';
-                        
-                        switch(method) {
-                            case 'bkash':
-                                methodName = 'bKash';
-                                iconClass = 'fas fa-mobile-alt';
-                                break;
-                            case 'nagad':
-                                methodName = 'Nagad';
-                                iconClass = 'fas fa-wallet';
-                                break;
-                            case 'rocket':
-                                methodName = 'Rocket';
-                                iconClass = 'fas fa-rocket';
-                                break;
-                            default:
-                                methodName = method.charAt(0).toUpperCase() + method.slice(1);
-                                iconClass = 'fas fa-money-bill-wave';
-                        }
-                        
-                        methodOption.innerHTML = `
-                            <div class="method-icon ${method}">
-                                <i class="${iconClass}"></i>
-                            </div>
-                            <div>
-                                <strong>${methodName}</strong>
-                                <p style="font-size: 12px; color: var(--dark-gray); margin-top: 5px;">
-                                    Send ${file.price || 200} BDT to complete payment
-                                </p>
-                            </div>
-                        `;
-                        
-                        methodOption.addEventListener('click', function() {
-                            // Remove selected class from all options
-                            document.querySelectorAll('.method-option').forEach(opt => {
-                                opt.classList.remove('selected');
-                            });
-                            
-                            // Add selected class to clicked option
-                            this.classList.add('selected');
-                            selectedPaymentMethod = {
-                                name: methodName,
-                                code: method,
-                                number: this.dataset.number
+                        // Update user's file status
+                        if (fileId) {
+                            const userRef = db.collection('users').doc(userId);
+                            const updateData = {};
+                            updateData[fileId] = {
+                                paymentStatus: 'pending',
+                                paymentId: paymentRef.id,
+                                paidUnlocked: false,
+                                paymentSubmittedAt: new Date()
                             };
                             
-                            // Show payment details
-                            showPaymentDetails();
-                        });
-                        
-                        paymentMethods.appendChild(methodOption);
-                    });
+                            await userRef.set(updateData, { merge: true });
+                        }
+                    }
                     
-                    // Show modal
-                    paymentModal.style.display = 'flex';
-                } else {
-                    showError("Payment system is not configured. Please contact admin.");
-                }
-            }).catch((error) => {
-                console.error("Error loading payment methods: ", error);
-                showError("Failed to load payment methods. Please try again.");
-            });
-        }
-        
-        // Show payment details after selecting method
-        function showPaymentDetails() {
-            if (!selectedPaymentMethod) return;
-            
-            // Generate unique reference
-            const reference = `FILE-${currentFile.id.substring(0, 8)}-${Date.now().toString().substr(-6)}`;
-            
-            // Update payment details
-            selectedMethodName.textContent = `Pay with ${selectedPaymentMethod.name}`;
-            paymentAmount.textContent = `${currentFile.price || 200} BDT`;
-            paymentNumber.textContent = selectedPaymentMethod.number || 'Not available';
-            paymentReference.textContent = reference;
-            
-            // Show sections
-            paymentDetails.style.display = 'block';
-            paymentInstructions.style.display = 'block';
-            paymentForm.style.display = 'block';
-            
-            // Clear form
-            transactionId.value = '';
-            senderNumber.value = '';
-            
-            // Store reference in current file
-            currentFile.paymentReference = reference;
-        }
-        
-        // Submit payment details
-        function submitPayment() {
-            if (!selectedPaymentMethod || !currentFile) {
-                showError("Please select a payment method first.");
-                return;
-            }
-            
-            const trxId = transactionId.value.trim();
-            const sender = senderNumber.value.trim();
-            
-            if (!trxId) {
-                showError("Please enter your transaction ID.");
-                return;
-            }
-            
-            if (!sender) {
-                showError("Please enter your phone number.");
-                return;
-            }
-            
-            // Create payment record
-            const paymentId = 'payment_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            const paymentData = {
-                id: paymentId,
-                userId: userId,
-                fileId: currentFile.id,
-                fileName: currentFile.name,
-                amount: currentFile.price || 200,
-                method: selectedPaymentMethod.code,
-                methodName: selectedPaymentMethod.name,
-                transactionId: trxId,
-                senderNumber: sender,
-                reference: currentFile.paymentReference,
-                status: 'pending',
-                submittedAt: new Date(),
-                updatedAt: new Date()
-            };
-            
-            // Save to Firebase
-            db.collection('payments').doc(paymentId).set(paymentData)
-                .then(() => {
-                    // Update user's file status
-                    const userRef = db.collection('users').doc(userId);
-                    const updateData = {};
-                    updateData[currentFile.id] = {
-                        paymentStatus: 'pending',
-                        paymentId: paymentId,
-                        paidUnlocked: false,
-                        paymentSubmittedAt: new Date()
-                    };
+                    // Reset form
+                    paymentBox.querySelector('.deposit-amount').value = '';
+                    paymentBox.querySelector('.sender-number').value = '';
+                    paymentBox.querySelector('.transaction-id').value = '';
                     
-                    return userRef.set(updateData, { merge: true });
-                })
-                .then(() => {
-                    // Update local data
-                    currentFile.paymentStatus = 'pending';
-                    currentFile.paymentId = paymentId;
-                    currentPayment = paymentData;
+                    // Show success message
+                    showToast('আপনার পেমেন্ট অনুরোধ সফলভাবে জমা হয়েছে! ভেরিফিকেশনের জন্য অপেক্ষা করুন।', 'success');
                     
-                    // Close payment modal
-                    closePaymentModal();
+                    // Update button back to original state
+                    button.innerHTML = originalText;
+                    button.disabled = false;
                     
-                    // Show processing modal
-                    showProcessingModal();
+                    // Redirect to main app after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 3000);
                     
-                    // Refresh files display
-                    filterFiles();
-                })
-                .catch((error) => {
+                } catch (error) {
                     console.error("Error submitting payment: ", error);
-                    showError("Failed to submit payment. Please try again.");
-                });
-        }
-        
-        // Show processing modal
-        function showProcessingModal() {
-            if (!currentPayment) return;
-            
-            processingStatus.textContent = "Payment Submitted!";
-            processingNote.textContent = "Your payment details have been submitted. Our team will verify your payment and approve it shortly.";
-            submissionTime.textContent = new Date().toLocaleTimeString();
-            
-            processingModal.style.display = 'flex';
-            
-            // Start checking status
-            setTimeout(checkPaymentStatus, 5000);
-        }
-        
-        // Check payment status
-        function checkPaymentStatus(fileId) {
-            let checkFileId = fileId;
-            if (!checkFileId && currentFile) {
-                checkFileId = currentFile.id;
-            }
-            
-            if (!checkFileId) return;
-            
-            // Find the file
-            const file = filesData.find(f => f.id === checkFileId);
-            if (!file || !file.paymentId) return;
-            
-            processingStatus.textContent = "Checking Status...";
-            
-            // Get payment from Firebase
-            db.collection('payments').doc(file.paymentId).get()
-                .then((doc) => {
-                    if (doc.exists) {
-                        const payment = doc.data();
-                        
-                        switch(payment.status) {
-                            case 'approved':
-                                // Payment approved
-                                processingStatus.textContent = "Payment Approved!";
-                                processingNote.textContent = "Your payment has been verified and approved. The file is now unlocked.";
-                                
-                                // Update user data
-                                const userRef = db.collection('users').doc(userId);
-                                const updateData = {};
-                                updateData[file.id] = {
-                                    paymentStatus: 'approved',
-                                    paidUnlocked: true,
-                                    unlocked: true,
-                                    paymentApprovedAt: payment.updatedAt
-                                };
-                                
-                                userRef.set(updateData, { merge: true })
-                                    .then(() => {
-                                        // Update local data
-                                        file.paymentStatus = 'approved';
-                                        file.paidUnlocked = true;
-                                        file.unlocked = true;
-                                        
-                                        // Close modal after 3 seconds
-                                        setTimeout(() => {
-                                            processingModal.style.display = 'none';
-                                            showNotification("Payment Approved!", "Your payment has been verified. You can now download the file.", "success");
-                                            filterFiles();
-                                        }, 3000);
-                                    });
-                                break;
-                                
-                            case 'rejected':
-                                // Payment rejected
-                                processingStatus.textContent = "Payment Rejected";
-                                processingNote.textContent = payment.rejectReason || "Your payment was rejected. Please contact support or try again.";
-                                
-                                // Update user data
-                                const userRef2 = db.collection('users').doc(userId);
-                                const updateData2 = {};
-                                updateData2[file.id] = {
-                                    paymentStatus: 'rejected',
-                                    paidUnlocked: false,
-                                    paymentRejectedAt: payment.updatedAt
-                                };
-                                
-                                userRef2.set(updateData2, { merge: true })
-                                    .then(() => {
-                                        // Update local data
-                                        file.paymentStatus = 'rejected';
-                                        file.paidUnlocked = false;
-                                        
-                                        // Close modal after 3 seconds
-                                        setTimeout(() => {
-                                            processingModal.style.display = 'none';
-                                            showNotification("Payment Rejected", payment.rejectReason || "Your payment was rejected.", "error");
-                                            filterFiles();
-                                        }, 3000);
-                                    });
-                                break;
-                                
-                            default:
-                                // Still pending
-                                processingStatus.textContent = "Payment Pending";
-                                processingNote.textContent = "Your payment is still being verified. Please check back in a few minutes.";
-                                submissionTime.textContent = new Date(payment.submittedAt).toLocaleTimeString();
-                        }
-                    } else {
-                        processingStatus.textContent = "Payment Not Found";
-                        processingNote.textContent = "Unable to find your payment record. Please contact support.";
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error checking payment status: ", error);
-                    processingStatus.textContent = "Error Checking Status";
-                    processingNote.textContent = "Failed to check payment status. Please try again.";
-                });
-        }
-        
-        // Admin approve payment
-        function adminApprovePayment() {
-            if (!currentPayment) return;
-            
-            // Update payment status
-            db.collection('payments').doc(currentPayment.id).update({
-                status: 'approved',
-                updatedAt: new Date(),
-                approvedBy: 'admin',
-                approvedAt: new Date()
-            })
-            .then(() => {
-                // Update user data
-                const userRef = db.collection('users').doc(currentPayment.userId);
-                const updateData = {};
-                updateData[currentPayment.fileId] = {
-                    paymentStatus: 'approved',
-                    paidUnlocked: true,
-                    unlocked: true,
-                    paymentApprovedAt: new Date()
-                };
-                
-                return userRef.set(updateData, { merge: true });
-            })
-            .then(() => {
-                showNotification("Payment Approved", "Payment has been approved successfully.", "success");
-                closeAdminApprovalModal();
-                
-                // If current user is the one who made payment, update local data
-                if (userId === currentPayment.userId) {
-                    const file = filesData.find(f => f.id === currentPayment.fileId);
-                    if (file) {
-                        file.paymentStatus = 'approved';
-                        file.paidUnlocked = true;
-                        file.unlocked = true;
-                        filterFiles();
-                    }
+                    showToast('পেমেন্ট অনুরোধ জমা করা যায়নি। আবার চেষ্টা করুন।', 'error');
+                    
+                    // Reset button state
+                    button.innerHTML = originalText;
+                    button.disabled = false;
                 }
-            })
-            .catch((error) => {
-                console.error("Error approving payment: ", error);
-                showError("Failed to approve payment. Please try again.");
             });
-        }
-        
-        // Admin reject payment
-        function adminRejectPayment() {
-            if (!currentPayment) return;
+        });
+
+        // Initialize the page
+        async function initPage() {
+            await loadContactInfo();
+            await loadFileInfo();
             
-            const rejectReason = prompt("Please enter reason for rejection:");
-            if (!rejectReason) return;
-            
-            // Update payment status
-            db.collection('payments').doc(currentPayment.id).update({
-                status: 'rejected',
-                rejectReason: rejectReason,
-                updatedAt: new Date(),
-                rejectedBy: 'admin',
-                rejectedAt: new Date()
-            })
-            .then(() => {
-                // Update user data
-                const userRef = db.collection('users').doc(currentPayment.userId);
-                const updateData = {};
-                updateData[currentPayment.fileId] = {
-                    paymentStatus: 'rejected',
-                    paidUnlocked: false,
-                    paymentRejectedAt: new Date()
-                };
-                
-                return userRef.set(updateData, { merge: true });
-            })
-            .then(() => {
-                showNotification("Payment Rejected", "Payment has been rejected.", "error");
-                closeAdminApprovalModal();
-                
-                // If current user is the one who made payment, update local data
-                if (userId === currentPayment.userId) {
-                    const file = filesData.find(f => f.id === currentPayment.fileId);
-                    if (file) {
-                        file.paymentStatus = 'rejected';
-                        file.paidUnlocked = false;
-                        filterFiles();
-                    }
-                }
-            })
-            .catch((error) => {
-                console.error("Error rejecting payment: ", error);
-                showError("Failed to reject payment. Please try again.");
-            });
-        }
-        
-        // Close payment modal
-        function closePaymentModal() {
-            paymentModal.style.display = 'none';
-            selectedPaymentMethod = null;
-        }
-        
-        // Close admin approval modal
-        function closeAdminApprovalModal() {
-            adminApprovalModal.style.display = 'none';
-            currentPayment = null;
+            console.log("Payment page initialized");
         }
 
-        // Save user progress to Firebase
-        function saveUserProgress() {
-            if (!currentFile) return;
-            
-            const userRef = db.collection('users').doc(userId);
-            const updateData = {};
-            updateData[currentFile.id] = {
-                adsWatched: currentFile.adsWatched,
-                unlocked: currentFile.unlocked,
-                lastUpdated: new Date()
-            };
-            
-            userRef.set(updateData, { merge: true })
-                .then(() => {
-                    console.log("User progress saved successfully");
-                })
-                .catch((error) => {
-                    console.error("Error saving user progress: ", error);
-                    showError("Failed to save progress. Please try again.");
-                });
-        }
-
-        // Show notification
-        function showNotification(title, message, type = "success") {
-            notification.className = `notification ${type}`;
-            notificationTitle.textContent = title;
-            notificationMessage.textContent = message;
-            
-            // Update icon based on type
-            const icon = notification.querySelector('i');
-            if (type === "success") {
-                icon.className = "fas fa-check-circle";
-            } else if (type === "error") {
-                icon.className = "fas fa-exclamation-circle";
-            } else {
-                icon.className = "fas fa-info-circle";
-            }
-            
-            notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 4000);
-        }
-
-        // Show error notification
-        function showError(message) {
-            showNotification("Error", message, "error");
-        }
-
-        // Show loading state
-        function showLoading() {
-            filesContainer.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                </div>
-            `;
-        }
-
-        // Download file
-        function downloadFile(fileId) {
-            const file = filesData.find(f => f.id === fileId);
-            if (!file) return;
-            
-            // Check if file is unlocked (free or paid)
-            const isUnlocked = file.unlocked || (file.isPaid && file.paidUnlocked);
-            
-            if (isUnlocked) {
-                // Open the download link in a new tab
-                window.open(file.downloadLink, '_blank');
-            } else if (file.isPaid) {
-                showError("This paid file is still locked. Please complete the payment.");
-            } else {
-                showError("This file is still locked. Please watch ads to unlock it.");
-            }
-        }
-
-        // Admin function to view pending payments
-        function viewPendingPayments() {
-            // This would typically be in an admin panel
-            // For now, we'll just log to console
-            db.collection('payments').where('status', '==', 'pending').get()
-                .then((querySnapshot) => {
-                    console.log("Pending payments:", querySnapshot.size);
-                    querySnapshot.forEach((doc) => {
-                        const payment = doc.data();
-                        console.log(payment);
-                        
-                        // Show admin modal for first pending payment
-                        if (!currentPayment) {
-                            currentPayment = payment;
-                            showAdminApprovalModal();
-                        }
-                    });
-                })
-                .catch((error) => {
-                    console.error("Error fetching pending payments: ", error);
-                });
-        }
-        
-        // Show admin approval modal
-        function showAdminApprovalModal() {
-            if (!currentPayment) return;
-            
-            adminFileName.textContent = currentPayment.fileName;
-            adminUserId.textContent = currentPayment.userId;
-            adminAmount.textContent = `${currentPayment.amount} BDT`;
-            adminTrxId.textContent = currentPayment.transactionId;
-            adminMethod.textContent = currentPayment.methodName;
-            adminSubmitted.textContent = new Date(currentPayment.submittedAt).toLocaleString();
-            
-            adminApprovalModal.style.display = 'flex';
-        }
-
-        // Initialize the app when the page loads
-        document.addEventListener('DOMContentLoaded', initApp);
-        
-        // For admin testing - remove in production
-        window.viewPendingPayments = viewPendingPayments;
-        window.adminApprovePayment = adminApprovePayment;
-        window.adminRejectPayment = adminRejectPayment;
+        // Initialize the page when loaded
+        document.addEventListener('DOMContentLoaded', initPage);
     </script>
 </body>
 </html>
