@@ -58,7 +58,7 @@
     <!-- Inline CSS -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-             :root {
+        :root {
             --primary: #FF6B35;
             --primary-dark: #E55A28;
             --primary-light: #FFF0EB;
@@ -2003,6 +2003,91 @@
             color: var(--text);
         }
 
+        /* Transaction History Card */
+        .transaction-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .transaction-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .transaction-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .transaction-detail {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .transaction-label {
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .transaction-value {
+            font-weight: 600;
+        }
+
+        /* Privacy & Security Page */
+        .privacy-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        .privacy-content h2 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .privacy-content p {
+            margin-bottom: 10px;
+        }
+
+        .privacy-content ul {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* Help & Support Modal */
+        .help-modal-content {
+            max-width: 600px;
+        }
+
+        .help-section {
+            margin-bottom: 20px;
+        }
+
+        .help-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .auth-card {
@@ -2846,6 +2931,21 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Privacy & Security Page -->
+            <div id="privacy-page" class="app-page d-none">
+                <div class="product-detail-header">
+                    <button class="back-button" id="privacy-back-button">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h1 class="page-title">Privacy & Security</h1>
+                </div>
+                <div class="section-box">
+                    <div class="privacy-content" id="privacy-content">
+                        Loading privacy policy...
+                    </div>
+                </div>
+            </div>
         </main>
 
         <!-- Footer Navigation -->
@@ -2875,6 +2975,93 @@
         <!-- Fixed Action Bar for Product Detail Page -->
         <div id="product-detail-footer" class="footer-action-bar d-none">
             <button id="buy-now-btn" class="buy-now-btn">BUY NOW</button>
+        </div>
+
+        <!-- Help & Support Modal -->
+        <div id="help-support-modal" class="modal-overlay d-none">
+            <div class="modal-content help-modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Help & Support</h3>
+                    <button class="modal-close" id="help-modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="help-section">
+                        <h4 class="help-title">Contact Support</h4>
+                        <div class="support-links">
+                            <a href="mailto:support@topuphub.com" class="support-link" target="_blank">
+                                <div class="support-icon" style="background-color: #FF6B35; color: white;">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="support-details">
+                                    <div class="support-name">Email Support</div>
+                                    <div class="support-value">support@topuphub.com</div>
+                                </div>
+                            </a>
+                            
+                            <a href="https://wa.me/8801234567890" class="support-link" target="_blank">
+                                <div class="support-icon" style="background-color: #25D366; color: white;">
+                                    <i class="fab fa-whatsapp"></i>
+                                </div>
+                                <div class="support-details">
+                                    <div class="support-name">WhatsApp</div>
+                                    <div class="support-value">+8801234567890</div>
+                                </div>
+                            </a>
+                            
+                            <a href="https://t.me/topuphub" class="support-link" target="_blank">
+                                <div class="support-icon" style="background-color: #0088cc; color: white;">
+                                    <i class="fab fa-telegram"></i>
+                                </div>
+                                <div class="support-details">
+                                    <div class="support-name">Telegram</div>
+                                    <div class="support-value">@topuphub</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h4 class="help-title">Follow Us</h4>
+                        <div class="social-links">
+                            <a href="https://youtube.com/topuphub" class="social-link" target="_blank">
+                                <div class="social-icon" style="background-color: #FF0000; color: white;">
+                                    <i class="fab fa-youtube"></i>
+                                </div>
+                                <div class="support-details">
+                                    <div class="support-name">YouTube</div>
+                                    <div class="support-value">Subscribe to our channel</div>
+                                </div>
+                            </a>
+                            
+                            <a href="https://facebook.com/topuphub" class="social-link" target="_blank">
+                                <div class="social-icon" style="background-color: #4267B2; color: white;">
+                                    <i class="fab fa-facebook"></i>
+                                </div>
+                                <div class="support-details">
+                                    <div class="support-name">Facebook</div>
+                                    <div class="support-value">Follow us on Facebook</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h4 class="help-title">FAQ</h4>
+                        <div class="faq-item">
+                            <strong>Q: How long does topup take?</strong>
+                            <p>A: Usually within 5-10 minutes after payment verification.</p>
+                        </div>
+                        <div class="faq-item">
+                            <strong>Q: What if my topup fails?</strong>
+                            <p>A: Contact our support team with your transaction ID for assistance.</p>
+                        </div>
+                        <div class="faq-item">
+                            <strong>Q: Is my payment secure?</strong>
+                            <p>A: Yes, we use secure payment gateways and never store your payment details.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -3226,6 +3413,8 @@
             if (pageId === 'product-detail-page') {
                 document.querySelector('.footer-nav').classList.add('d-none');
                 document.getElementById('product-detail-footer').classList.remove('d-none');
+            } else if (pageId === 'privacy-page') {
+                document.querySelector('.footer-nav').classList.add('d-none');
             } else {
                 document.querySelector('.footer-nav').classList.remove('d-none');
                 document.getElementById('product-detail-footer').classList.add('d-none');
@@ -3241,6 +3430,8 @@
                 loadMyTransactions();
             } else if (pageId === 'account-page') {
                 loadAccountData();
+            } else if (pageId === 'privacy-page') {
+                loadPrivacyPage();
             }
             
             if (history && history.pushState) {
@@ -3609,11 +3800,17 @@
         });
         
         document.getElementById('privacy-action').addEventListener('click', () => {
-            showToast('Privacy & Security features coming soon!', 'info');
+            loadPrivacyPage();
+            switchAppPage('privacy-page');
         });
         
         document.getElementById('help-action').addEventListener('click', () => {
-            showToast('Help & Support features coming soon!', 'info');
+            document.getElementById('help-support-modal').classList.remove('d-none');
+        });
+        
+        // Help & Support Modal Close
+        document.getElementById('help-modal-close').addEventListener('click', () => {
+            document.getElementById('help-support-modal').classList.add('d-none');
         });
         
         // Edit Profile Modal
@@ -3683,12 +3880,16 @@
         // --- FIRESTORE DATA & APP LOGIC ---
         async function initializeApp() {
             try {
-                await loadSettings();
-                await loadContactInfo();
-                await loadSupportInfo();
+                await Promise.all([
+                    loadSettings(),
+                    loadContactInfo(),
+                    loadSupportInfo(),
+                    loadProductItems()
+                ]);
+                
                 await initializeFixedProducts();
-                await loadProductItems();
                 await loadDynamicProducts();
+                
                 listenToUserData();
                 setupAllPasswordToggles();
                 setupCopyButtons();
@@ -3699,12 +3900,13 @@
             }
         }
 
-        // ফিক্সড প্রোডাক্ট ইনিশিয়ালাইজেশন (ডিফল্ট রিচার্জ আইটেম ছাড়া)
+        // ফিক্সড প্রোডাক্ট ইনিশিয়ালাইজেশন - অপটিমাইজড ভার্সন
         async function initializeFixedProducts() {
             try {
                 // 1. ফিক্সড ক্যাটাগরি চেক/ক্রিয়েট
                 const categoryQuery = await db.collection('categories')
                     .where('name', '==', 'FREE FIRE TOPUP')
+                    .limit(1)
                     .get();
                 
                 let fixedCategoryId;
@@ -3723,16 +3925,20 @@
                     fixedCategoryId = categoryQuery.docs[0].id;
                 }
                 
-                // 2. ফিক্সড প্রোডাক্টগুলো চেক/ক্রিয়েট
+                // 2. ফিক্সড প্রোডাক্টগুলো চেক/ক্রিয়েট (batch update)
+                const batch = db.batch();
+                
                 for (const [productId, productData] of Object.entries(fixedProductsData)) {
                     const productQuery = await db.collection('products')
                         .where('name', '==', productData.name)
                         .where('category', '==', 'FREE FIRE TOPUP')
+                        .limit(1)
                         .get();
                     
                     if (productQuery.empty) {
                         // প্রোডাক্ট তৈরি করুন
-                        await db.collection('products').add({
+                        const productRef = db.collection('products').doc();
+                        batch.set(productRef, {
                             id: productId,
                             name: productData.name,
                             category: 'FREE FIRE TOPUP',
@@ -3745,26 +3951,32 @@
                             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                         });
                     }
-                    // ডিফল্ট রিচার্জ আইটেমস যোগ করা হবে না
                 }
+                
+                await batch.commit();
                 
             } catch (error) {
                 console.error("Error initializing fixed products:", error);
             }
         }
 
-        // ডাইনামিক প্রোডাক্ট লোড করবে (Firestore থেকে)
+        // ডাইনামিক প্রোডাক্ট লোড করবে (Firestore থেকে) - অপটিমাইজড
         async function loadDynamicProducts() {
             try {
                 const dynamicContainer = document.getElementById('dynamic-categories-container');
                 dynamicContainer.innerHTML = '';
                 
-                // 1. সব ক্যাটাগরি লোড করুন
-                const categoriesSnap = await db.collection('categories')
-                    .orderBy('order', 'asc')
-                    .get();
+                // Parallell requests for better performance
+                const [categoriesSnap, productsSnap] = await Promise.all([
+                    db.collection('categories')
+                        .orderBy('order', 'asc')
+                        .get(),
+                    db.collection('products')
+                        .orderBy('order', 'asc')
+                        .get()
+                ]);
                 
-                // 2. "FREE FIRE TOPUP" বাদে সব ক্যাটাগরি নিন
+                // "FREE FIRE TOPUP" বাদে সব ক্যাটাগরি নিন
                 const categories = categoriesSnap.docs
                     .map(doc => ({ 
                         id: doc.id, 
@@ -3772,12 +3984,7 @@
                     }))
                     .filter(cat => cat.name !== 'FREE FIRE TOPUP');
                 
-                // 3. সব প্রোডাক্ট লোড করুন
-                const productsSnap = await db.collection('products')
-                    .orderBy('order', 'asc')
-                    .get();
-                
-                // 4. ফিক্সড প্রোডাক্টের নামগুলোর লিস্ট
+                // ফিক্সড প্রোডাক্টের নামগুলোর লিস্ট
                 const fixedProductNames = [
                     'LEVEL UP PASS',
                     'UID TOPUP [BD]', 
@@ -3785,7 +3992,7 @@
                     'Weekly Monthly Offer'
                 ];
                 
-                // 5. ফিক্সড প্রোডাক্ট বাদ দিন
+                // ফিক্সড প্রোডাক্ট বাদ দিন
                 const products = productsSnap.docs
                     .map(doc => ({ 
                         id: doc.id, 
@@ -3793,13 +4000,13 @@
                     }))
                     .filter(p => !fixedProductNames.includes(p.name));
                 
-                // 6. প্রোডাক্টগুলোকে ক্যাটাগরি অনুযায়ী গ্রুপ করুন
+                // প্রোডাক্টগুলোকে ক্যাটাগরি অনুযায়ী গ্রুপ করুন
                 const productsByCategory = {};
                 categories.forEach(cat => {
                     productsByCategory[cat.name] = products.filter(p => p.category === cat.name);
                 });
                 
-                // 7. UI তৈরি করুন
+                // UI তৈরি করুন
                 categories.forEach(category => {
                     const categoryProducts = productsByCategory[category.name] || [];
                     
@@ -3851,42 +4058,38 @@
             }
         }
 
-        // প্রোডাক্ট আইটেম লোড করবে - আপডেট করা ভার্সন
+        // প্রোডাক্ট আইটেম লোড করবে - অপটিমাইজড ভার্সন
         async function loadProductItems() {
             try {
-                const snapshot = await db.collection('product_items').get();
+                const snapshot = await db.collection('product_items')
+                    .where('status', '==', 'In Stock')
+                    .get();
                 
                 productItems = [];
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     
-                    // শুধুমাত্র "In Stock" স্ট্যাটাসের আইটেম যোগ করুন
-                    const status = data.status || '';
-                    const isInStock = status.toLowerCase() === 'in stock';
-                    
-                    if (isInStock) {
-                        // অফার ক্যালকুলেশন
-                        if (data.isSpecialOffer && data.offerStartDate && data.offerDuration) {
-                            try {
-                                const startDate = data.offerStartDate.toDate();
-                                const now = new Date();
-                                const diffTime = now - startDate;
-                                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                                const remainingDays = Math.max(0, data.offerDuration - diffDays);
-                                
-                                productItems.push({ 
-                                    id: doc.id, 
-                                    ...data,
-                                    remainingDays: remainingDays,
-                                    isActiveOffer: remainingDays > 0
-                                });
-                            } catch (dateError) {
-                                console.error("Date calculation error:", dateError);
-                                productItems.push({ id: doc.id, ...data });
-                            }
-                        } else {
+                    // অফার ক্যালকুলেশন
+                    if (data.isSpecialOffer && data.offerStartDate && data.offerDuration) {
+                        try {
+                            const startDate = data.offerStartDate.toDate();
+                            const now = new Date();
+                            const diffTime = now - startDate;
+                            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                            const remainingDays = Math.max(0, data.offerDuration - diffDays);
+                            
+                            productItems.push({ 
+                                id: doc.id, 
+                                ...data,
+                                remainingDays: remainingDays,
+                                isActiveOffer: remainingDays > 0
+                            });
+                        } catch (dateError) {
+                            console.error("Date calculation error:", dateError);
                             productItems.push({ id: doc.id, ...data });
                         }
+                    } else {
+                        productItems.push({ id: doc.id, ...data });
                     }
                 });
                 
@@ -3899,7 +4102,7 @@
             }
         }
 
-        // প্রোডাক্ট ডিটেইল পেজে রিচার্জ অপশন জেনারেট করবে - আপডেট করা ভার্সন
+        // প্রোডাক্ট ডিটেইল পেজে রিচার্জ অপশন জেনারেট করবে - ফিক্সড প্রোডাক্টের জন্য সঠিক লজিক
         function generateRechargeOptions(productId, isFixed = false) {
             const rechargeOptionsEl = document.getElementById('recharge-options');
             rechargeOptionsEl.innerHTML = '';
@@ -3909,36 +4112,18 @@
             console.log(`Current product name: ${currentProduct?.name}`);
             console.log(`Total product items available: ${productItems.length}`);
             
-            // ফিল্টারিং লজিক
+            // ফিল্টারিং লজিক - ফিক্সড প্রোডাক্টের জন্য নামের exact ম্যাচ
             let cardProductItems = productItems.filter(item => {
-                // কেস ১: সরাসরি productId মিলে (productCardId)
-                if (item.productCardId === productId) {
-                    console.log(`Found by productCardId: ${item.productCardId}`);
-                    return true;
-                }
-                
-                // কেস ২: productName মিলে (ফিক্সড প্রোডাক্টের জন্য)
-                if (currentProduct?.name && item.productName) {
-                    const itemNameLower = item.productName.toLowerCase();
-                    const currentProductNameLower = currentProduct.name.toLowerCase();
-                    
-                    // নামের মিল চেক করুন
-                    if (itemNameLower.includes(currentProductNameLower) || 
-                        currentProductNameLower.includes(itemNameLower)) {
-                        console.log(`Found by product name match: ${item.productName} for ${currentProduct.name}`);
-                        return true;
+                if (isFixed) {
+                    // ফিক্সড প্রোডাক্টের জন্য productName exact ম্যাচ
+                    if (currentProduct?.name && item.productName) {
+                        return item.productName.trim() === currentProduct.name.trim();
                     }
+                    return false;
+                } else {
+                    // ডাইনামিক প্রোডাক্টের জন্য productCardId ম্যাচ
+                    return item.productCardId === productId;
                 }
-                
-                // কেস ৩: category মিলে
-                if (currentProduct?.category && item.category) {
-                    if (item.category.toLowerCase() === currentProduct.category.toLowerCase()) {
-                        console.log(`Found by category match: ${item.category}`);
-                        return true;
-                    }
-                }
-                
-                return false;
             });
             
             // ডিবাগিং ইনফো
@@ -4430,7 +4615,7 @@
                 ordersListEl.innerHTML = '';
                 
                 if (snapshot.empty) {
-                    ordersListEl.innerHTML = '<p>No orders found.</p>';
+                    ordersListEl.innerHTML = '<p style="text-align: center; color: var(--text-light);">No orders found.</p>';
                     return;
                 }
                 
@@ -4466,11 +4651,11 @@
                 });
             } catch (error) {
                 console.error("Error loading orders: ", error);
-                document.getElementById('orders-list').innerHTML = '<p>Error loading orders.</p>';
+                document.getElementById('orders-list').innerHTML = '<p style="text-align: center; color: var(--danger);">Error loading orders.</p>';
             }
         }
         
-        // Load My Transactions
+        // Load My Transactions - আপডেট করা ভার্সন
         async function loadMyTransactions() {
             if (!currentUser) return;
             
@@ -4480,28 +4665,37 @@
                 transactionsListEl.innerHTML = '';
                 
                 if (snapshot.empty) {
-                    transactionsListEl.innerHTML = '<p>No transactions found.</p>';
+                    transactionsListEl.innerHTML = '<p style="text-align: center; color: var(--text-light);">No transactions found.</p>';
                     return;
                 }
                 
                 snapshot.forEach(doc => {
                     const transaction = doc.data();
                     const date = transaction.timestamp ? new Date(transaction.timestamp.toDate()).toLocaleString() : 'N/A';
+                    const status = transaction.status || 'Pending';
+                    const amount = transaction.amount || 0;
+                    const method = transaction.method || 'N/A';
+                    const senderNumber = transaction.senderNumber || 'N/A';
+                    const transactionId = transaction.transactionId || 'N/A';
                     
                     transactionsListEl.innerHTML += `
                         <div class="transaction-card">
                             <div class="transaction-header">
-                                <div class="order-status status-${transaction.status?.toLowerCase() || 'pending'}">${transaction.status || 'Pending'}</div>
-                                <div class="transaction-amount">৳${transaction.amount || 0}</div>
+                                <div class="order-status status-${status.toLowerCase()}">${status}</div>
+                                <div class="transaction-amount">৳${amount}</div>
                             </div>
                             <div class="transaction-details">
                                 <div class="transaction-detail">
+                                    <span class="transaction-label">Method:</span>
+                                    <span class="transaction-value">${method}</span>
+                                </div>
+                                <div class="transaction-detail">
                                     <span class="transaction-label">Phone:</span>
-                                    <span class="transaction-value">${transaction.senderNumber || 'N/A'}</span>
+                                    <span class="transaction-value">${senderNumber}</span>
                                 </div>
                                 <div class="transaction-detail">
                                     <span class="transaction-label">Trx ID:</span>
-                                    <span class="transaction-value">${transaction.transactionId || 'N/A'}</span>
+                                    <span class="transaction-value">${transactionId}</span>
                                 </div>
                                 <div class="transaction-detail">
                                     <span class="transaction-label">Date:</span>
@@ -4513,7 +4707,7 @@
                 });
             } catch (error) {
                 console.error("Error loading transactions: ", error);
-                document.getElementById('transactions-list').innerHTML = '<p>Error loading transactions.</p>';
+                document.getElementById('transactions-list').innerHTML = '<p style="text-align: center; color: var(--danger);">Error loading transactions.</p>';
             }
         }
         
@@ -4547,6 +4741,73 @@
                 }
             } catch (error) {
                 console.error("Error loading account data: ", error);
+            }
+        }
+        
+        // Load Privacy Page Content
+        async function loadPrivacyPage() {
+            try {
+                const doc = await db.collection('settings').doc('privacy_policy').get();
+                const content = document.getElementById('privacy-content');
+                
+                if (doc.exists) {
+                    const data = doc.data();
+                    content.innerHTML = data.content || `
+                        <h2>Privacy Policy</h2>
+                        <p>Your privacy is important to us. This privacy policy explains what personal data we collect and how we use it.</p>
+                        
+                        <h2>Information We Collect</h2>
+                        <p>We collect information you provide directly to us, such as when you create an account, make a purchase, or contact us for support.</p>
+                        
+                        <h2>How We Use Your Information</h2>
+                        <p>We use the information we collect to:</p>
+                        <ul>
+                            <li>Provide, maintain, and improve our services</li>
+                            <li>Process transactions and send related information</li>
+                            <li>Respond to your comments and questions</li>
+                            <li>Send you technical notices and support messages</li>
+                        </ul>
+                        
+                        <h2>Security</h2>
+                        <p>We take reasonable measures to help protect your personal information from loss, theft, misuse, and unauthorized access.</p>
+                        
+                        <p><strong>Last Updated:</strong> ${new Date().toLocaleDateString()}</p>
+                    `;
+                } else {
+                    // Create default privacy policy
+                    const defaultPrivacy = `
+                        <h2>Privacy Policy</h2>
+                        <p>Your privacy is important to us. This privacy policy explains what personal data we collect and how we use it.</p>
+                        
+                        <h2>Information We Collect</h2>
+                        <p>We collect information you provide directly to us, such as when you create an account, make a purchase, or contact us for support.</p>
+                        
+                        <h2>How We Use Your Information</h2>
+                        <p>We use the information we collect to:</p>
+                        <ul>
+                            <li>Provide, maintain, and improve our services</li>
+                            <li>Process transactions and send related information</li>
+                            <li>Respond to your comments and questions</li>
+                            <li>Send you technical notices and support messages</li>
+                        </ul>
+                        
+                        <h2>Security</h2>
+                        <p>We take reasonable measures to help protect your personal information from loss, theft, misuse, and unauthorized access.</p>
+                        
+                        <p><strong>Last Updated:</strong> ${new Date().toLocaleDateString()}</p>
+                    `;
+                    
+                    content.innerHTML = defaultPrivacy;
+                    
+                    // Save default to Firestore
+                    db.collection('settings').doc('privacy_policy').set({
+                        content: defaultPrivacy,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }).catch(console.error);
+                }
+            } catch (error) {
+                console.error("Error loading privacy policy: ", error);
+                document.getElementById('privacy-content').innerHTML = '<p style="color: var(--danger);">Error loading privacy policy.</p>';
             }
         }
         
@@ -4669,6 +4930,11 @@
         // Deposit Back Button
         document.getElementById('deposit-back-button').addEventListener('click', () => {
             switchAppPage('add-money-page');
+        });
+
+        // Privacy Page Back Button
+        document.getElementById('privacy-back-button').addEventListener('click', () => {
+            switchAppPage('account-page');
         });
 
         // Payment Method Selection in Product Detail
@@ -4886,7 +5152,7 @@
         // Initialize when DOM is loaded
         window.addEventListener('load', () => {
             console.log("App initialized successfully");
-            // লোডার দৃশ্যমান থাকবে, Firebase authentication চেক করার পর আপনা-আপনি hide হবে
+            // Firebase authentication চেক করার পর আপনা-আপনি hide হবে
         });
     });
     </script>
