@@ -3110,965 +3110,947 @@
     <script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore-compat.js"></script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyD0XJnPpD19dFbN7o1438JvVAgEI4clksI",
-            authDomain: "topup-8255a.firebaseapp.com",
-            projectId: "topup-8255a",
-            storageBucket: "topup-8255a.firebasestorage.app",
-            messagingSenderId: "532685580306",
-            appId: "1:532685580306:web:97016d39bd47ea916f90cb",
-            measurementId: "G-4SP578BX3G"
-        };
-        
-        // Initialize Firebase
-        try {
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-        } catch (error) {
-            console.error("Firebase initialization error:", error);
+document.addEventListener('DOMContentLoaded', () => {
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyD0XJnPpD19dFbN7o1438JvVAgEI4clksI",
+        authDomain: "topup-8255a.firebaseapp.com",
+        projectId: "topup-8255a",
+        storageBucket: "topup-8255a.firebasestorage.app",
+        messagingSenderId: "532685580306",
+        appId: "1:532685580306:web:97016d39bd47ea916f90cb",
+        measurementId: "G-4SP578BX3G"
+    };
+    
+    // Initialize Firebase
+    try {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
-        
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        
-        // Set Firestore settings
-        db.settings({
-            cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
-        });
+    } catch (error) {
+        console.error("Firebase initialization error:", error);
+    }
+    
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    
+    // Set Firestore settings
+    db.settings({
+        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+    });
 
-        // --- GLOBAL STATE ---
-        let currentUser = null;
-        let currentProduct = null;
-        let globalSettings = {};
-        let selectedRechargeOption = null;
-        let selectedPaymentMethod = 'wallet';
-        let userBalance = 0;
-        let productItems = [];
-        let userData = {};
-        let contactInfo = {
-            bkash: "017XXXXXXXX",
-            nagad: "017XXXXXXXX", 
-            rocket: "017XXXXXXXX"
-        };
-        let supportInfo = {
-            support_email: "support@topuphub.com",
-            whatsapp_number: "+8801234567890",
-            telegram_link: "@topuphub",
-            youtube_link: "https://youtube.com/topuphub",
-            facebook_link: "https://facebook.com/topuphub"
-        };
-        
-        // ফিক্সড প্রোডাক্ট ডেটা
-        const fixedProductsData = {
-            'fixed-level-up': {
-                name: 'LEVEL UP PASS',
-                imageUrl: 'https://i.ibb.co.com/YFMtHhYF/1749532945.png',
-                category: 'FREE FIRE TOPUP',
-                isFixed: true
-            },
-            'fixed-uid-topup': {
-                name: 'UID TOPUP [BD]',
-                imageUrl: 'https://i.ibb.co.com/0p2Fz2gr/images-1.jpg',
-                category: 'FREE FIRE TOPUP',
-                isFixed: true
-            },
-            'fixed-unipin': {
-                name: 'UNIPIN VOUCHER',
-                imageUrl: 'https://i.ibb.co.com/5xJZmNbK/1692046712.jpg',
-                category: 'FREE FIRE TOPUP',
-                isFixed: true
-            },
-            'fixed-weekly-offer': {
-                name: 'Weekly Monthly Offer',
-                imageUrl: 'https://i.ibb.co.com/ksPy1qKQ/images-1759380428872.webp',
-                category: 'FREE FIRE TOPUP',
-                isFixed: true
-            }
-        };
-        
-        // --- UTILITY FUNCTIONS ---
-        function generateOrderId() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let result = '';
-            for (let i = 0; i < 8; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
+    // --- GLOBAL STATE ---
+    let currentUser = null;
+    let currentProduct = null;
+    let globalSettings = {};
+    let selectedRechargeOption = null;
+    let selectedPaymentMethod = 'wallet';
+    let userBalance = 0;
+    let productItems = [];
+    let userData = {};
+    let contactInfo = {
+        bkash: "017XXXXXXXX",
+        nagad: "017XXXXXXXX", 
+        rocket: "017XXXXXXXX"
+    };
+    let supportInfo = {
+        support_email: "support@topuphub.com",
+        whatsapp_number: "+8801234567890",
+        telegram_link: "@topuphub",
+        youtube_link: "https://youtube.com/topuphub",
+        facebook_link: "https://facebook.com/topuphub"
+    };
+    
+    // ফিক্সড প্রোডাক্ট ডেটা
+    const fixedProductsData = {
+        'fixed-level-up': {
+            name: 'LEVEL UP PASS',
+            imageUrl: 'https://i.ibb.co.com/YFMtHhYF/1749532945.png',
+            category: 'FREE FIRE TOPUP',
+            isFixed: true
+        },
+        'fixed-uid-topup': {
+            name: 'UID TOPUP [BD]',
+            imageUrl: 'https://i.ibb.co.com/0p2Fz2gr/images-1.jpg',
+            category: 'FREE FIRE TOPUP',
+            isFixed: true
+        },
+        'fixed-unipin': {
+            name: 'UNIPIN VOUCHER',
+            imageUrl: 'https://i.ibb.co.com/5xJZmNbK/1692046712.jpg',
+            category: 'FREE FIRE TOPUP',
+            isFixed: true
+        },
+        'fixed-weekly-offer': {
+            name: 'Weekly Monthly Offer',
+            imageUrl: 'https://i.ibb.co.com/ksPy1qKQ/images-1759380428872.webp',
+            category: 'FREE FIRE TOPUP',
+            isFixed: true
         }
+    };
+    
+    // --- UTILITY FUNCTIONS ---
+    function generateOrderId() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let result = '';
+        for (let i = 0; i < 8; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+    }
 
-        // Updated showToast function with bottom animation
-        function showToast(message, type = 'info') {
-            const toastContainer = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            
-            let icon = 'info-circle';
-            if (type === 'success') icon = 'check-circle';
-            else if (type === 'error') icon = 'exclamation-triangle';
-            else if (type === 'warning') icon = 'exclamation-circle';
-            
-            toast.innerHTML = `
-                <i class="fas fa-${icon}"></i>
-                <span>${message}</span>
-            `;
-            toastContainer.appendChild(toast);
-            
-            // Auto remove after 3 seconds
+    // Updated showToast function with bottom animation
+    function showToast(message, type = 'info') {
+        const toastContainer = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        
+        let icon = 'info-circle';
+        if (type === 'success') icon = 'check-circle';
+        else if (type === 'error') icon = 'exclamation-triangle';
+        else if (type === 'warning') icon = 'exclamation-circle';
+        
+        toast.innerHTML = `
+            <i class="fas fa-${icon}"></i>
+            <span>${message}</span>
+        `;
+        toastContainer.appendChild(toast);
+        
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            toast.style.animation = 'slideOutDown 0.3s ease-out';
             setTimeout(() => {
-                toast.style.animation = 'slideOutDown 0.3s ease-out';
-                setTimeout(() => {
-                    if (toast.parentNode === toastContainer) {
-                        toast.remove();
-                    }
-                }, 300);
-            }, 3000);
-        }
+                if (toast.parentNode === toastContainer) {
+                    toast.remove();
+                }
+            }, 300);
+        }, 3000);
+    }
 
-        // Updated Google Profile Picture Function
-        function updateProfilePicture() {
-            if (!currentUser) return;
-            
-            // Header Profile Icon
-            const headerProfileIcon = document.getElementById('profile-icon-header');
-            if (headerProfileIcon) {
-                if (currentUser.photoURL) {
-                    headerProfileIcon.innerHTML = `<img src="${currentUser.photoURL}" alt="Profile" 
-                        style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-                } else {
-                    // Use first letter of name if no photo
-                    const firstName = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : 'U';
-                    headerProfileIcon.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-radius: 50%;">${firstName}</div>`;
-                }
-            }
-            
-            // Account Page Profile Avatar
-            const accountAvatar = document.getElementById('user-avatar');
-            if (accountAvatar) {
-                if (currentUser.photoURL) {
-                    accountAvatar.innerHTML = `<img src="${currentUser.photoURL}" alt="Profile" 
-                        style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-                } else {
-                    // Use first letter of name if no photo
-                    const firstName = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : 'U';
-                    accountAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 40px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-radius: 50%;">${firstName}</div>`;
-                }
-            }
-            
-            // Also update profile name in account page if available
-            if (userData.fullName) {
-                const userNameElement = document.getElementById('user-fullname');
-                if (userNameElement) {
-                    userNameElement.textContent = userData.fullName;
-                }
-            }
-        }
-
-        function copyNumber(method) {
-            if (contactInfo[method]) {
-                const textToCopy = contactInfo[method];
-                
-                if (navigator.clipboard && window.isSecureContext) {
-                    navigator.clipboard.writeText(textToCopy)
-                        .then(() => {
-                            showToast(`${method.toUpperCase()} number copied!`, 'success');
-                        })
-                        .catch(err => {
-                            console.error('Failed to copy: ', err);
-                            fallbackCopyTextToClipboard(textToCopy, method);
-                        });
-                } else {
-                    fallbackCopyTextToClipboard(textToCopy, method);
-                }
+    // Updated Google Profile Picture Function
+    function updateProfilePicture() {
+        if (!currentUser) return;
+        
+        // Header Profile Icon
+        const headerProfileIcon = document.getElementById('profile-icon-header');
+        if (headerProfileIcon) {
+            if (currentUser.photoURL) {
+                headerProfileIcon.innerHTML = `<img src="${currentUser.photoURL}" alt="Profile" 
+                    style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
             } else {
-                showToast('Phone number not available', 'error');
+                // Use first letter of name if no photo
+                const firstName = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : 'U';
+                headerProfileIcon.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-radius: 50%;">${firstName}</div>`;
             }
         }
+        
+        // Account Page Profile Avatar
+        const accountAvatar = document.getElementById('user-avatar');
+        if (accountAvatar) {
+            if (currentUser.photoURL) {
+                accountAvatar.innerHTML = `<img src="${currentUser.photoURL}" alt="Profile" 
+                    style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            } else {
+                // Use first letter of name if no photo
+                const firstName = userData.fullName ? userData.fullName.charAt(0).toUpperCase() : 'U';
+                accountAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 40px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-radius: 50%;">${firstName}</div>`;
+            }
+        }
+        
+        // Also update profile name in account page if available
+        if (userData.fullName) {
+            const userNameElement = document.getElementById('user-fullname');
+            if (userNameElement) {
+                userNameElement.textContent = userData.fullName;
+            }
+        }
+    }
 
-        function fallbackCopyTextToClipboard(text, method) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.opacity = "0";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
+    function copyNumber(method) {
+        if (contactInfo[method]) {
+            const textToCopy = contactInfo[method];
             
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    showToast(`${method.toUpperCase()} number copied!`, 'success');
-                } else {
-                    showToast('Failed to copy number', 'error');
-                }
-            } catch (err) {
-                console.error('Fallback copy failed: ', err);
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => {
+                        showToast(`${method.toUpperCase()} number copied!`, 'success');
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy: ', err);
+                        fallbackCopyTextToClipboard(textToCopy, method);
+                    });
+            } else {
+                fallbackCopyTextToClipboard(textToCopy, method);
+            }
+        } else {
+            showToast('Phone number not available', 'error');
+        }
+    }
+
+    function fallbackCopyTextToClipboard(text, method) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                showToast(`${method.toUpperCase()} number copied!`, 'success');
+            } else {
                 showToast('Failed to copy number', 'error');
             }
-            
-            document.body.removeChild(textArea);
+        } catch (err) {
+            console.error('Fallback copy failed: ', err);
+            showToast('Failed to copy number', 'error');
         }
+        
+        document.body.removeChild(textArea);
+    }
 
-        function setupCopyButtons() {
-            document.querySelectorAll('.copy-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const method = e.target.dataset.method || e.target.closest('.copy-btn').dataset.method;
-                    copyNumber(method);
-                });
-            });
-        }
-
-        function setupPasswordToggle(passwordInputId, toggleButtonId) {
-            const passwordInput = document.getElementById(passwordInputId);
-            const toggleButton = document.getElementById(toggleButtonId);
-            
-            if (!passwordInput || !toggleButton) return;
-            
-            toggleButton.addEventListener('click', (e) => {
+    function setupCopyButtons() {
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
                 e.preventDefault();
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                
-                const icon = toggleButton.querySelector('i');
-                if (type === 'password') {
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                } else {
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                }
+                const method = e.target.dataset.method || e.target.closest('.copy-btn').dataset.method;
+                copyNumber(method);
             });
-        }
+        });
+    }
 
-        function setupAllPasswordToggles() {
-            setupPasswordToggle('login-password', 'login-password-toggle');
-            setupPasswordToggle('signup-password', 'signup-password-toggle');
-            setupPasswordToggle('signup-confirm-password', 'signup-confirm-password-toggle');
-            setupPasswordToggle('edit-old-password', 'edit-old-password-toggle');
-            setupPasswordToggle('edit-new-password', 'edit-new-password-toggle');
-            setupPasswordToggle('edit-confirm-password', 'edit-confirm-password-toggle');
-        }
-
-        // --- VALIDATION FUNCTIONS ---
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
-        }
-
-        function validatePhoneNumber(phone) {
-            const re = /^(?:\+88|88)?(01[3-9]\d{8})$/;
-            const cleaned = phone.replace(/\s/g, '');
-            return re.test(cleaned);
-        }
-
-        function validatePlayerId(playerId) {
-            return playerId.length >= 3 && playerId.length <= 20;
-        }
-
-        // --- VIEW/PAGE SWITCHING LOGIC ---
-        function showAuthSubView(viewId) {
-            ['login-view', 'signup-view', 'forgot-password-view'].forEach(id => {
-                document.getElementById(id).classList.add('d-none');
-            });
-            document.getElementById(viewId).classList.remove('d-none');
-        }
-
-        // Header Back Button Functionality
-        const headerBackButton = document.getElementById('header-back-button');
-
-        function showHeaderBackButton(show = true) {
-            if (show) {
-                headerBackButton.classList.remove('d-none');
-            } else {
-                headerBackButton.classList.add('d-none');
-            }
-        }
-
-        headerBackButton.addEventListener('click', () => {
-            const currentPage = document.querySelector('.app-page:not(.d-none)').id;
+    function setupPasswordToggle(passwordInputId, toggleButtonId) {
+        const passwordInput = document.getElementById(passwordInputId);
+        const toggleButton = document.getElementById(toggleButtonId);
+        
+        if (!passwordInput || !toggleButton) return;
+        
+        toggleButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
             
-            if (currentPage === 'add-money-page' || currentPage === 'deposit-page') {
-                switchAppPage('home-page');
-            } else if (currentPage === 'product-detail-page') {
-                switchAppPage('home-page');
+            const icon = toggleButton.querySelector('i');
+            if (type === 'password') {
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
             } else {
-                switchAppPage('home-page');
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
             }
         });
+    }
 
-        function switchAppPage(pageId) {
-            const mainContent = document.getElementById('main-content');
-            mainContent.querySelectorAll('.app-page').forEach(page => page.classList.add('d-none'));
-            document.getElementById(pageId).classList.remove('d-none');
-            
-            if (pageId === 'home-page') {
-                showHeaderBackButton(false);
-            } else {
-                showHeaderBackButton(true);
-            }
-            
-            if (pageId === 'product-detail-page') {
-                document.querySelector('.footer-nav').classList.add('d-none');
-                document.getElementById('product-detail-footer').classList.remove('d-none');
-            } else if (pageId === 'privacy-page') {
-                document.querySelector('.footer-nav').classList.add('d-none');
-            } else {
-                document.querySelector('.footer-nav').classList.remove('d-none');
-                document.getElementById('product-detail-footer').classList.add('d-none');
-            }
-            
-            document.querySelectorAll('.footer-nav .nav-item').forEach(item => {
-                item.classList.toggle('active', item.dataset.page === pageId);
-            });
-            
-            if (pageId === 'my-orders-page') {
-                loadMyOrders();
-            } else if (pageId === 'my-transaction-page') {
-                loadMyTransactions();
-            } else if (pageId === 'account-page') {
-                loadAccountData();
-            } else if (pageId === 'privacy-page') {
-                loadPrivacyPage();
-            }
-            
-            if (history && history.pushState) {
-                history.pushState({ page: pageId }, '', `#${pageId}`);
-            }
+    function setupAllPasswordToggles() {
+        setupPasswordToggle('login-password', 'login-password-toggle');
+        setupPasswordToggle('signup-password', 'signup-password-toggle');
+        setupPasswordToggle('signup-confirm-password', 'signup-confirm-password-toggle');
+        setupPasswordToggle('edit-old-password', 'edit-old-password-toggle');
+        setupPasswordToggle('edit-new-password', 'edit-new-password-toggle');
+        setupPasswordToggle('edit-confirm-password', 'edit-confirm-password-toggle');
+    }
+
+    // --- VALIDATION FUNCTIONS ---
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    function validatePhoneNumber(phone) {
+        const re = /^(?:\+88|88)?(01[3-9]\d{8})$/;
+        const cleaned = phone.replace(/\s/g, '');
+        return re.test(cleaned);
+    }
+
+    function validatePlayerId(playerId) {
+        return playerId.length >= 3 && playerId.length <= 20;
+    }
+
+    // --- VIEW/PAGE SWITCHING LOGIC ---
+    function showAuthSubView(viewId) {
+        ['login-view', 'signup-view', 'forgot-password-view'].forEach(id => {
+            document.getElementById(id).classList.add('d-none');
+        });
+        document.getElementById(viewId).classList.remove('d-none');
+    }
+
+    // Header Back Button Functionality
+    const headerBackButton = document.getElementById('header-back-button');
+
+    function showHeaderBackButton(show = true) {
+        if (show) {
+            headerBackButton.classList.remove('d-none');
+        } else {
+            headerBackButton.classList.add('d-none');
         }
+    }
 
-        // Updated success animation
-        function showAuthSuccessAnimation(authContainer, callback) {
-            // Success animation for auth card
-            const authCard = authContainer.querySelector('.auth-card');
-            authCard.classList.add('success-animation');
-            
-            // Show success toast
-            showToast('Welcome to TOPUP HUB!', 'success');
+    headerBackButton.addEventListener('click', () => {
+        const currentPage = document.querySelector('.app-page:not(.d-none)').id;
+        
+        if (currentPage === 'add-money-page' || currentPage === 'deposit-page') {
+            switchAppPage('home-page');
+        } else if (currentPage === 'product-detail-page') {
+            switchAppPage('home-page');
+        } else {
+            switchAppPage('home-page');
+        }
+    });
+
+    function switchAppPage(pageId) {
+        const mainContent = document.getElementById('main-content');
+        mainContent.querySelectorAll('.app-page').forEach(page => page.classList.add('d-none'));
+        document.getElementById(pageId).classList.remove('d-none');
+        
+        if (pageId === 'home-page') {
+            showHeaderBackButton(false);
+        } else {
+            showHeaderBackButton(true);
+        }
+        
+        if (pageId === 'product-detail-page') {
+            document.querySelector('.footer-nav').classList.add('d-none');
+            document.getElementById('product-detail-footer').classList.remove('d-none');
+        } else {
+            document.querySelector('.footer-nav').classList.remove('d-none');
+            document.getElementById('product-detail-footer').classList.add('d-none');
+        }
+        
+        document.querySelectorAll('.footer-nav .nav-item').forEach(item => {
+            item.classList.toggle('active', item.dataset.page === pageId);
+        });
+        
+        if (pageId === 'my-orders-page') {
+            loadMyOrders();
+        } else if (pageId === 'my-transaction-page') {
+            loadMyTransactions();
+        } else if (pageId === 'account-page') {
+            loadAccountData();
+        }
+        
+        if (history && history.pushState) {
+            history.pushState({ page: pageId }, '', `#${pageId}`);
+        }
+    }
+
+    // Updated success animation
+    function showAuthSuccessAnimation(authContainer, callback) {
+        // Success animation for auth card
+        const authCard = authContainer.querySelector('.auth-card');
+        authCard.classList.add('success-animation');
+        
+        // Show success toast
+        showToast('Welcome to TOPUP HUB!', 'success');
+        
+        setTimeout(() => {
+            authContainer.classList.add('slide-out');
             
             setTimeout(() => {
-                authContainer.classList.add('slide-out');
+                document.getElementById('app-view').classList.remove('d-none');
+                document.getElementById('auth-view').classList.add('d-none');
                 
-                setTimeout(() => {
-                    document.getElementById('app-view').classList.remove('d-none');
-                    document.getElementById('auth-view').classList.add('d-none');
-                    
-                    if (callback) callback();
-                }, 500);
-            }, 800);
-        }
+                if (callback) callback();
+            }, 500);
+        }, 800);
+    }
 
-        // Google Sign In Function
-        function signInWithGoogle(isSignUp = false) {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            
-            // Add animation to Google button
-            const googleBtn = isSignUp ? document.getElementById('google-signup-btn') : document.getElementById('google-login-btn');
-            const originalContent = googleBtn.innerHTML;
-            googleBtn.innerHTML = '<div class="spinner"></div>';
-            googleBtn.disabled = true;
-            
-            auth.signInWithPopup(provider)
-                .then(async (result) => {
-                    const user = result.user;
+    // Google Sign In Function
+    function signInWithGoogle(isSignUp = false) {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        
+        // Add animation to Google button
+        const googleBtn = isSignUp ? document.getElementById('google-signup-btn') : document.getElementById('google-login-btn');
+        const originalContent = googleBtn.innerHTML;
+        googleBtn.innerHTML = '<div class="spinner"></div>';
+        googleBtn.disabled = true;
+        
+        auth.signInWithPopup(provider)
+            .then(async (result) => {
+                const user = result.user;
+                
+                // Check if user exists in Firestore
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    // Create new user document
+                    const usersSnapshot = await db.collection('users').get();
+                    const userNumber = usersSnapshot.size + 1;
                     
-                    // Check if user exists in Firestore
-                    const userDoc = await db.collection('users').doc(user.uid).get();
-                    
-                    if (!userDoc.exists) {
-                        // Create new user document
-                        const usersSnapshot = await db.collection('users').get();
-                        const userNumber = usersSnapshot.size + 1;
-                        
-                        await db.collection('users').doc(user.uid).set({
-                            uid: user.uid,
-                            email: user.email,
-                            fullName: user.displayName || 'Google User',
-                            walletBalance: 0,
-                            totalSpent: 0,
-                            userNumber: userNumber,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            banned: false,
-                            isGoogleUser: true
-                        });
-                    }
-                    
-                    // Update profile picture
-                    updateProfilePicture();
-                    
-                    // Reset button
-                    googleBtn.innerHTML = originalContent;
-                    googleBtn.disabled = false;
-                    
-                    showToast('Successfully signed in!', 'success');
-                })
-                .catch((error) => {
-                    // Reset button
-                    googleBtn.innerHTML = originalContent;
-                    googleBtn.disabled = false;
-                    
-                    console.error("Google sign in error:", error);
-                    showToast(error.message, 'error');
-                });
-        }
-
-        // --- AUTHENTICATION ---
-        auth.onAuthStateChanged(async user => {
-            const initialLoader = document.getElementById('initial-loader');
-            
-            if (user) {
-                try {
-                    const userDoc = await db.collection('users').doc(user.uid).get();
-                    
-                    if (!userDoc.exists) {
-                        const usersSnapshot = await db.collection('users').get();
-                        const userNumber = usersSnapshot.size + 1;
-                        
-                        await db.collection('users').doc(user.uid).set({
-                            uid: user.uid,
-                            email: user.email,
-                            fullName: user.displayName || 'User',
-                            walletBalance: 0,
-                            totalSpent: 0,
-                            userNumber: userNumber,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            banned: false
-                        });
-                        
-                        userData = await db.collection('users').doc(user.uid).get().then(doc => doc.data());
-                        
-                    } else {
-                        userData = userDoc.data();
-                    }
-                    
-                    if (userData.banned) {
-                        initialLoader.style.display = 'none';
-                        document.getElementById('auth-view').classList.add('d-none');
-                        document.getElementById('app-view').classList.add('d-none');
-                        document.getElementById('ban-screen').classList.remove('d-none');
-                        return;
-                    }
-                    
-                    currentUser = user;
-                    
-                    // Update profile picture
-                    updateProfilePicture();
-                    
-                    // Hide initial loader
-                    initialLoader.style.display = 'none';
-                    
-                    // Show app view immediately
-                    document.getElementById('auth-view').classList.add('d-none');
-                    document.getElementById('app-view').classList.remove('d-none');
-                    
-                    // Initialize app
-                    await initializeApp();
-                    
-                    // Switch to home page
-                    switchAppPage('home-page');
-                    
-                    // Show welcome toast
-                    showToast('Welcome back!', 'success');
-                    
-                } catch (error) {
-                    console.error("Error checking user:", error);
-                    initialLoader.style.display = 'none';
-                    showToast('Error loading user data', 'error');
-                    await auth.signOut();
+                    await db.collection('users').doc(user.uid).set({
+                        uid: user.uid,
+                        email: user.email,
+                        fullName: user.displayName || 'Google User',
+                        walletBalance: 0,
+                        totalSpent: 0,
+                        userNumber: userNumber,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        banned: false,
+                        isGoogleUser: true
+                    });
                 }
-            } else {
-                currentUser = null;
-                initialLoader.style.display = 'none';
-                document.getElementById('auth-view').classList.remove('d-none');
-                document.getElementById('app-view').classList.add('d-none');
-                document.getElementById('ban-screen').classList.add('d-none');
-                showAuthSubView('login-view');
                 
-                // রিসেট অ্যানিমেশন
-                document.querySelectorAll('.auth-container').forEach(container => {
-                    container.classList.remove('slide-out');
-                });
-            }
-        });
+                // Update profile picture
+                updateProfilePicture();
+                
+                // Reset button
+                googleBtn.innerHTML = originalContent;
+                googleBtn.disabled = false;
+                
+                showToast('Successfully signed in!', 'success');
+            })
+            .catch((error) => {
+                // Reset button
+                googleBtn.innerHTML = originalContent;
+                googleBtn.disabled = false;
+                
+                console.error("Google sign in error:", error);
+                showToast(error.message, 'error');
+            });
+    }
 
-        // Login Form with Updated Animations
-        document.getElementById('login-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const errorEl = document.getElementById('login-error');
-            const submitBtn = document.getElementById('login-submit-btn');
-            
-            if (!validateEmail(email)) {
-                errorEl.textContent = "Please enter a valid email address.";
-                submitBtn.style.animation = 'shake 0.5s';
-                setTimeout(() => submitBtn.style.animation = '', 500);
-                return;
-            }
-            
-            // Show loading animation
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<div class="spinner"></div>';
-            submitBtn.disabled = true;
-            
-            auth.signInWithEmailAndPassword(email, password)
-                .then(() => {
-                    // Success will be handled by auth state change
-                })
-                .catch(error => {
-                    // Reset button
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                    errorEl.textContent = error.message;
-                    
-                    // Error animation
-                    submitBtn.style.animation = 'shake 0.5s';
-                    setTimeout(() => {
-                        submitBtn.style.animation = '';
-                    }, 500);
-                    
-                    showToast('Login failed. Please check your credentials.', 'error');
-                });
-        });
-
-        // Signup Form with Updated Animations
-        document.getElementById('signup-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const fullName = document.getElementById('signup-fullname').value;
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-            const confirmPassword = document.getElementById('signup-confirm-password').value;
-            const errorEl = document.getElementById('signup-error');
-            const submitBtn = document.getElementById('signup-submit-btn');
-            
-            if (fullName.length < 2) {
-                errorEl.textContent = "Please enter a valid full name.";
-                submitBtn.style.animation = 'shake 0.5s';
-                setTimeout(() => submitBtn.style.animation = '', 500);
-                return;
-            }
-            
-            if (!validateEmail(email)) {
-                errorEl.textContent = "Please enter a valid email address.";
-                submitBtn.style.animation = 'shake 0.5s';
-                setTimeout(() => submitBtn.style.animation = '', 500);
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                errorEl.textContent = "Passwords do not match.";
-                submitBtn.style.animation = 'shake 0.5s';
-                setTimeout(() => submitBtn.style.animation = '', 500);
-                return;
-            }
-            
-            if (password.length < 6) {
-                errorEl.textContent = "Password must be at least 6 characters.";
-                submitBtn.style.animation = 'shake 0.5s';
-                setTimeout(() => submitBtn.style.animation = '', 500);
-                return;
-            }
-            
-            // Show loading animation
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<div class="spinner"></div>';
-            submitBtn.disabled = true;
-            
+    // --- AUTHENTICATION ---
+    auth.onAuthStateChanged(async user => {
+        const initialLoader = document.getElementById('initial-loader');
+        
+        if (user) {
             try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
+                const userDoc = await db.collection('users').doc(user.uid).get();
                 
-                await db.collection('users').doc(user.uid).set({
-                    uid: user.uid,
-                    email: user.email,
-                    fullName: fullName,
-                    walletBalance: 0,
-                    totalSpent: 0,
-                    userNumber: Date.now(),
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    banned: false
-                });
+                if (!userDoc.exists) {
+                    const usersSnapshot = await db.collection('users').get();
+                    const userNumber = usersSnapshot.size + 1;
+                    
+                    await db.collection('users').doc(user.uid).set({
+                        uid: user.uid,
+                        email: user.email,
+                        fullName: user.displayName || 'User',
+                        walletBalance: 0,
+                        totalSpent: 0,
+                        userNumber: userNumber,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        banned: false
+                    });
+                    
+                    userData = await db.collection('users').doc(user.uid).get().then(doc => doc.data());
+                    
+                } else {
+                    userData = userDoc.data();
+                }
                 
+                if (userData.banned) {
+                    initialLoader.style.display = 'none';
+                    document.getElementById('auth-view').classList.add('d-none');
+                    document.getElementById('app-view').classList.add('d-none');
+                    document.getElementById('ban-screen').classList.remove('d-none');
+                    return;
+                }
+                
+                currentUser = user;
+                
+                // Update profile picture
+                updateProfilePicture();
+                
+                // Hide initial loader
+                initialLoader.style.display = 'none';
+                
+                // Show app view immediately
+                document.getElementById('auth-view').classList.add('d-none');
+                document.getElementById('app-view').classList.remove('d-none');
+                
+                // Initialize app
+                await initializeApp();
+                
+                // Switch to home page
+                switchAppPage('home-page');
+                
+                // Show welcome toast
+                showToast('Welcome back!', 'success');
+                
+            } catch (error) {
+                console.error("Error checking user:", error);
+                initialLoader.style.display = 'none';
+                showToast('Error loading user data', 'error');
+                await auth.signOut();
+            }
+        } else {
+            currentUser = null;
+            initialLoader.style.display = 'none';
+            document.getElementById('auth-view').classList.remove('d-none');
+            document.getElementById('app-view').classList.add('d-none');
+            document.getElementById('ban-screen').classList.add('d-none');
+            showAuthSubView('login-view');
+            
+            // রিসেট অ্যানিমেশন
+            document.querySelectorAll('.auth-container').forEach(container => {
+                container.classList.remove('slide-out');
+            });
+        }
+    });
+
+    // Login Form with Updated Animations
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const errorEl = document.getElementById('login-error');
+        const submitBtn = document.getElementById('login-submit-btn');
+        
+        if (!validateEmail(email)) {
+            errorEl.textContent = "Please enter a valid email address.";
+            submitBtn.style.animation = 'shake 0.5s';
+            setTimeout(() => submitBtn.style.animation = '', 500);
+            return;
+        }
+        
+        // Show loading animation
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<div class="spinner"></div>';
+        submitBtn.disabled = true;
+        
+        auth.signInWithEmailAndPassword(email, password)
+            .then(() => {
                 // Success will be handled by auth state change
-                showToast('Account created successfully! Welcome to TOPUP HUB', 'success');
-                
-            } catch(error) {
-                console.error("Signup error details:", error);
-                
+            })
+            .catch(error => {
                 // Reset button
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
-                submitBtn.style.animation = 'shake 0.5s';
-                setTimeout(() => submitBtn.style.animation = '', 500);
-                
-                if (error.code === 'auth/email-already-in-use') {
-                    errorEl.textContent = "This email is already registered. Please login instead.";
-                    showToast('Email already registered. Please login.', 'warning');
-                } else if (error.code === 'auth/weak-password') {
-                    errorEl.textContent = "Password is too weak. Please use a stronger password.";
-                } else if (error.code === 'auth/invalid-email') {
-                    errorEl.textContent = "Invalid email address.";
-                } else if (error.code === 'auth/operation-not-allowed') {
-                    errorEl.textContent = "Signup is currently disabled. Please contact support.";
-                } else {
-                    errorEl.textContent = error.message || "Signup failed. Please try again.";
-                }
-            }
-        });
-
-        // Google Sign In Buttons
-        document.getElementById('google-login-btn').addEventListener('click', () => {
-            signInWithGoogle(false);
-        });
-
-        document.getElementById('google-signup-btn').addEventListener('click', () => {
-            signInWithGoogle(true);
-        });
-
-        // Logout
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            auth.signOut();
-            showToast('Logged out successfully', 'info');
-        });
-
-        // Ban Screen Close Button
-        document.getElementById('ban-close-btn').addEventListener('click', () => {
-            window.close();
-            showToast('App will now close', 'info');
-        });
-
-        // Forgot Password
-        document.getElementById('forgot-password-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('reset-email').value;
-            const messageEl = document.getElementById('reset-message');
-            
-            if (!validateEmail(email)) {
-                messageEl.style.color = 'var(--danger)';
-                messageEl.textContent = 'Please enter a valid email address.';
-                return;
-            }
-            
-            auth.sendPasswordResetEmail(email)
-                .then(() => {
-                    messageEl.style.color = 'var(--success)';
-                    messageEl.textContent = 'Password reset email sent! Check your inbox.';
-                    showToast('Password reset email sent successfully!', 'success');
-                })
-                .catch(error => {
-                    messageEl.style.color = 'var(--danger)';
-                    messageEl.textContent = error.message;
-                    showToast('Failed to send reset email. Please try again.', 'error');
-                });
-        });
-
-        // Auth View Switching
-        document.getElementById('show-signup-link').addEventListener('click', (e) => {
-            e.preventDefault();
-            showAuthSubView('signup-view');
-        });
-        
-        document.getElementById('show-login-link').addEventListener('click', (e) => {
-            e.preventDefault();
-            showAuthSubView('login-view');
-        });
-        
-        document.getElementById('forgot-password-link').addEventListener('click', (e) => {
-            e.preventDefault();
-            showAuthSubView('forgot-password-view');
-        });
-        
-        document.getElementById('back-to-login-link').addEventListener('click', (e) => {
-            e.preventDefault();
-            showAuthSubView('login-view');
-        });
-        
-        // Profile icon click handler
-        document.getElementById('profile-icon-header').addEventListener('click', () => {
-            switchAppPage('account-page');
-        });
-        
-        // Account action cards
-        document.getElementById('edit-profile-action').addEventListener('click', () => {
-            openEditProfileModal();
-        });
-        
-        document.getElementById('change-password-action').addEventListener('click', () => {
-            openEditProfileModal();
-        });
-        
-        document.getElementById('privacy-action').addEventListener('click', () => {
-            loadPrivacyPage();
-            switchAppPage('privacy-page');
-        });
-        
-        document.getElementById('help-action').addEventListener('click', () => {
-            document.getElementById('help-support-modal').classList.remove('d-none');
-        });
-        
-        // Help & Support Modal Close
-        document.getElementById('help-modal-close').addEventListener('click', () => {
-            document.getElementById('help-support-modal').classList.add('d-none');
-        });
-        
-        // Edit Profile Modal
-        const editProfileModal = document.getElementById('edit-profile-modal');
-        const editProfileForm = document.getElementById('edit-profile-form');
-        
-        editProfileModal.querySelector('.modal-close').addEventListener('click', () => {
-            editProfileModal.classList.add('d-none');
-        });
-        
-        editProfileForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const fullName = document.getElementById('edit-fullname').value;
-            const oldPassword = document.getElementById('edit-old-password').value;
-            const newPassword = document.getElementById('edit-new-password').value;
-            const confirmPassword = document.getElementById('edit-confirm-password').value;
-            const errorEl = document.getElementById('edit-profile-error');
-            
-            try {
-                if (fullName !== userData.fullName) {
-                    await db.collection('users').doc(currentUser.uid).update({
-                        fullName: fullName
-                    });
-                }
-                
-                if (oldPassword && newPassword) {
-                    if (newPassword !== confirmPassword) {
-                        throw new Error('New passwords do not match.');
-                    }
-                    
-                    if (newPassword.length < 6) {
-                        throw new Error('New password must be at least 6 characters.');
-                    }
-                    
-                    const credential = firebase.auth.EmailAuthProvider.credential(
-                        currentUser.email, 
-                        oldPassword
-                    );
-                    
-                    await currentUser.reauthenticateWithCredential(credential);
-                    
-                    await currentUser.updatePassword(newPassword);
-                    
-                    await db.collection('users').doc(currentUser.uid).update({
-                        password: newPassword
-                    });
-                }
-                
-                showToast('Profile updated successfully!', 'success');
-                editProfileModal.classList.add('d-none');
-                loadAccountData();
-            } catch (error) {
                 errorEl.textContent = error.message;
-            }
-        });
-        
-        function openEditProfileModal() {
-            document.getElementById('edit-fullname').value = userData.fullName || '';
-            document.getElementById('edit-old-password').value = '';
-            document.getElementById('edit-new-password').value = '';
-            document.getElementById('edit-confirm-password').value = '';
-            document.getElementById('edit-profile-error').textContent = '';
-            editProfileModal.classList.remove('d-none');
-        }
-        
-        // --- FIRESTORE DATA & APP LOGIC ---
-        async function initializeApp() {
-            try {
-                await Promise.all([
-                    loadSettings(),
-                    loadContactInfo(),
-                    loadSupportInfo(),
-                    loadProductItems()
-                ]);
                 
-                await initializeFixedProducts();
-                await loadDynamicProducts();
+                // Error animation
+                submitBtn.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    submitBtn.style.animation = '';
+                }, 500);
                 
-                listenToUserData();
-                setupAllPasswordToggles();
-                setupCopyButtons();
-                setupProductCardListeners();
-            } catch (error) {
-                console.error("Error initializing app:", error);
-                showToast('Error loading app data', 'error');
-            }
-        }
+                showToast('Login failed. Please check your credentials.', 'error');
+            });
+    });
 
-        // ফিক্সড প্রোডাক্ট ইনিশিয়ালাইজেশন - অপটিমাইজড ভার্সন
-        async function initializeFixedProducts() {
-            try {
-                // 1. ফিক্সড ক্যাটাগরি চেক/ক্রিয়েট
-                const categoryQuery = await db.collection('categories')
-                    .where('name', '==', 'FREE FIRE TOPUP')
-                    .limit(1)
+    // Signup Form with Updated Animations
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fullName = document.getElementById('signup-fullname').value;
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
+        const confirmPassword = document.getElementById('signup-confirm-password').value;
+        const errorEl = document.getElementById('signup-error');
+        const submitBtn = document.getElementById('signup-submit-btn');
+        
+        if (fullName.length < 2) {
+            errorEl.textContent = "Please enter a valid full name.";
+            submitBtn.style.animation = 'shake 0.5s';
+            setTimeout(() => submitBtn.style.animation = '', 500);
+            return;
+        }
+        
+        if (!validateEmail(email)) {
+            errorEl.textContent = "Please enter a valid email address.";
+            submitBtn.style.animation = 'shake 0.5s';
+            setTimeout(() => submitBtn.style.animation = '', 500);
+            return;
+        }
+        
+        if (password !== confirmPassword) {
+            errorEl.textContent = "Passwords do not match.";
+            submitBtn.style.animation = 'shake 0.5s';
+            setTimeout(() => submitBtn.style.animation = '', 500);
+            return;
+        }
+        
+        if (password.length < 6) {
+            errorEl.textContent = "Password must be at least 6 characters.";
+            submitBtn.style.animation = 'shake 0.5s';
+            setTimeout(() => submitBtn.style.animation = '', 500);
+            return;
+        }
+        
+        // Show loading animation
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<div class="spinner"></div>';
+        submitBtn.disabled = true;
+        
+        try {
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+            
+            await db.collection('users').doc(user.uid).set({
+                uid: user.uid,
+                email: user.email,
+                fullName: fullName,
+                walletBalance: 0,
+                totalSpent: 0,
+                userNumber: Date.now(),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                banned: false
+            });
+            
+            // Success will be handled by auth state change
+            showToast('Account created successfully! Welcome to TOPUP HUB', 'success');
+            
+        } catch(error) {
+            console.error("Signup error details:", error);
+            
+            // Reset button
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            submitBtn.style.animation = 'shake 0.5s';
+            setTimeout(() => submitBtn.style.animation = '', 500);
+            
+            if (error.code === 'auth/email-already-in-use') {
+                errorEl.textContent = "This email is already registered. Please login instead.";
+                showToast('Email already registered. Please login.', 'warning');
+            } else if (error.code === 'auth/weak-password') {
+                errorEl.textContent = "Password is too weak. Please use a stronger password.";
+            } else if (error.code === 'auth/invalid-email') {
+                errorEl.textContent = "Invalid email address.";
+            } else if (error.code === 'auth/operation-not-allowed') {
+                errorEl.textContent = "Signup is currently disabled. Please contact support.";
+            } else {
+                errorEl.textContent = error.message || "Signup failed. Please try again.";
+            }
+        }
+    });
+
+    // Google Sign In Buttons
+    document.getElementById('google-login-btn').addEventListener('click', () => {
+        signInWithGoogle(false);
+    });
+
+    document.getElementById('google-signup-btn').addEventListener('click', () => {
+        signInWithGoogle(true);
+    });
+
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        auth.signOut();
+        showToast('Logged out successfully', 'info');
+    });
+
+    // Ban Screen Close Button
+    document.getElementById('ban-close-btn').addEventListener('click', () => {
+        window.close();
+        showToast('App will now close', 'info');
+    });
+
+    // Forgot Password
+    document.getElementById('forgot-password-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('reset-email').value;
+        const messageEl = document.getElementById('reset-message');
+        
+        if (!validateEmail(email)) {
+            messageEl.style.color = 'var(--danger)';
+            messageEl.textContent = 'Please enter a valid email address.';
+            return;
+        }
+        
+        auth.sendPasswordResetEmail(email)
+            .then(() => {
+                messageEl.style.color = 'var(--success)';
+                messageEl.textContent = 'Password reset email sent! Check your inbox.';
+                showToast('Password reset email sent successfully!', 'success');
+            })
+            .catch(error => {
+                messageEl.style.color = 'var(--danger)';
+                messageEl.textContent = error.message;
+                showToast('Failed to send reset email. Please try again.', 'error');
+            });
+    });
+
+    // Auth View Switching
+    document.getElementById('show-signup-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showAuthSubView('signup-view');
+    });
+    
+    document.getElementById('show-login-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showAuthSubView('login-view');
+    });
+    
+    document.getElementById('forgot-password-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showAuthSubView('forgot-password-view');
+    });
+    
+    document.getElementById('back-to-login-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showAuthSubView('login-view');
+    });
+    
+    // Profile icon click handler
+    document.getElementById('profile-icon-header').addEventListener('click', () => {
+        switchAppPage('account-page');
+    });
+    
+    // Account action cards
+    document.getElementById('edit-profile-action').addEventListener('click', () => {
+        openEditProfileModal();
+    });
+    
+    document.getElementById('change-password-action').addEventListener('click', () => {
+        openEditProfileModal();
+    });
+    
+    document.getElementById('privacy-action').addEventListener('click', () => {
+        showToast('Privacy & Security features coming soon!', 'info');
+    });
+    
+    document.getElementById('help-action').addEventListener('click', () => {
+        showToast('Help & Support features coming soon!', 'info');
+    });
+    
+    // Edit Profile Modal
+    const editProfileModal = document.getElementById('edit-profile-modal');
+    const editProfileForm = document.getElementById('edit-profile-form');
+    
+    editProfileModal.querySelector('.modal-close').addEventListener('click', () => {
+        editProfileModal.classList.add('d-none');
+    });
+    
+    editProfileForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const fullName = document.getElementById('edit-fullname').value;
+        const oldPassword = document.getElementById('edit-old-password').value;
+        const newPassword = document.getElementById('edit-new-password').value;
+        const confirmPassword = document.getElementById('edit-confirm-password').value;
+        const errorEl = document.getElementById('edit-profile-error');
+        
+        try {
+            if (fullName !== userData.fullName) {
+                await db.collection('users').doc(currentUser.uid).update({
+                    fullName: fullName
+                });
+            }
+            
+            if (oldPassword && newPassword) {
+                if (newPassword !== confirmPassword) {
+                    throw new Error('New passwords do not match.');
+                }
+                
+                if (newPassword.length < 6) {
+                    throw new Error('New password must be at least 6 characters.');
+                }
+                
+                const credential = firebase.auth.EmailAuthProvider.credential(
+                    currentUser.email, 
+                    oldPassword
+                );
+                
+                await currentUser.reauthenticateWithCredential(credential);
+                
+                await currentUser.updatePassword(newPassword);
+                
+                await db.collection('users').doc(currentUser.uid).update({
+                    password: newPassword
+                });
+            }
+            
+            showToast('Profile updated successfully!', 'success');
+            editProfileModal.classList.add('d-none');
+            loadAccountData();
+        } catch (error) {
+            errorEl.textContent = error.message;
+        }
+    });
+    
+    function openEditProfileModal() {
+        document.getElementById('edit-fullname').value = userData.fullName || '';
+        document.getElementById('edit-old-password').value = '';
+        document.getElementById('edit-new-password').value = '';
+        document.getElementById('edit-confirm-password').value = '';
+        document.getElementById('edit-profile-error').textContent = '';
+        editProfileModal.classList.remove('d-none');
+    }
+    
+    // --- FIRESTORE DATA & APP LOGIC ---
+    async function initializeApp() {
+        try {
+            await loadSettings();
+            await loadContactInfo();
+            await loadSupportInfo();
+            await initializeFixedProducts();
+            await loadProductItems();
+            await loadDynamicProducts();
+            listenToUserData();
+            setupAllPasswordToggles();
+            setupCopyButtons();
+            setupProductCardListeners();
+        } catch (error) {
+            console.error("Error initializing app:", error);
+            showToast('Error loading app data', 'error');
+        }
+    }
+
+    // ফিক্সড প্রোডাক্ট ইনিশিয়ালাইজেশন
+    async function initializeFixedProducts() {
+        try {
+            // 1. ফিক্সড ক্যাটাগরি চেক/ক্রিয়েট
+            const categoryQuery = await db.collection('categories')
+                .where('name', '==', 'FREE FIRE TOPUP')
+                .get();
+            
+            let fixedCategoryId;
+            if (categoryQuery.empty) {
+                // ক্যাটাগরি তৈরি করুন
+                const newCategoryRef = await db.collection('categories').add({
+                    name: 'FREE FIRE TOPUP',
+                    isFixed: true,
+                    order: 0,
+                    status: 'Active',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                fixedCategoryId = newCategoryRef.id;
+            } else {
+                fixedCategoryId = categoryQuery.docs[0].id;
+            }
+            
+            // 2. ফিক্সড প্রোডাক্টগুলো চেক/ক্রিয়েট
+            for (const [productId, productData] of Object.entries(fixedProductsData)) {
+                const productQuery = await db.collection('products')
+                    .where('name', '==', productData.name)
+                    .where('category', '==', 'FREE FIRE TOPUP')
                     .get();
                 
-                let fixedCategoryId;
-                if (categoryQuery.empty) {
-                    // ক্যাটাগরি তৈরি করুন
-                    const newCategoryRef = await db.collection('categories').add({
-                        name: 'FREE FIRE TOPUP',
+                if (productQuery.empty) {
+                    // প্রোডাক্ট তৈরি করুন
+                    await db.collection('products').add({
+                        id: productId,
+                        name: productData.name,
+                        category: 'FREE FIRE TOPUP',
+                        categoryId: fixedCategoryId,
+                        imageUrl: productData.imageUrl,
                         isFixed: true,
-                        order: 0,
                         status: 'Active',
+                        order: Object.keys(fixedProductsData).indexOf(productId),
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    fixedCategoryId = newCategoryRef.id;
-                } else {
-                    fixedCategoryId = categoryQuery.docs[0].id;
                 }
-                
-                // 2. ফিক্সড প্রোডাক্টগুলো চেক/ক্রিয়েট (batch update)
-                const batch = db.batch();
-                
-                for (const [productId, productData] of Object.entries(fixedProductsData)) {
-                    const productQuery = await db.collection('products')
-                        .where('name', '==', productData.name)
-                        .where('category', '==', 'FREE FIRE TOPUP')
-                        .limit(1)
-                        .get();
-                    
-                    if (productQuery.empty) {
-                        // প্রোডাক্ট তৈরি করুন
-                        const productRef = db.collection('products').doc();
-                        batch.set(productRef, {
-                            id: productId,
-                            name: productData.name,
-                            category: 'FREE FIRE TOPUP',
-                            categoryId: fixedCategoryId,
-                            imageUrl: productData.imageUrl,
-                            isFixed: true,
-                            status: 'Active',
-                            order: Object.keys(fixedProductsData).indexOf(productId),
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                    }
-                }
-                
-                await batch.commit();
-                
-            } catch (error) {
-                console.error("Error initializing fixed products:", error);
             }
+            
+        } catch (error) {
+            console.error("Error initializing fixed products:", error);
         }
+    }
 
-        // ডাইনামিক প্রোডাক্ট লোড করবে (Firestore থেকে) - অপটিমাইজড
-        async function loadDynamicProducts() {
-            try {
-                const dynamicContainer = document.getElementById('dynamic-categories-container');
-                dynamicContainer.innerHTML = '';
+    // ডাইনামিক প্রোডাক্ট লোড করবে (Firestore থেকে)
+    async function loadDynamicProducts() {
+        try {
+            const dynamicContainer = document.getElementById('dynamic-categories-container');
+            dynamicContainer.innerHTML = '';
+            
+            // 1. সব ক্যাটাগরি লোড করুন
+            const categoriesSnap = await db.collection('categories')
+                .orderBy('order', 'asc')
+                .get();
+            
+            // 2. "FREE FIRE TOPUP" বাদে সব ক্যাটাগরি নিন
+            const categories = categoriesSnap.docs
+                .map(doc => ({ 
+                    id: doc.id, 
+                    ...doc.data() 
+                }))
+                .filter(cat => cat.name !== 'FREE FIRE TOPUP');
+            
+            // 3. সব প্রোডাক্ট লোড করুন
+            const productsSnap = await db.collection('products')
+                .orderBy('order', 'asc')
+                .get();
+            
+            // 4. ফিক্সড প্রোডাক্টের নামগুলোর লিস্ট
+            const fixedProductNames = [
+                'LEVEL UP PASS',
+                'UID TOPUP [BD]', 
+                'UNIPIN VOUCHER',
+                'Weekly Monthly Offer'
+            ];
+            
+            // 5. ফিক্সড প্রোডাক্ট বাদ দিন
+            const products = productsSnap.docs
+                .map(doc => ({ 
+                    id: doc.id, 
+                    ...doc.data() 
+                }))
+                .filter(p => !fixedProductNames.includes(p.name));
+            
+            // 6. প্রোডাক্টগুলোকে ক্যাটাগরি অনুযায়ী গ্রুপ করুন
+            const productsByCategory = {};
+            categories.forEach(cat => {
+                productsByCategory[cat.name] = products.filter(p => p.category === cat.name);
+            });
+            
+            // 7. UI তৈরি করুন
+            categories.forEach(category => {
+                const categoryProducts = productsByCategory[category.name] || [];
                 
-                // Parallell requests for better performance
-                const [categoriesSnap, productsSnap] = await Promise.all([
-                    db.collection('categories')
-                        .orderBy('order', 'asc')
-                        .get(),
-                    db.collection('products')
-                        .orderBy('order', 'asc')
-                        .get()
-                ]);
+                if (categoryProducts.length === 0) return;
                 
-                // "FREE FIRE TOPUP" বাদে সব ক্যাটাগরি নিন
-                const categories = categoriesSnap.docs
-                    .map(doc => ({ 
-                        id: doc.id, 
-                        ...doc.data() 
-                    }))
-                    .filter(cat => cat.name !== 'FREE FIRE TOPUP');
+                const categorySection = document.createElement('div');
+                categorySection.className = 'category-section';
+                categorySection.innerHTML = `
+                    <div class="category-title-wrapper">
+                        <div class="title-line"></div>
+                        <h2 class="category-title">${category.name}</h2>
+                        <div class="title-line"></div>
+                    </div>
+                `;
                 
-                // ফিক্সড প্রোডাক্টের নামগুলোর লিস্ট
-                const fixedProductNames = [
-                    'LEVEL UP PASS',
-                    'UID TOPUP [BD]', 
-                    'UNIPIN VOUCHER',
-                    'Weekly Monthly Offer'
-                ];
+                const grid = document.createElement('div');
+                grid.className = 'product-grid';
                 
-                // ফিক্সড প্রোডাক্ট বাদ দিন
-                const products = productsSnap.docs
-                    .map(doc => ({ 
-                        id: doc.id, 
-                        ...doc.data() 
-                    }))
-                    .filter(p => !fixedProductNames.includes(p.name));
+                const displayProducts = categoryProducts.slice(0, 10);
                 
-                // প্রোডাক্টগুলোকে ক্যাটাগরি অনুযায়ী গ্রুপ করুন
-                const productsByCategory = {};
-                categories.forEach(cat => {
-                    productsByCategory[cat.name] = products.filter(p => p.category === cat.name);
-                });
-                
-                // UI তৈরি করুন
-                categories.forEach(category => {
-                    const categoryProducts = productsByCategory[category.name] || [];
+                displayProducts.forEach(product => {
+                    const isOutOfStock = product.status === 'Out of Stock';
+                    const isComingSoon = product.status === 'Coming Soon';
                     
-                    if (categoryProducts.length === 0) return;
-                    
-                    const categorySection = document.createElement('div');
-                    categorySection.className = 'category-section';
-                    categorySection.innerHTML = `
-                        <div class="category-title-wrapper">
-                            <div class="title-line"></div>
-                            <h2 class="category-title">${category.name}</h2>
-                            <div class="title-line"></div>
+                    grid.innerHTML += `
+                        <div class="product-card ${isOutOfStock ? 'out-of-stock' : ''}" 
+                             data-product-id="${product.id}"
+                             data-product-name="${product.name}"
+                             data-product-image="${product.imageUrl}"
+                             data-product-category="${product.category}"
+                             data-is-fixed="false">
+                            ${isComingSoon ? '<span class="coming-soon-badge">Coming Soon</span>' : ''}
+                            <img src="${product.imageUrl}" alt="${product.name}" loading="lazy" 
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/100x100?text=${encodeURIComponent(product.name)}';">
+                            <div class="product-info">
+                                <div class="product-name">${product.name}</div>
+                            </div>
                         </div>
                     `;
-                    
-                    const grid = document.createElement('div');
-                    grid.className = 'product-grid';
-                    
-                    const displayProducts = categoryProducts.slice(0, 10);
-                    
-                    displayProducts.forEach(product => {
-                        const isOutOfStock = product.status === 'Out of Stock';
-                        const isComingSoon = product.status === 'Coming Soon';
-                        
-                        grid.innerHTML += `
-                            <div class="product-card ${isOutOfStock ? 'out-of-stock' : ''}" 
-                                 data-product-id="${product.id}"
-                                 data-product-name="${product.name}"
-                                 data-product-image="${product.imageUrl}"
-                                 data-product-category="${product.category}"
-                                 data-is-fixed="false">
-                                ${isComingSoon ? '<span class="coming-soon-badge">Coming Soon</span>' : ''}
-                                <img src="${product.imageUrl}" alt="${product.name}" loading="lazy" 
-                                     onerror="this.onerror=null; this.src='https://via.placeholder.com/100x100?text=${encodeURIComponent(product.name)}';">
-                                <div class="product-info">
-                                    <div class="product-name">${product.name}</div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    
-                    categorySection.appendChild(grid);
-                    dynamicContainer.appendChild(categorySection);
                 });
                 
-            } catch (error) {
-                console.error("Error loading dynamic products:", error);
-                showToast('Error loading products', 'error');
-            }
+                categorySection.appendChild(grid);
+                dynamicContainer.appendChild(categorySection);
+            });
+            
+        } catch (error) {
+            console.error("Error loading dynamic products:", error);
+            showToast('Error loading products', 'error');
         }
+    }
 
-        // প্রোডাক্ট আইটেম লোড করবে - অপটিমাইজড ভার্সন
-        async function loadProductItems() {
-            try {
-                const snapshot = await db.collection('product_items')
-                    .where('status', '==', 'In Stock')
-                    .get();
+    // প্রোডাক্ট আইটেম লোড করবে - আপডেট করা ভার্সন
+    async function loadProductItems() {
+        try {
+            const snapshot = await db.collection('product_items').get();
+            
+            productItems = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
                 
-                productItems = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    
+                // শুধুমাত্র "In Stock" স্ট্যাটাসের আইটেম যোগ করুন
+                const status = data.status || '';
+                const isInStock = status.toLowerCase() === 'in stock';
+                
+                if (isInStock) {
                     // অফার ক্যালকুলেশন
                     if (data.isSpecialOffer && data.offerStartDate && data.offerDuration) {
                         try {
@@ -4091,1005 +4073,1002 @@
                     } else {
                         productItems.push({ id: doc.id, ...data });
                     }
-                });
-                
-                console.log(`Total product items loaded: ${productItems.length}`);
-                
-            } catch (error) {
-                console.error("Error loading product items: ", error);
-                productItems = [];
-                showToast('Error loading products', 'error');
-            }
-        }
-
-        // প্রোডাক্ট ডিটেইল পেজে রিচার্জ অপশন জেনারেট করবে - ফিক্সড প্রোডাক্টের জন্য সঠিক লজিক
-        function generateRechargeOptions(productId, isFixed = false) {
-            const rechargeOptionsEl = document.getElementById('recharge-options');
-            rechargeOptionsEl.innerHTML = '';
-            
-            // ডিবাগিং এর জন্য
-            console.log(`Generating recharge options for product: ${productId}, isFixed: ${isFixed}`);
-            console.log(`Current product name: ${currentProduct?.name}`);
-            console.log(`Total product items available: ${productItems.length}`);
-            
-            // ফিল্টারিং লজিক - ফিক্সড প্রোডাক্টের জন্য নামের exact ম্যাচ
-            let cardProductItems = productItems.filter(item => {
-                if (isFixed) {
-                    // ফিক্সড প্রোডাক্টের জন্য productName exact ম্যাচ
-                    if (currentProduct?.name && item.productName) {
-                        return item.productName.trim() === currentProduct.name.trim();
-                    }
-                    return false;
-                } else {
-                    // ডাইনামিক প্রোডাক্টের জন্য productCardId ম্যাচ
-                    return item.productCardId === productId;
                 }
             });
             
-            // ডিবাগিং ইনফো
-            console.log(`Found ${cardProductItems.length} items for this product`);
+            console.log(`Total product items loaded: ${productItems.length}`);
             
-            // যদি কোনো আইটেম না পাওয়া যায়
-            if (cardProductItems.length === 0) {
-                rechargeOptionsEl.innerHTML = `
-                    <div class="text-center" style="grid-column: 1 / -1; padding: 20px; color: var(--text-light);">
-                        <i class="fas fa-box-open" style="margin-right: 8px;"></i>
-                        No recharge options available for this product yet. Please check back later!
-                    </div>
-                `;
+        } catch (error) {
+            console.error("Error loading product items: ", error);
+            productItems = [];
+            showToast('Error loading products', 'error');
+        }
+    }
+
+    // প্রোডাক্ট ডিটেইল পেজে রিচার্জ অপশন জেনারেট করবে - সম্পূর্ণ ফিক্সড ভার্সন
+    function generateRechargeOptions(productId, isFixed = false) {
+        const rechargeOptionsEl = document.getElementById('recharge-options');
+        rechargeOptionsEl.innerHTML = '';
+        
+        console.log(`Generating recharge options for:`, currentProduct);
+        console.log(`Product ID: ${productId}, isFixed: ${isFixed}`);
+        console.log(`Current Product Name: ${currentProduct?.name}`);
+        console.log(`Current Product Category: ${currentProduct?.category}`);
+        
+        let cardProductItems = [];
+        
+        if (isFixed) {
+            // ফিক্সড প্রোডাক্টের জন্য: প্রথমে ক্যাটাগরি ম্যাচ, তারপর productCardName ম্যাচ
+            cardProductItems = productItems.filter(item => {
+                // ১. ক্যাটাগরি ম্যাচ চেক করুন
+                if (item.category && currentProduct?.category) {
+                    const itemCategoryLower = item.category.trim().toLowerCase();
+                    const currentCategoryLower = currentProduct.category.trim().toLowerCase();
+                    
+                    if (itemCategoryLower !== currentCategoryLower) {
+                        // ক্যাটাগরি ম্যাচ না হলে স্কিপ করুন
+                        console.log(`Category mismatch: ${itemCategoryLower} vs ${currentCategoryLower}`);
+                        return false;
+                    }
+                    
+                    // ২. ক্যাটাগরি ম্যাচ হলে, এখন productCardName চেক করুন
+                    if (item.productCardName && currentProduct?.name) {
+                        const itemCardNameLower = item.productCardName.trim().toLowerCase();
+                        const currentProductNameLower = currentProduct.name.trim().toLowerCase();
+                        
+                        // productCardName এক্সাক্ট ম্যাচ করলে শো করবে
+                        if (itemCardNameLower === currentProductNameLower) {
+                            console.log(`Fixed: Exact productCardName match for ${currentProduct.name}: ${item.productCardName}`);
+                            return true;
+                        }
+                        
+                        // যদি productCardName না থাকে, কিন্তু productName ম্যাচ করে
+                        if (!item.productCardName && item.productName) {
+                            const itemNameLower = item.productName.trim().toLowerCase();
+                            if (itemNameLower.includes(currentProductNameLower) || 
+                                currentProductNameLower.includes(itemNameLower)) {
+                                console.log(`Fixed: Fallback to productName match: ${item.productName}`);
+                                return true;
+                            }
+                        }
+                    }
+                    
+                    // ৩. যদি productCardName না থাকে, কিন্তু আইটেমটি এই ফিক্সড কার্ডের জন্য নির্দিষ্ট করে রাখা হয়েছে
+                    if (!item.productCardName && item.productName) {
+                        // বিশেষ লজিক: আইটেমের নামে কার্ডের নাম থাকলে
+                        const itemNameLower = item.productName.trim().toLowerCase();
+                        const currentProductNameLower = currentProduct.name.trim().toLowerCase();
+                        
+                        // যদি আইটেমের নামে কার্ডের নাম কন্টেইন থাকে
+                        if (itemNameLower.includes(currentProductNameLower)) {
+                            console.log(`Fixed: Item name contains card name: ${item.productName}`);
+                            return true;
+                        }
+                        
+                        // বিশেষ ম্যাচিং ফিক্সড প্রোডাক্টের জন্য
+                        if (currentProductNameLower.includes("weekly monthly") && 
+                            (itemNameLower.includes("weekly") || itemNameLower.includes("monthly"))) {
+                            console.log(`Fixed: Special weekly/monthly match: ${item.productName}`);
+                            return true;
+                        }
+                        
+                        if (currentProductNameLower.includes("level up") && itemNameLower.includes("level")) {
+                            console.log(`Fixed: Special level up match: ${item.productName}`);
+                            return true;
+                        }
+                        
+                        if (currentProductNameLower.includes("uid topup") && 
+                            (itemNameLower.includes("uid") || itemNameLower.includes("diamond"))) {
+                            console.log(`Fixed: Special UID topup match: ${item.productName}`);
+                            return true;
+                        }
+                        
+                        if (currentProductNameLower.includes("unipin") && itemNameLower.includes("unipin")) {
+                            console.log(`Fixed: Special unipin match: ${item.productName}`);
+                            return true;
+                        }
+                    }
+                    
+                    return false;
+                }
+                
+                // ক্যাটাগরি ম্যাচ না হলে
+                console.log(`No category match for item: ${item.productName || item.id}`);
+                return false;
+            });
+        } else {
+            // ডাইনামিক প্রোডাক্টের জন্য আগের লজিক
+            cardProductItems = productItems.filter(item => {
+                if (item.productCardId && item.productCardId === productId) {
+                    console.log(`Dynamic: Found by productCardId: ${item.productCardId}`);
+                    return true;
+                }
+                
+                if (item.productId && item.productId === productId) {
+                    console.log(`Dynamic: Found by productId: ${item.productId}`);
+                    return true;
+                }
+                
+                if (currentProduct?.name && item.productName) {
+                    const itemNameLower = item.productName.trim().toLowerCase();
+                    const currentProductNameLower = currentProduct.name.trim().toLowerCase();
+                    
+                    if (itemNameLower === currentProductNameLower || 
+                        itemNameLower.includes(currentProductNameLower) || 
+                        currentProductNameLower.includes(itemNameLower)) {
+                        console.log(`Dynamic: Found by product name match: ${item.productName}`);
+                        return true;
+                    }
+                }
+                
+                return false;
+            });
+        }
+        
+        console.log(`Filtered items for ${currentProduct?.name}:`, cardProductItems);
+        console.log(`Total filtered items: ${cardProductItems.length}`);
+        
+        // যদি কোনো আইটেম না পাওয়া যায়
+        if (cardProductItems.length === 0) {
+            rechargeOptionsEl.innerHTML = `
+                <div class="no-items-message" style="grid-column: 1 / -1; padding: 30px; text-align: center; color: var(--text-light);">
+                    <i class="fas fa-box-open" style="font-size: 40px; margin-bottom: 15px; opacity: 0.5;"></i>
+                    <h3 style="margin-bottom: 10px;">No recharge options available</h3>
+                    <p style="font-size: 14px;">Please check back later or contact support</p>
+                </div>
+            `;
+            
+            console.warn(`No recharge items found for product: ${currentProduct?.name}`);
+            
+            return;
+        }
+        
+        // প্রাইস অনুযায়ী সাজান (ছোট থেকে বড়)
+        cardProductItems.sort((a, b) => (a.price || 0) - (b.price || 0));
+        
+        // HTML জেনারেট করুন
+        cardProductItems.forEach((item, index) => {
+            const isOutOfStock = item.status === 'Out of Stock' || (item.stock !== undefined && item.stock <= 0);
+            const hasOffer = item.isSpecialOffer === true && item.isActiveOffer === true;
+            const offerPercentage = item.offerPercentage || '';
+            const remainingDays = item.remainingDays || 0;
+            const price = item.price || 0;
+            const cost = item.cost || 0;
+            const itemName = item.name || 'Unknown Item';
+            
+            rechargeOptionsEl.innerHTML += `
+                <div class="recharge-item ${isOutOfStock ? 'out-of-stock' : ''}" 
+                     data-id="${item.id}" 
+                     data-cost="${cost}"
+                     data-price="${price}"
+                     data-name="${itemName}"
+                     title="${itemName} - ৳${price}">
+                    ${hasOffer ? `
+                        ${offerPercentage ? `<div class="offer-badge offer-percentage">${offerPercentage}% OFF</div>` : ''}
+                        ${remainingDays > 0 ? `<div class="offer-badge offer-duration">${remainingDays} DAY</div>` : ''}
+                    ` : ''}
+                    <span class="diamond-info">${itemName}</span>
+                    <span class="price-info">৳${price}</span>
+                </div>
+            `;
+        });
+        
+        // ক্লিক ইভেন্ট যোগ করুন
+        document.querySelectorAll('.recharge-item:not(.out-of-stock)').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.recharge-item').forEach(i => {
+                    i.classList.remove('selected');
+                });
+                item.classList.add('selected');
+                
+                selectedRechargeOption = {
+                    id: item.dataset.id,
+                    name: item.querySelector('.diamond-info').textContent,
+                    price: parseFloat(item.dataset.price),
+                    cost: parseFloat(item.dataset.cost)
+                };
+                
+                document.getElementById('cost-info').textContent = `৳ ${selectedRechargeOption.price}`;
+                updateBuyNowButtonState();
+            });
+        });
+        
+        // অটোমেটিকভাবে প্রথম আইটেম সিলেক্ট করুন
+        const firstAvailableItem = document.querySelector('.recharge-item:not(.out-of-stock)');
+        if (firstAvailableItem) {
+            firstAvailableItem.click();
+        }
+    }
+
+    // প্রোডাক্ট কার্ড ক্লিক হ্যান্ডলার সেটআপ
+    function setupProductCardListeners() {
+        document.getElementById('product-list').addEventListener('click', (e) => {
+            const card = e.target.closest('.product-card:not(.out-of-stock)');
+            if (card) {
+                const productId = card.dataset.productId;
+                const productName = card.dataset.productName;
+                const productImage = card.dataset.productImage;
+                const productCategory = card.dataset.productCategory;
+                const isFixed = card.dataset.isFixed === 'true';
+                
+                console.log(`Product card clicked:`, {
+                    productId,
+                    productName,
+                    productCategory,
+                    isFixed
+                });
+                
+                currentProduct = {
+                    id: productId,
+                    name: productName,
+                    imageUrl: productImage,
+                    category: productCategory,
+                    isFixed: isFixed
+                };
+                
+                openProductDetailPage();
+            }
+        });
+    }
+
+    // প্রোডাক্ট ডিটেইল পেজ ওপেন ফাংশন
+    function openProductDetailPage() {
+        if (!currentProduct) return;
+        
+        document.getElementById('product-detail-title').textContent = currentProduct.name;
+        
+        generateRechargeOptions(currentProduct.id, currentProduct.isFixed);
+        
+        resetProductDetailForm();
+        switchAppPage('product-detail-page');
+    }
+
+    // Load Contact Info from Firestore
+    async function loadContactInfo() {
+        try {
+            const settingsDoc = await db.collection('settings').doc('global').get();
+            
+            if (settingsDoc.exists) {
+                const settings = settingsDoc.data();
+                
+                if (settings.payment_numbers) {
+                    contactInfo = {
+                        bkash: settings.payment_numbers.bkash || "017XXXXXXXX",
+                        nagad: settings.payment_numbers.nagad || "017XXXXXXXX", 
+                        rocket: settings.payment_numbers.rocket || "017XXXXXXXX"
+                    };
+                    updateContactInfoUI();
+                    return;
+                }
+            }
+            
+            const configDoc = await db.collection('configs').doc('contact_info').get();
+            if (configDoc.exists) {
+                contactInfo = configDoc.data();
+                updateContactInfoUI();
+            } else {
+                updateContactInfoUI();
+            }
+        } catch (error) {
+            console.error("Error loading contact info: ", error);
+            updateContactInfoUI();
+        }
+    }
+
+    // Load Support Info from Firestore
+    async function loadSupportInfo() {
+        try {
+            const settingsDoc = await db.collection('settings').doc('global').get();
+            
+            if (settingsDoc.exists) {
+                const settings = settingsDoc.data();
+                
+                supportInfo = {
+                    support_email: settings.support_email || "support@topuphub.com",
+                    whatsapp_number: settings.whatsapp_number || "+8801234567890",
+                    telegram_link: settings.telegram_link || "@topuphub",
+                    youtube_link: settings.youtube_link || "https://youtube.com/topuphub",
+                    facebook_link: settings.facebook_link || "https://facebook.com/topuphub"
+                };
+                updateSupportInfoUI();
                 return;
             }
             
-            // প্রাইস অনুযায়ী সাজান
-            cardProductItems.sort((a, b) => (a.price || 0) - (b.price || 0));
+            const configDoc = await db.collection('configs').doc('support_info').get();
+            if (configDoc.exists) {
+                supportInfo = configDoc.data();
+                updateSupportInfoUI();
+            } else {
+                updateSupportInfoUI();
+            }
+        } catch (error) {
+            console.error("Error loading support info: ", error);
+            updateSupportInfoUI();
+        }
+    }
+
+    // Update UI with contact info
+    function updateContactInfoUI() {
+        if (contactInfo.bkash) {
+            const bkashNumberEl = document.getElementById('bkashNumber');
+            if (bkashNumberEl) bkashNumberEl.textContent = contactInfo.bkash;
+        }
+        if (contactInfo.nagad) {
+            const nagadNumberEl = document.getElementById('nagadNumber');
+            if (nagadNumberEl) nagadNumberEl.textContent = contactInfo.nagad;
+        }
+        if (contactInfo.rocket) {
+            const rocketNumberEl = document.getElementById('rocketNumber');
+            if (rocketNumberEl) rocketNumberEl.textContent = contactInfo.rocket;
+        }
+
+        if (contactInfo.bkash) {
+            const instantBkashNumberEl = document.getElementById('instant-bkash-number');
+            if (instantBkashNumberEl) instantBkashNumberEl.textContent = contactInfo.bkash;
+        }
+        if (contactInfo.nagad) {
+            const instantNagadNumberEl = document.getElementById('instant-nagad-number');
+            if (instantNagadNumberEl) instantNagadNumberEl.textContent = contactInfo.nagad;
+        }
+        if (contactInfo.rocket) {
+            const instantRocketNumberEl = document.getElementById('instant-rocket-number');
+            if (instantRocketNumberEl) instantRocketNumberEl.textContent = contactInfo.rocket;
+        }
+    }
+
+    // Update UI with support info
+    function updateSupportInfoUI() {
+        if (supportInfo.support_email) {
+            const supportEmailEl = document.getElementById('support-email');
+            const supportEmailLink = document.getElementById('support-email-link');
+            if (supportEmailEl) supportEmailEl.textContent = supportInfo.support_email;
+            if (supportEmailLink) supportEmailLink.href = `mailto:${supportInfo.support_email}`;
+        }
+
+        if (supportInfo.whatsapp_number) {
+            const whatsappNumberEl = document.getElementById('whatsapp-number');
+            const whatsappLink = document.getElementById('whatsapp-link');
+            if (whatsappNumberEl) whatsappNumberEl.textContent = supportInfo.whatsapp_number;
+            if (whatsappLink) whatsappLink.href = `https://wa.me/${supportInfo.whatsapp_number.replace('+', '')}`;
+        }
+
+        if (supportInfo.telegram_link) {
+            const telegramLinkTextEl = document.getElementById('telegram-link-text');
+            const telegramLink = document.getElementById('telegram-link');
+            if (telegramLinkTextEl) telegramLinkTextEl.textContent = supportInfo.telegram_link;
+            if (telegramLink) telegramLink.href = `https://t.me/${supportInfo.telegram_link.replace('@', '')}`;
+        }
+
+        if (supportInfo.youtube_link) {
+            const youtubeLink = document.getElementById('youtube-link');
+            if (youtubeLink) {
+                youtubeLink.href = supportInfo.youtube_link;
+            }
+        }
+
+        if (supportInfo.facebook_link) {
+            const facebookLink = document.getElementById('facebook-link');
+            if (facebookLink) {
+                facebookLink.href = supportInfo.facebook_link;
+            }
+        }
+    }
+
+    // Load Global Settings
+    async function loadSettings() {
+        try {
+            const doc = await db.collection('settings').doc('global').get();
+            const logoImg = document.getElementById('app-logo-img');
             
-            // HTML জেনারেট করুন
-            cardProductItems.forEach(item => {
-                const isOutOfStock = item.status === 'Out of Stock' || (item.stock !== undefined && item.stock <= 0);
-                const hasOffer = item.isSpecialOffer === true && item.isActiveOffer === true;
-                const offerPercentage = item.offerPercentage || '';
-                const remainingDays = item.remainingDays || 0;
-                const price = item.price || 0;
-                const cost = item.cost || 0;
+            if (doc.exists) {
+                const settings = doc.data();
+                globalSettings = settings;
                 
-                rechargeOptionsEl.innerHTML += `
-                    <div class="recharge-item ${isOutOfStock ? 'out-of-stock' : ''}" 
-                         data-id="${item.id}" 
-                         data-cost="${cost}"
-                         data-price="${price}"
-                         data-name="${item.name}">
-                        ${hasOffer ? `
-                            ${offerPercentage ? `<div class="offer-badge offer-percentage">${offerPercentage}% OFF</div>` : ''}
-                            ${remainingDays > 0 ? `<div class="offer-badge offer-duration">${remainingDays} DAY</div>` : ''}
-                        ` : ''}
-                        <span class="diamond-info">${item.name}</span>
-                        <span class="price-info">৳${price}</span>
+                if (settings.notice) {
+                    document.getElementById('support-notice-text').textContent = settings.notice;
+                }
+
+                if (settings.appLogo) {
+                    logoImg.onerror = function() {
+                        this.onerror = null;
+                        this.src = "https://i.ibb.co.com/BH4jgFWW/1767122546090.png";
+                    };
+                    logoImg.src = settings.appLogo;
+                } else {
+                    logoImg.src = "https://i.ibb.co.com/BH4jgFWW/1767122546090.png";
+                }
+                
+                const slider = document.getElementById('image-slider');
+                const sliderDots = document.getElementById('slider-dots');
+                slider.innerHTML = '';
+                sliderDots.innerHTML = '';
+                
+                const sliderData = [
+                    { url: settings.slider_url_1, link: settings.slider_link_1 },
+                    { url: settings.slider_url_2, link: settings.slider_link_2 },
+                    { url: settings.slider_url_3, link: settings.slider_link_3 }
+                ].filter(slide => slide.url);
+                
+                sliderData.forEach((slide, index) => {
+                    if (slide.url) {
+                        const slideDiv = document.createElement('div');
+                        slideDiv.className = 'slide';
+                        
+                        if (slide.link) {
+                            const link = document.createElement('a');
+                            link.href = slide.link;
+                            link.target = '_blank';
+                            link.rel = 'noopener noreferrer';
+                            
+                            const img = document.createElement('img');
+                            img.src = slide.url;
+                            img.alt = 'Banner';
+                            img.loading = 'lazy';
+                            img.onerror = function() {
+                                this.style.display = 'none';
+                            };
+                            
+                            link.appendChild(img);
+                            slideDiv.appendChild(link);
+                        } else {
+                            const img = document.createElement('img');
+                            img.src = slide.url;
+                            img.alt = 'Banner';
+                            img.loading = 'lazy';
+                            img.onerror = function() {
+                                this.style.display = 'none';
+                            };
+                            slideDiv.appendChild(img);
+                        }
+                        
+                        slider.appendChild(slideDiv);
+                        
+                        const dot = document.createElement('div');
+                        dot.className = `slider-dot ${index === 0 ? 'active' : ''}`;
+                        dot.dataset.index = index;
+                        sliderDots.appendChild(dot);
+                    }
+                });
+                
+                if (sliderData.length > 0) {
+                    initSlider();
+                }
+
+            } else {
+                const logoImg = document.getElementById('app-logo-img');
+                logoImg.src = "https://i.ibb.co.com/BH4jgFWW/1767122546090.png";
+                
+                try {
+                    const defaultSettings = {
+                        appName: 'TOPUP HUB',
+                        appLogo: 'https://i.ibb.co.com/BH4jgFWW/1767122546090.png',
+                        notice: 'Welcome to TOPUP HUB - Best Gaming Topup Service',
+                        minDepositAmount: 10,
+                        support_email: 'support@topuphub.com',
+                        whatsapp_number: '+8801234567890',
+                        telegram_link: '@topuphub',
+                        youtube_link: 'https://youtube.com/topuphub',
+                        facebook_link: 'https://facebook.com/topuphub',
+                        payment_numbers: {
+                            bkash: '017XXXXXXXX',
+                            nagad: '017XXXXXXXX',
+                            rocket: '017XXXXXXXX'
+                        },
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    
+                    db.collection('settings').doc('global').set(defaultSettings).catch(e => {
+                        console.log("Could not create default settings");
+                    });
+                    
+                } catch (error) {
+                    console.error("Error creating default settings:", error);
+                }
+            }
+            
+        } catch (error) {
+            console.error("Error loading settings: ", error);
+            const logoImg = document.getElementById('app-logo-img');
+            logoImg.src = "https://i.ibb.co.com/BH4jgFWW/1767122546090.png";
+        }
+    }
+
+    // Fixed Slider Implementation
+    function initSlider() {
+        const slider = document.getElementById('image-slider');
+        const dots = document.querySelectorAll('.slider-dot');
+        const totalSlides = slider.children.length;
+        
+        if (totalSlides <= 1) return;
+        
+        let currentIndex = 0;
+        let startX = 0;
+        let isDragging = false;
+        let autoScrollInterval;
+        let touchMoved = false;
+        
+        function goToSlide(index) {
+            currentIndex = (index + totalSlides) % totalSlides;
+            slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentIndex);
+            });
+        }
+        
+        function nextSlide() {
+            goToSlide(currentIndex + 1);
+        }
+        
+        function prevSlide() {
+            goToSlide(currentIndex - 1);
+        }
+        
+        function startAutoScroll() {
+            stopAutoScroll();
+            autoScrollInterval = setInterval(nextSlide, 4000);
+        }
+        
+        function stopAutoScroll() {
+            if (autoScrollInterval) {
+                clearInterval(autoScrollInterval);
+                autoScrollInterval = null;
+            }
+        }
+        
+        // Touch events
+        slider.parentElement.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+            touchMoved = false;
+            stopAutoScroll();
+        });
+        
+        slider.parentElement.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const currentX = e.touches[0].clientX;
+            const diff = startX - currentX;
+            
+            if (Math.abs(diff) > 10) {
+                touchMoved = true;
+            }
+        });
+        
+        slider.parentElement.addEventListener('touchend', (e) => {
+            if (!isDragging || !touchMoved) {
+                isDragging = false;
+                setTimeout(startAutoScroll, 3000);
+                return;
+            }
+            
+            const endX = e.changedTouches[0].clientX;
+            const diff = startX - endX;
+            
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+            
+            isDragging = false;
+            setTimeout(startAutoScroll, 3000);
+        });
+        
+        // Click events for dots
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const index = parseInt(dot.dataset.index);
+                goToSlide(index);
+                stopAutoScroll();
+                setTimeout(startAutoScroll, 3000);
+            });
+        });
+        
+        // Start auto scroll initially
+        startAutoScroll();
+        
+        // Pause on hover for desktop
+        if (window.innerWidth > 768) {
+            slider.parentElement.addEventListener('mouseenter', stopAutoScroll);
+            slider.parentElement.addEventListener('mouseleave', startAutoScroll);
+        }
+    }
+
+    // Listen to User Data
+    function listenToUserData() {
+        if (!currentUser) return;
+        
+        const unsubscribe = db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
+            if (!doc.exists) {
+                auth.signOut();
+                showToast('Your account has been deleted.', 'error');
+                return;
+            }
+            
+            const userData = doc.data();
+            if (userData) {
+                userBalance = userData.walletBalance || 0;
+                document.getElementById('wallet-balance-value').textContent = `৳ ${userBalance.toFixed(2)}`;
+                document.getElementById('wallet-balance-display').textContent = userBalance.toFixed(2);
+                document.getElementById('balance-info').textContent = `৳ ${userBalance.toFixed(2)}`;
+                document.getElementById('user-email-display').textContent = userData.email;
+                
+                if (!document.getElementById('account-page').classList.contains('d-none')) {
+                    loadAccountData();
+                }
+            }
+        }, error => {
+            console.error("Error listening to user data:", error);
+        });
+    }
+    
+    // Load My Orders
+    async function loadMyOrders() {
+        if (!currentUser) return;
+        
+        try {
+            const snapshot = await db.collection('users').doc(currentUser.uid).collection('orders').orderBy('timestamp', 'desc').limit(20).get();
+            const ordersListEl = document.getElementById('orders-list');
+            ordersListEl.innerHTML = '';
+            
+            if (snapshot.empty) {
+                ordersListEl.innerHTML = '<p>No orders found.</p>';
+                return;
+            }
+            
+            snapshot.forEach(doc => {
+                const order = doc.data();
+                const date = order.timestamp ? new Date(order.timestamp.toDate()).toLocaleString() : 'N/A';
+                const orderId = doc.id.substring(0, 8).toUpperCase();
+                const productName = order.productName || 'N/A';
+                
+                ordersListEl.innerHTML += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-id">Order #${orderId}</div>
+                            <div class="order-date">${date}</div>
+                        </div>
+                        <div class="order-details">
+                            <div class="order-detail-row">
+                                <span class="order-detail-label">Package:</span>
+                                <span class="order-detail-value">${productName}</span>
+                            </div>
+                            <div class="order-detail-row">
+                                <span class="order-detail-label">Total Price:</span>
+                                <span class="order-detail-value">৳${order.price || 0}</span>
+                            </div>
+                            <div class="order-detail-row">
+                                <span class="order-detail-label">Player ID:</span>
+                                <span class="order-detail-value">${order.playerID || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div class="order-status status-${order.status?.toLowerCase() || 'pending'}">${order.status || 'Pending'}</div>
                     </div>
                 `;
             });
-            
-            // ক্লিক ইভেন্ট যোগ করুন
-            document.querySelectorAll('.recharge-item:not(.out-of-stock)').forEach(item => {
-                item.addEventListener('click', () => {
-                    document.querySelectorAll('.recharge-item').forEach(i => {
-                        i.classList.remove('selected');
-                    });
-                    item.classList.add('selected');
-                    
-                    selectedRechargeOption = {
-                        id: item.dataset.id,
-                        name: item.querySelector('.diamond-info').textContent,
-                        price: item.querySelector('.price-info').textContent.replace('৳', '').trim(),
-                        cost: item.dataset.cost
-                    };
-                    
-                    document.getElementById('cost-info').textContent = `৳ ${selectedRechargeOption.price}`;
-                    updateBuyNowButtonState();
-                });
-            });
+        } catch (error) {
+            console.error("Error loading orders: ", error);
+            document.getElementById('orders-list').innerHTML = '<p>Error loading orders.</p>';
         }
-
-        // প্রোডাক্ট কার্ড ক্লিক হ্যান্ডলার সেটআপ
-        function setupProductCardListeners() {
-            document.getElementById('product-list').addEventListener('click', (e) => {
-                const card = e.target.closest('.product-card:not(.out-of-stock)');
-                if (card) {
-                    const productId = card.dataset.productId;
-                    const productName = card.dataset.productName;
-                    const productImage = card.dataset.productImage;
-                    const productCategory = card.dataset.productCategory;
-                    const isFixed = card.dataset.isFixed === 'true';
-                    
-                    currentProduct = {
-                        id: productId,
-                        name: productName,
-                        imageUrl: productImage,
-                        category: productCategory,
-                        isFixed: isFixed
-                    };
-                    
-                    openProductDetailPage();
-                }
-            });
-        }
-
-        // প্রোডাক্ট ডিটেইল পেজ ওপেন ফাংশন
-        function openProductDetailPage() {
-            if (!currentProduct) return;
-            
-            document.getElementById('product-detail-title').textContent = currentProduct.name;
-            
-            generateRechargeOptions(currentProduct.id, currentProduct.isFixed);
-            
-            resetProductDetailForm();
-            switchAppPage('product-detail-page');
-        }
-
-        // Load Contact Info from Firestore
-        async function loadContactInfo() {
-            try {
-                const settingsDoc = await db.collection('settings').doc('global').get();
-                
-                if (settingsDoc.exists) {
-                    const settings = settingsDoc.data();
-                    
-                    if (settings.payment_numbers) {
-                        contactInfo = {
-                            bkash: settings.payment_numbers.bkash || "017XXXXXXXX",
-                            nagad: settings.payment_numbers.nagad || "017XXXXXXXX", 
-                            rocket: settings.payment_numbers.rocket || "017XXXXXXXX"
-                        };
-                        updateContactInfoUI();
-                        return;
-                    }
-                }
-                
-                const configDoc = await db.collection('configs').doc('contact_info').get();
-                if (configDoc.exists) {
-                    contactInfo = configDoc.data();
-                    updateContactInfoUI();
-                } else {
-                    updateContactInfoUI();
-                }
-            } catch (error) {
-                console.error("Error loading contact info: ", error);
-                updateContactInfoUI();
-            }
-        }
-
-        // Load Support Info from Firestore
-        async function loadSupportInfo() {
-            try {
-                const settingsDoc = await db.collection('settings').doc('global').get();
-                
-                if (settingsDoc.exists) {
-                    const settings = settingsDoc.data();
-                    
-                    supportInfo = {
-                        support_email: settings.support_email || "support@topuphub.com",
-                        whatsapp_number: settings.whatsapp_number || "+8801234567890",
-                        telegram_link: settings.telegram_link || "@topuphub",
-                        youtube_link: settings.youtube_link || "https://youtube.com/topuphub",
-                        facebook_link: settings.facebook_link || "https://facebook.com/topuphub"
-                    };
-                    updateSupportInfoUI();
-                    return;
-                }
-                
-                const configDoc = await db.collection('configs').doc('support_info').get();
-                if (configDoc.exists) {
-                    supportInfo = configDoc.data();
-                    updateSupportInfoUI();
-                } else {
-                    updateSupportInfoUI();
-                }
-            } catch (error) {
-                console.error("Error loading support info: ", error);
-                updateSupportInfoUI();
-            }
-        }
-
-        // Update UI with contact info
-        function updateContactInfoUI() {
-            if (contactInfo.bkash) {
-                const bkashNumberEl = document.getElementById('bkashNumber');
-                if (bkashNumberEl) bkashNumberEl.textContent = contactInfo.bkash;
-            }
-            if (contactInfo.nagad) {
-                const nagadNumberEl = document.getElementById('nagadNumber');
-                if (nagadNumberEl) nagadNumberEl.textContent = contactInfo.nagad;
-            }
-            if (contactInfo.rocket) {
-                const rocketNumberEl = document.getElementById('rocketNumber');
-                if (rocketNumberEl) rocketNumberEl.textContent = contactInfo.rocket;
-            }
-
-            if (contactInfo.bkash) {
-                const instantBkashNumberEl = document.getElementById('instant-bkash-number');
-                if (instantBkashNumberEl) instantBkashNumberEl.textContent = contactInfo.bkash;
-            }
-            if (contactInfo.nagad) {
-                const instantNagadNumberEl = document.getElementById('instant-nagad-number');
-                if (instantNagadNumberEl) instantNagadNumberEl.textContent = contactInfo.nagad;
-            }
-            if (contactInfo.rocket) {
-                const instantRocketNumberEl = document.getElementById('instant-rocket-number');
-                if (instantRocketNumberEl) instantRocketNumberEl.textContent = contactInfo.rocket;
-            }
-        }
-
-        // Update UI with support info
-        function updateSupportInfoUI() {
-            if (supportInfo.support_email) {
-                const supportEmailEl = document.getElementById('support-email');
-                const supportEmailLink = document.getElementById('support-email-link');
-                if (supportEmailEl) supportEmailEl.textContent = supportInfo.support_email;
-                if (supportEmailLink) supportEmailLink.href = `mailto:${supportInfo.support_email}`;
-            }
-
-            if (supportInfo.whatsapp_number) {
-                const whatsappNumberEl = document.getElementById('whatsapp-number');
-                const whatsappLink = document.getElementById('whatsapp-link');
-                if (whatsappNumberEl) whatsappNumberEl.textContent = supportInfo.whatsapp_number;
-                if (whatsappLink) whatsappLink.href = `https://wa.me/${supportInfo.whatsapp_number.replace('+', '')}`;
-            }
-
-            if (supportInfo.telegram_link) {
-                const telegramLinkTextEl = document.getElementById('telegram-link-text');
-                const telegramLink = document.getElementById('telegram-link');
-                if (telegramLinkTextEl) telegramLinkTextEl.textContent = supportInfo.telegram_link;
-                if (telegramLink) telegramLink.href = `https://t.me/${supportInfo.telegram_link.replace('@', '')}`;
-            }
-
-            if (supportInfo.youtube_link) {
-                const youtubeLink = document.getElementById('youtube-link');
-                if (youtubeLink) {
-                    youtubeLink.href = supportInfo.youtube_link;
-                }
-            }
-
-            if (supportInfo.facebook_link) {
-                const facebookLink = document.getElementById('facebook-link');
-                if (facebookLink) {
-                    facebookLink.href = supportInfo.facebook_link;
-                }
-            }
-        }
-
-        // Load Global Settings
-        async function loadSettings() {
-            try {
-                const doc = await db.collection('settings').doc('global').get();
-                const logoImg = document.getElementById('app-logo-img');
-                
-                if (doc.exists) {
-                    const settings = doc.data();
-                    globalSettings = settings;
-                    
-                    if (settings.notice) {
-                        document.getElementById('support-notice-text').textContent = settings.notice;
-                    }
-
-                    if (settings.appLogo) {
-                        logoImg.onerror = function() {
-                            this.onerror = null;
-                            this.src = "https://i.ibb.co.com/BH4jgFWW/1767122546090.png";
-                        };
-                        logoImg.src = settings.appLogo;
-                    } else {
-                        logoImg.src = "https://i.ibb.co.com/BH4jgFWW/1767122546090.png";
-                    }
-                    
-                    const slider = document.getElementById('image-slider');
-                    const sliderDots = document.getElementById('slider-dots');
-                    slider.innerHTML = '';
-                    sliderDots.innerHTML = '';
-                    
-                    const sliderData = [
-                        { url: settings.slider_url_1, link: settings.slider_link_1 },
-                        { url: settings.slider_url_2, link: settings.slider_link_2 },
-                        { url: settings.slider_url_3, link: settings.slider_link_3 }
-                    ].filter(slide => slide.url);
-                    
-                    sliderData.forEach((slide, index) => {
-                        if (slide.url) {
-                            const slideDiv = document.createElement('div');
-                            slideDiv.className = 'slide';
-                            
-                            if (slide.link) {
-                                const link = document.createElement('a');
-                                link.href = slide.link;
-                                link.target = '_blank';
-                                link.rel = 'noopener noreferrer';
-                                
-                                const img = document.createElement('img');
-                                img.src = slide.url;
-                                img.alt = 'Banner';
-                                img.loading = 'lazy';
-                                img.onerror = function() {
-                                    this.style.display = 'none';
-                                };
-                                
-                                link.appendChild(img);
-                                slideDiv.appendChild(link);
-                            } else {
-                                const img = document.createElement('img');
-                                img.src = slide.url;
-                                img.alt = 'Banner';
-                                img.loading = 'lazy';
-                                img.onerror = function() {
-                                    this.style.display = 'none';
-                                };
-                                slideDiv.appendChild(img);
-                            }
-                            
-                            slider.appendChild(slideDiv);
-                            
-                            const dot = document.createElement('div');
-                            dot.className = `slider-dot ${index === 0 ? 'active' : ''}`;
-                            dot.dataset.index = index;
-                            sliderDots.appendChild(dot);
-                        }
-                    });
-                    
-                    if (sliderData.length > 0) {
-                        initSlider();
-                    }
-
-                } else {
-                    const logoImg = document.getElementById('app-logo-img');
-                    logoImg.src = "https://i.ibb.co.com/BH4jgFWW/1767122546090.png";
-                    
-                    try {
-                        const defaultSettings = {
-                            appName: 'TOPUP HUB',
-                            appLogo: 'https://i.ibb.co.com/BH4jgFWW/1767122546090.png',
-                            notice: 'Welcome to TOPUP HUB - Best Gaming Topup Service',
-                            minDepositAmount: 10,
-                            support_email: 'support@topuphub.com',
-                            whatsapp_number: '+8801234567890',
-                            telegram_link: '@topuphub',
-                            youtube_link: 'https://youtube.com/topuphub',
-                            facebook_link: 'https://facebook.com/topuphub',
-                            payment_numbers: {
-                                bkash: '017XXXXXXXX',
-                                nagad: '017XXXXXXXX',
-                                rocket: '017XXXXXXXX'
-                            },
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        };
-                        
-                        db.collection('settings').doc('global').set(defaultSettings).catch(e => {
-                            console.log("Could not create default settings");
-                        });
-                        
-                    } catch (error) {
-                        console.error("Error creating default settings:", error);
-                    }
-                }
-                
-            } catch (error) {
-                console.error("Error loading settings: ", error);
-                const logoImg = document.getElementById('app-logo-img');
-                logoImg.src = "https://i.ibb.co.com/BH4jgFWW/1767122546090.png";
-            }
-        }
-
-        // Fixed Slider Implementation
-        function initSlider() {
-            const slider = document.getElementById('image-slider');
-            const dots = document.querySelectorAll('.slider-dot');
-            const totalSlides = slider.children.length;
-            
-            if (totalSlides <= 1) return;
-            
-            let currentIndex = 0;
-            let startX = 0;
-            let isDragging = false;
-            let autoScrollInterval;
-            let touchMoved = false;
-            
-            function goToSlide(index) {
-                currentIndex = (index + totalSlides) % totalSlides;
-                slider.style.transform = `translateX(-${currentIndex * 100}%)`;
-                dots.forEach((dot, i) => {
-                    dot.classList.toggle('active', i === currentIndex);
-                });
-            }
-            
-            function nextSlide() {
-                goToSlide(currentIndex + 1);
-            }
-            
-            function prevSlide() {
-                goToSlide(currentIndex - 1);
-            }
-            
-            function startAutoScroll() {
-                stopAutoScroll();
-                autoScrollInterval = setInterval(nextSlide, 4000);
-            }
-            
-            function stopAutoScroll() {
-                if (autoScrollInterval) {
-                    clearInterval(autoScrollInterval);
-                    autoScrollInterval = null;
-                }
-            }
-            
-            // Touch events
-            slider.parentElement.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].clientX;
-                isDragging = true;
-                touchMoved = false;
-                stopAutoScroll();
-            });
-            
-            slider.parentElement.addEventListener('touchmove', (e) => {
-                if (!isDragging) return;
-                const currentX = e.touches[0].clientX;
-                const diff = startX - currentX;
-                
-                if (Math.abs(diff) > 10) {
-                    touchMoved = true;
-                }
-            });
-            
-            slider.parentElement.addEventListener('touchend', (e) => {
-                if (!isDragging || !touchMoved) {
-                    isDragging = false;
-                    setTimeout(startAutoScroll, 3000);
-                    return;
-                }
-                
-                const endX = e.changedTouches[0].clientX;
-                const diff = startX - endX;
-                
-                if (Math.abs(diff) > 50) {
-                    if (diff > 0) {
-                        nextSlide();
-                    } else {
-                        prevSlide();
-                    }
-                }
-                
-                isDragging = false;
-                setTimeout(startAutoScroll, 3000);
-            });
-            
-            // Click events for dots
-            dots.forEach(dot => {
-                dot.addEventListener('click', () => {
-                    const index = parseInt(dot.dataset.index);
-                    goToSlide(index);
-                    stopAutoScroll();
-                    setTimeout(startAutoScroll, 3000);
-                });
-            });
-            
-            // Start auto scroll initially
-            startAutoScroll();
-            
-            // Pause on hover for desktop
-            if (window.innerWidth > 768) {
-                slider.parentElement.addEventListener('mouseenter', stopAutoScroll);
-                slider.parentElement.addEventListener('mouseleave', startAutoScroll);
-            }
-        }
-
-        // Listen to User Data
-        function listenToUserData() {
-            if (!currentUser) return;
-            
-            const unsubscribe = db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
-                if (!doc.exists) {
-                    auth.signOut();
-                    showToast('Your account has been deleted.', 'error');
-                    return;
-                }
-                
-                const userData = doc.data();
-                if (userData) {
-                    userBalance = userData.walletBalance || 0;
-                    document.getElementById('wallet-balance-value').textContent = `৳ ${userBalance.toFixed(2)}`;
-                    document.getElementById('wallet-balance-display').textContent = userBalance.toFixed(2);
-                    document.getElementById('balance-info').textContent = `৳ ${userBalance.toFixed(2)}`;
-                    document.getElementById('user-email-display').textContent = userData.email;
-                    
-                    if (!document.getElementById('account-page').classList.contains('d-none')) {
-                        loadAccountData();
-                    }
-                }
-            }, error => {
-                console.error("Error listening to user data:", error);
-            });
-        }
+    }
+    
+    // Load My Transactions
+    async function loadMyTransactions() {
+        if (!currentUser) return;
         
-        // Load My Orders
-        async function loadMyOrders() {
-            if (!currentUser) return;
+        try {
+            const snapshot = await db.collection('users').doc(currentUser.uid).collection('deposits').orderBy('timestamp', 'desc').limit(20).get();
+            const transactionsListEl = document.getElementById('transactions-list');
+            transactionsListEl.innerHTML = '';
             
-            try {
-                const snapshot = await db.collection('users').doc(currentUser.uid).collection('orders').orderBy('timestamp', 'desc').limit(20).get();
-                const ordersListEl = document.getElementById('orders-list');
-                ordersListEl.innerHTML = '';
+            if (snapshot.empty) {
+                transactionsListEl.innerHTML = '<p>No transactions found.</p>';
+                return;
+            }
+            
+            snapshot.forEach(doc => {
+                const transaction = doc.data();
+                const date = transaction.timestamp ? new Date(transaction.timestamp.toDate()).toLocaleString() : 'N/A';
                 
-                if (snapshot.empty) {
-                    ordersListEl.innerHTML = '<p style="text-align: center; color: var(--text-light);">No orders found.</p>';
-                    return;
-                }
+                transactionsListEl.innerHTML += `
+                    <div class="transaction-card">
+                        <div class="transaction-header">
+                            <div class="order-status status-${transaction.status?.toLowerCase() || 'pending'}">${transaction.status || 'Pending'}</div>
+                            <div class="transaction-amount">৳${transaction.amount || 0}</div>
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-detail">
+                                <span class="transaction-label">Phone:</span>
+                                <span class="transaction-value">${transaction.senderNumber || 'N/A'}</span>
+                            </div>
+                            <div class="transaction-detail">
+                                <span class="transaction-label">Trx ID:</span>
+                                <span class="transaction-value">${transaction.transactionId || 'N/A'}</span>
+                            </div>
+                            <div class="transaction-detail">
+                                <span class="transaction-label">Date:</span>
+                                <span class="transaction-value">${date}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        } catch (error) {
+            console.error("Error loading transactions: ", error);
+            document.getElementById('transactions-list').innerHTML = '<p>Error loading transactions.</p>';
+        }
+    }
+    
+    // Load Account Data
+    async function loadAccountData() {
+        if (!currentUser) return;
+        
+        try {
+            const userDoc = await db.collection('users').doc(currentUser.uid).get();
+            if (userDoc.exists) {
+                userData = userDoc.data();
                 
-                snapshot.forEach(doc => {
+                // Update profile picture
+                updateProfilePicture();
+                
+                document.getElementById('user-fullname').textContent = userData.fullName || 'User';
+                document.getElementById('user-email-display').textContent = userData.email || 'N/A';
+                document.getElementById('user-id-display').textContent = `#${userData.userNumber || '000000'}`;
+                document.getElementById('total-wallet').textContent = `৳${userData.walletBalance || 0}`;
+                
+                const ordersSnap = await db.collection('users').doc(currentUser.uid).collection('orders').where('status', '==', 'Completed').get();
+                let totalSpent = 0;
+                
+                ordersSnap.forEach(doc => {
                     const order = doc.data();
-                    const date = order.timestamp ? new Date(order.timestamp.toDate()).toLocaleString() : 'N/A';
-                    const orderId = doc.id.substring(0, 8).toUpperCase();
-                    const productName = order.productName || 'N/A';
-                    
-                    ordersListEl.innerHTML += `
-                        <div class="order-card">
-                            <div class="order-header">
-                                <div class="order-id">Order #${orderId}</div>
-                                <div class="order-date">${date}</div>
-                            </div>
-                            <div class="order-details">
-                                <div class="order-detail-row">
-                                    <span class="order-detail-label">Package:</span>
-                                    <span class="order-detail-value">${productName}</span>
-                                </div>
-                                <div class="order-detail-row">
-                                    <span class="order-detail-label">Total Price:</span>
-                                    <span class="order-detail-value">৳${order.price || 0}</span>
-                                </div>
-                                <div class="order-detail-row">
-                                    <span class="order-detail-label">Player ID:</span>
-                                    <span class="order-detail-value">${order.playerID || 'N/A'}</span>
-                                </div>
-                            </div>
-                            <div class="order-status status-${order.status?.toLowerCase() || 'pending'}">${order.status || 'Pending'}</div>
-                        </div>
-                    `;
+                    totalSpent += order.price || 0;
                 });
-            } catch (error) {
-                console.error("Error loading orders: ", error);
-                document.getElementById('orders-list').innerHTML = '<p style="text-align: center; color: var(--danger);">Error loading orders.</p>';
+                
+                document.getElementById('total-spent').textContent = `৳${totalSpent.toFixed(2)}`;
+                document.getElementById('total-orders').textContent = ordersSnap.size;
             }
+        } catch (error) {
+            console.error("Error loading account data: ", error);
         }
-        
-        // Load My Transactions - আপডেট করা ভার্সন
-        async function loadMyTransactions() {
-            if (!currentUser) return;
+    }
+    
+    // --- INTERACTIONS ---
+
+    // Footer Navigation
+    document.querySelector('.footer-nav').addEventListener('click', (e) => {
+        const navItem = e.target.closest('.nav-item');
+        if (navItem) {
+            switchAppPage(navItem.dataset.page);
+        }
+    });
+
+    // Add Money Options
+    document.getElementById('auto-add-money').addEventListener('click', () => {
+        showToast('Auto Add Money feature coming soon!', 'info');
+    });
+
+    document.getElementById('manual-add-money').addEventListener('click', () => {
+        switchAppPage('deposit-page');
+    });
+
+    // Payment Tab Switching
+    document.querySelector('.payment-tabs').addEventListener('click', (e) => {
+        const tab = e.target.closest('.payment-tab');
+        if (tab) {
+            document.querySelectorAll('.payment-tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            tab.classList.add('active');
+            
+            document.querySelectorAll('.payment-form').forEach(form => {
+                form.classList.add('d-none');
+                form.classList.remove('active');
+            });
+            
+            const method = tab.dataset.method;
+            const paymentForm = document.getElementById(`${method}-payment`);
+            paymentForm.classList.remove('d-none');
+            paymentForm.classList.add('active');
+        }
+    });
+    
+    // Deposit Form Submission
+    document.querySelectorAll('.verify-btn').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const method = e.target.dataset.method;
+            const paymentBox = e.target.closest('.payment-box');
+            const amount = parseFloat(paymentBox.querySelector('.deposit-amount').value);
+            const senderNumber = paymentBox.querySelector('.sender-number').value;
+            const transactionId = paymentBox.querySelector('.transaction-id').value;
+
+            if (isNaN(amount) || amount <= 0) {
+                showToast('Please enter a valid amount.', 'error');
+                return;
+            }
+
+            if (!validatePhoneNumber(senderNumber)) {
+                showToast('Please enter a valid mobile number.', 'error');
+                return;
+            }
+
+            if (!transactionId) {
+                showToast('Please enter transaction ID.', 'error');
+                return;
+            }
+
+            const minDepositAmount = globalSettings.minDepositAmount || 0;
+            if (amount < minDepositAmount) {
+                showToast(`Minimum deposit amount is ৳${minDepositAmount}.`, 'error');
+                return;
+            }
+
+            const depositData = {
+                uid: currentUser.uid,
+                userEmail: currentUser.email,
+                amount: amount,
+                method: method,
+                senderNumber: senderNumber,
+                transactionId: transactionId,
+                status: 'Pending',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
             
             try {
-                const snapshot = await db.collection('users').doc(currentUser.uid).collection('deposits').orderBy('timestamp', 'desc').limit(20).get();
-                const transactionsListEl = document.getElementById('transactions-list');
-                transactionsListEl.innerHTML = '';
+                const topLevelDocRef = db.collection('deposits').doc();
+                const userSubDocRef = db.collection('users').doc(currentUser.uid).collection('deposits').doc(topLevelDocRef.id);
                 
-                if (snapshot.empty) {
-                    transactionsListEl.innerHTML = '<p style="text-align: center; color: var(--text-light);">No transactions found.</p>';
-                    return;
-                }
+                const batch = db.batch();
+                batch.set(topLevelDocRef, depositData);
+                batch.set(userSubDocRef, depositData);
                 
-                snapshot.forEach(doc => {
-                    const transaction = doc.data();
-                    const date = transaction.timestamp ? new Date(transaction.timestamp.toDate()).toLocaleString() : 'N/A';
-                    const status = transaction.status || 'Pending';
-                    const amount = transaction.amount || 0;
-                    const method = transaction.method || 'N/A';
-                    const senderNumber = transaction.senderNumber || 'N/A';
-                    const transactionId = transaction.transactionId || 'N/A';
-                    
-                    transactionsListEl.innerHTML += `
-                        <div class="transaction-card">
-                            <div class="transaction-header">
-                                <div class="order-status status-${status.toLowerCase()}">${status}</div>
-                                <div class="transaction-amount">৳${amount}</div>
-                            </div>
-                            <div class="transaction-details">
-                                <div class="transaction-detail">
-                                    <span class="transaction-label">Method:</span>
-                                    <span class="transaction-value">${method}</span>
-                                </div>
-                                <div class="transaction-detail">
-                                    <span class="transaction-label">Phone:</span>
-                                    <span class="transaction-value">${senderNumber}</span>
-                                </div>
-                                <div class="transaction-detail">
-                                    <span class="transaction-label">Trx ID:</span>
-                                    <span class="transaction-value">${transactionId}</span>
-                                </div>
-                                <div class="transaction-detail">
-                                    <span class="transaction-label">Date:</span>
-                                    <span class="transaction-value">${date}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
+                await batch.commit();
+                showToast('Deposit request submitted successfully!', 'success');
+                paymentBox.querySelector('.deposit-amount').value = '';
+                paymentBox.querySelector('.sender-number').value = '';
+                paymentBox.querySelector('.transaction-id').value = '';
+                switchAppPage('my-transaction-page');
             } catch (error) {
-                console.error("Error loading transactions: ", error);
-                document.getElementById('transactions-list').innerHTML = '<p style="text-align: center; color: var(--danger);">Error loading transactions.</p>';
-            }
-        }
-        
-        // Load Account Data
-        async function loadAccountData() {
-            if (!currentUser) return;
-            
-            try {
-                const userDoc = await db.collection('users').doc(currentUser.uid).get();
-                if (userDoc.exists) {
-                    userData = userDoc.data();
-                    
-                    // Update profile picture
-                    updateProfilePicture();
-                    
-                    document.getElementById('user-fullname').textContent = userData.fullName || 'User';
-                    document.getElementById('user-email-display').textContent = userData.email || 'N/A';
-                    document.getElementById('user-id-display').textContent = `#${userData.userNumber || '000000'}`;
-                    document.getElementById('total-wallet').textContent = `৳${userData.walletBalance || 0}`;
-                    
-                    const ordersSnap = await db.collection('users').doc(currentUser.uid).collection('orders').where('status', '==', 'Completed').get();
-                    let totalSpent = 0;
-                    
-                    ordersSnap.forEach(doc => {
-                        const order = doc.data();
-                        totalSpent += order.price || 0;
-                    });
-                    
-                    document.getElementById('total-spent').textContent = `৳${totalSpent.toFixed(2)}`;
-                    document.getElementById('total-orders').textContent = ordersSnap.size;
-                }
-            } catch (error) {
-                console.error("Error loading account data: ", error);
-            }
-        }
-        
-        // Load Privacy Page Content
-        async function loadPrivacyPage() {
-            try {
-                const doc = await db.collection('settings').doc('privacy_policy').get();
-                const content = document.getElementById('privacy-content');
-                
-                if (doc.exists) {
-                    const data = doc.data();
-                    content.innerHTML = data.content || `
-                        <h2>Privacy Policy</h2>
-                        <p>Your privacy is important to us. This privacy policy explains what personal data we collect and how we use it.</p>
-                        
-                        <h2>Information We Collect</h2>
-                        <p>We collect information you provide directly to us, such as when you create an account, make a purchase, or contact us for support.</p>
-                        
-                        <h2>How We Use Your Information</h2>
-                        <p>We use the information we collect to:</p>
-                        <ul>
-                            <li>Provide, maintain, and improve our services</li>
-                            <li>Process transactions and send related information</li>
-                            <li>Respond to your comments and questions</li>
-                            <li>Send you technical notices and support messages</li>
-                        </ul>
-                        
-                        <h2>Security</h2>
-                        <p>We take reasonable measures to help protect your personal information from loss, theft, misuse, and unauthorized access.</p>
-                        
-                        <p><strong>Last Updated:</strong> ${new Date().toLocaleDateString()}</p>
-                    `;
-                } else {
-                    // Create default privacy policy
-                    const defaultPrivacy = `
-                        <h2>Privacy Policy</h2>
-                        <p>Your privacy is important to us. This privacy policy explains what personal data we collect and how we use it.</p>
-                        
-                        <h2>Information We Collect</h2>
-                        <p>We collect information you provide directly to us, such as when you create an account, make a purchase, or contact us for support.</p>
-                        
-                        <h2>How We Use Your Information</h2>
-                        <p>We use the information we collect to:</p>
-                        <ul>
-                            <li>Provide, maintain, and improve our services</li>
-                            <li>Process transactions and send related information</li>
-                            <li>Respond to your comments and questions</li>
-                            <li>Send you technical notices and support messages</li>
-                        </ul>
-                        
-                        <h2>Security</h2>
-                        <p>We take reasonable measures to help protect your personal information from loss, theft, misuse, and unauthorized access.</p>
-                        
-                        <p><strong>Last Updated:</strong> ${new Date().toLocaleDateString()}</p>
-                    `;
-                    
-                    content.innerHTML = defaultPrivacy;
-                    
-                    // Save default to Firestore
-                    db.collection('settings').doc('privacy_policy').set({
-                        content: defaultPrivacy,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    }).catch(console.error);
-                }
-            } catch (error) {
-                console.error("Error loading privacy policy: ", error);
-                document.getElementById('privacy-content').innerHTML = '<p style="color: var(--danger);">Error loading privacy policy.</p>';
-            }
-        }
-        
-        // --- INTERACTIONS ---
-
-        // Footer Navigation
-        document.querySelector('.footer-nav').addEventListener('click', (e) => {
-            const navItem = e.target.closest('.nav-item');
-            if (navItem) {
-                switchAppPage(navItem.dataset.page);
+                console.error("Error submitting deposit: ", error);
+                showToast('Failed to submit deposit request. Please try again.', 'error');
             }
         });
+    });
 
-        // Add Money Options
-        document.getElementById('auto-add-money').addEventListener('click', () => {
-            showToast('Auto Add Money feature coming soon!', 'info');
-        });
+    // Back to Home from Product Detail
+    document.getElementById('back-to-home').addEventListener('click', () => {
+        switchAppPage('home-page');
+        resetProductDetailForm();
+    });
 
-        document.getElementById('manual-add-money').addEventListener('click', () => {
-            switchAppPage('deposit-page');
-        });
+    // Add Money Back Button
+    document.getElementById('add-money-back-button').addEventListener('click', () => {
+        switchAppPage('home-page');
+    });
 
-        // Payment Tab Switching
-        document.querySelector('.payment-tabs').addEventListener('click', (e) => {
-            const tab = e.target.closest('.payment-tab');
-            if (tab) {
-                document.querySelectorAll('.payment-tab').forEach(t => {
-                    t.classList.remove('active');
-                });
-                
-                tab.classList.add('active');
-                
-                document.querySelectorAll('.payment-form').forEach(form => {
-                    form.classList.add('d-none');
-                    form.classList.remove('active');
-                });
-                
-                const method = tab.dataset.method;
-                const paymentForm = document.getElementById(`${method}-payment`);
-                paymentForm.classList.remove('d-none');
-                paymentForm.classList.add('active');
-            }
-        });
-        
-        // Deposit Form Submission
-        document.querySelectorAll('.verify-btn').forEach(button => {
-            button.addEventListener('click', async (e) => {
-                e.preventDefault();
-                
-                const method = e.target.dataset.method;
-                const paymentBox = e.target.closest('.payment-box');
-                const amount = parseFloat(paymentBox.querySelector('.deposit-amount').value);
-                const senderNumber = paymentBox.querySelector('.sender-number').value;
-                const transactionId = paymentBox.querySelector('.transaction-id').value;
+    // Deposit Back Button
+    document.getElementById('deposit-back-button').addEventListener('click', () => {
+        switchAppPage('add-money-page');
+    });
 
-                if (isNaN(amount) || amount <= 0) {
-                    showToast('Please enter a valid amount.', 'error');
-                    return;
-                }
-
-                if (!validatePhoneNumber(senderNumber)) {
-                    showToast('Please enter a valid mobile number.', 'error');
-                    return;
-                }
-
-                if (!transactionId) {
-                    showToast('Please enter transaction ID.', 'error');
-                    return;
-                }
-
-                const minDepositAmount = globalSettings.minDepositAmount || 0;
-                if (amount < minDepositAmount) {
-                    showToast(`Minimum deposit amount is ৳${minDepositAmount}.`, 'error');
-                    return;
-                }
-
-                const depositData = {
-                    uid: currentUser.uid,
-                    userEmail: currentUser.email,
-                    amount: amount,
-                    method: method,
-                    senderNumber: senderNumber,
-                    transactionId: transactionId,
-                    status: 'Pending',
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                try {
-                    const topLevelDocRef = db.collection('deposits').doc();
-                    const userSubDocRef = db.collection('users').doc(currentUser.uid).collection('deposits').doc(topLevelDocRef.id);
-                    
-                    const batch = db.batch();
-                    batch.set(topLevelDocRef, depositData);
-                    batch.set(userSubDocRef, depositData);
-                    
-                    await batch.commit();
-                    showToast('Deposit request submitted successfully!', 'success');
-                    paymentBox.querySelector('.deposit-amount').value = '';
-                    paymentBox.querySelector('.sender-number').value = '';
-                    paymentBox.querySelector('.transaction-id').value = '';
-                    switchAppPage('my-transaction-page');
-                } catch (error) {
-                    console.error("Error submitting deposit: ", error);
-                    showToast('Failed to submit deposit request. Please try again.', 'error');
-                }
-            });
-        });
-
-        // Back to Home from Product Detail
-        document.getElementById('back-to-home').addEventListener('click', () => {
-            switchAppPage('home-page');
-            resetProductDetailForm();
-        });
-
-        // Add Money Back Button
-        document.getElementById('add-money-back-button').addEventListener('click', () => {
-            switchAppPage('home-page');
-        });
-
-        // Deposit Back Button
-        document.getElementById('deposit-back-button').addEventListener('click', () => {
-            switchAppPage('add-money-page');
-        });
-
-        // Privacy Page Back Button
-        document.getElementById('privacy-back-button').addEventListener('click', () => {
-            switchAppPage('account-page');
-        });
-
-        // Payment Method Selection in Product Detail
-        document.querySelector('.payment-options').addEventListener('click', (e) => {
-            const paymentMethod = e.target.closest('.payment-method');
-            if (paymentMethod) {
-                document.querySelectorAll('.payment-method').forEach(method => {
-                    method.classList.remove('selected');
-                });
-                
-                paymentMethod.classList.add('selected');
-                
-                selectedPaymentMethod = paymentMethod.dataset.method;
-                
-                if (selectedPaymentMethod === 'instant') {
-                    document.getElementById('instant-payment-form').classList.remove('d-none');
-                } else {
-                    document.getElementById('instant-payment-form').classList.add('d-none');
-                }
-                
-                updateBuyNowButtonState();
-            }
-        });
-
-        // Player ID Input Change
-        document.getElementById('player-id-input').addEventListener('input', () => {
-            updateBuyNowButtonState();
-        });
-
-        // Mobile Number and Transaction ID Input Change
-        document.getElementById('mobile-number')?.addEventListener('input', updateBuyNowButtonState);
-        document.getElementById('transaction-id')?.addEventListener('input', updateBuyNowButtonState);
-        document.getElementById('instant-payment-method')?.addEventListener('change', updateBuyNowButtonState);
-
-        // Buy Now Button Click
-        document.getElementById('buy-now-btn').addEventListener('click', () => {
-            placeOrder();
-        });
-
-        // Function to reset product detail form
-        function resetProductDetailForm() {
-            document.getElementById('player-id-input').value = '';
-            document.querySelectorAll('.recharge-item').forEach(item => {
-                item.classList.remove('selected');
-            });
+    // Payment Method Selection in Product Detail
+    document.querySelector('.payment-options').addEventListener('click', (e) => {
+        const paymentMethod = e.target.closest('.payment-method');
+        if (paymentMethod) {
             document.querySelectorAll('.payment-method').forEach(method => {
                 method.classList.remove('selected');
             });
-            document.querySelector('.payment-method[data-method="wallet"]').classList.add('selected');
-            document.getElementById('instant-payment-form').classList.add('d-none');
-            document.getElementById('mobile-number').value = '';
-            document.getElementById('transaction-id').value = '';
-            document.getElementById('instant-payment-method').value = '';
-            document.getElementById('cost-info').textContent = '৳ 0.00';
-            selectedRechargeOption = null;
-            selectedPaymentMethod = 'wallet';
-            updateBuyNowButtonState();
-        }
-
-        // Function to update buy now button state
-        function updateBuyNowButtonState() {
-            const playerId = document.getElementById('player-id-input').value.trim();
-            const hasSelectedRecharge = selectedRechargeOption !== null;
-            let isValid = playerId !== '' && hasSelectedRecharge && validatePlayerId(playerId);
+            
+            paymentMethod.classList.add('selected');
+            
+            selectedPaymentMethod = paymentMethod.dataset.method;
             
             if (selectedPaymentMethod === 'instant') {
-                const mobileNumber = document.getElementById('mobile-number').value.trim();
-                const transactionId = document.getElementById('transaction-id').value.trim();
-                const paymentMethod = document.getElementById('instant-payment-method').value;
-                isValid = isValid && validatePhoneNumber(mobileNumber) && transactionId !== '' && paymentMethod !== '';
-            }
-            
-            const buyNowBtn = document.getElementById('buy-now-btn');
-            buyNowBtn.disabled = !isValid;
-            
-            if (buyNowBtn.disabled) {
-                buyNowBtn.style.opacity = '0.6';
-                buyNowBtn.style.cursor = 'not-allowed';
+                document.getElementById('instant-payment-form').classList.remove('d-none');
             } else {
-                buyNowBtn.style.opacity = '1';
-                buyNowBtn.style.cursor = 'pointer';
+                document.getElementById('instant-payment-form').classList.add('d-none');
             }
-        }
-
-        // Function to place order
-        async function placeOrder() {
-            const playerId = document.getElementById('player-id-input').value.trim();
-            const rechargeName = selectedRechargeOption.name;
-            const rechargePrice = parseFloat(selectedRechargeOption.price);
-            const productItemId = selectedRechargeOption.id;
             
-            try {
-                if (selectedPaymentMethod === 'wallet') {
-                    const userRef = db.collection('users').doc(currentUser.uid);
+            updateBuyNowButtonState();
+        }
+    });
+
+    // Player ID Input Change
+    document.getElementById('player-id-input').addEventListener('input', () => {
+        updateBuyNowButtonState();
+    });
+
+    // Mobile Number and Transaction ID Input Change
+    document.getElementById('mobile-number')?.addEventListener('input', updateBuyNowButtonState);
+    document.getElementById('transaction-id')?.addEventListener('input', updateBuyNowButtonState);
+    document.getElementById('instant-payment-method')?.addEventListener('change', updateBuyNowButtonState);
+
+    // Buy Now Button Click
+    document.getElementById('buy-now-btn').addEventListener('click', () => {
+        placeOrder();
+    });
+
+    // Function to reset product detail form
+    function resetProductDetailForm() {
+        document.getElementById('player-id-input').value = '';
+        document.querySelectorAll('.recharge-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.classList.remove('selected');
+        });
+        document.querySelector('.payment-method[data-method="wallet"]').classList.add('selected');
+        document.getElementById('instant-payment-form').classList.add('d-none');
+        document.getElementById('mobile-number').value = '';
+        document.getElementById('transaction-id').value = '';
+        document.getElementById('instant-payment-method').value = '';
+        document.getElementById('cost-info').textContent = '৳ 0.00';
+        selectedRechargeOption = null;
+        selectedPaymentMethod = 'wallet';
+        updateBuyNowButtonState();
+    }
+
+    // Function to update buy now button state
+    function updateBuyNowButtonState() {
+        const playerId = document.getElementById('player-id-input').value.trim();
+        const hasSelectedRecharge = selectedRechargeOption !== null;
+        let isValid = playerId !== '' && hasSelectedRecharge && validatePlayerId(playerId);
+        
+        if (selectedPaymentMethod === 'instant') {
+            const mobileNumber = document.getElementById('mobile-number').value.trim();
+            const transactionId = document.getElementById('transaction-id').value.trim();
+            const paymentMethod = document.getElementById('instant-payment-method').value;
+            isValid = isValid && validatePhoneNumber(mobileNumber) && transactionId !== '' && paymentMethod !== '';
+        }
+        
+        const buyNowBtn = document.getElementById('buy-now-btn');
+        buyNowBtn.disabled = !isValid;
+        
+        if (buyNowBtn.disabled) {
+            buyNowBtn.style.opacity = '0.6';
+            buyNowBtn.style.cursor = 'not-allowed';
+        } else {
+            buyNowBtn.style.opacity = '1';
+            buyNowBtn.style.cursor = 'pointer';
+        }
+    }
+
+    // Function to place order
+    async function placeOrder() {
+        const playerId = document.getElementById('player-id-input').value.trim();
+        const rechargeName = selectedRechargeOption.name;
+        const rechargePrice = parseFloat(selectedRechargeOption.price);
+        const productItemId = selectedRechargeOption.id;
+        
+        try {
+            if (selectedPaymentMethod === 'wallet') {
+                const userRef = db.collection('users').doc(currentUser.uid);
+                
+                await db.runTransaction(async (transaction) => {
+                    const userDoc = await transaction.get(userRef);
+                    if (!userDoc.exists) {
+                        throw new Error("User document does not exist!");
+                    }
+
+                    const currentBalance = userDoc.data().walletBalance;
                     
-                    await db.runTransaction(async (transaction) => {
-                        const userDoc = await transaction.get(userRef);
-                        if (!userDoc.exists) {
-                            throw new Error("User document does not exist!");
-                        }
+                    if (currentBalance <= 0) {
+                        throw new Error("ZERO_BALANCE");
+                    }
+                    
+                    if (currentBalance < rechargePrice) {
+                        throw new Error("INSUFFICIENT_BALANCE");
+                    }
 
-                        const currentBalance = userDoc.data().walletBalance;
-                        
-                        if (currentBalance <= 0) {
-                            throw new Error("ZERO_BALANCE");
-                        }
-                        
-                        if (currentBalance < rechargePrice) {
-                            throw new Error("INSUFFICIENT_BALANCE");
-                        }
-
-                        const newBalance = currentBalance - rechargePrice;
-                        transaction.update(userRef, { 
-                            walletBalance: newBalance,
-                            totalSpent: firebase.firestore.FieldValue.increment(rechargePrice)
-                        });
-                        
-                        const orderData = {
-                            uid: currentUser.uid,
-                            userEmail: currentUser.email,
-                            playerID: playerId,
-                            productName: rechargeName,
-                            productId: currentProduct.id,
-                            productItemId: productItemId,
-                            productType: currentProduct.isFixed ? 'fixed' : 'dynamic',
-                            price: rechargePrice,
-                            paymentMethod: 'Wallet',
-                            status: 'Pending',
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                        };
-                        
-                        const newOrderRef = db.collection('orders').doc();
-                        transaction.set(newOrderRef, orderData);
-                        transaction.set(userRef.collection('orders').doc(newOrderRef.id), orderData);
+                    const newBalance = currentBalance - rechargePrice;
+                    transaction.update(userRef, { 
+                        walletBalance: newBalance,
+                        totalSpent: firebase.firestore.FieldValue.increment(rechargePrice)
                     });
                     
-                    showToast('Order placed successfully using wallet!', 'success');
-                    
-                } else if (selectedPaymentMethod === 'instant') {
-                    const mobileNumber = document.getElementById('mobile-number').value.trim();
-                    const transactionId = document.getElementById('transaction-id').value.trim();
-                    const paymentMethod = document.getElementById('instant-payment-method').value;
-                    
-                    if (!validatePhoneNumber(mobileNumber)) {
-                        throw new Error("INVALID_PHONE");
-                    }
-
-                    if (!transactionId || transactionId.length < 5) {
-                        throw new Error("MISSING_TRANSACTION_ID");
-                    }
-
-                    if (!paymentMethod) {
-                        throw new Error("MISSING_PAYMENT_METHOD");
-                    }
-
                     const orderData = {
                         uid: currentUser.uid,
                         userEmail: currentUser.email,
@@ -5099,62 +5078,100 @@
                         productItemId: productItemId,
                         productType: currentProduct.isFixed ? 'fixed' : 'dynamic',
                         price: rechargePrice,
-                        paymentMethod: paymentMethod,
-                        mobileNumber: mobileNumber,
-                        transactionId: transactionId,
+                        paymentMethod: 'Wallet',
                         status: 'Pending',
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     };
                     
                     const newOrderRef = db.collection('orders').doc();
-                    const userOrderRef = db.collection('users').doc(currentUser.uid).collection('orders').doc(newOrderRef.id);
-                    
-                    const batch = db.batch();
-                    batch.set(newOrderRef, orderData);
-                    batch.set(userOrderRef, orderData);
-                    
-                    await batch.commit();
-                    showToast('Order placed successfully! Payment verification pending.', 'success');
+                    transaction.set(newOrderRef, orderData);
+                    transaction.set(userRef.collection('orders').doc(newOrderRef.id), orderData);
+                });
+                
+                showToast('Order placed successfully using wallet!', 'success');
+                
+            } else if (selectedPaymentMethod === 'instant') {
+                const mobileNumber = document.getElementById('mobile-number').value.trim();
+                const transactionId = document.getElementById('transaction-id').value.trim();
+                const paymentMethod = document.getElementById('instant-payment-method').value;
+                
+                if (!validatePhoneNumber(mobileNumber)) {
+                    throw new Error("INVALID_PHONE");
                 }
-                
-                // অর্ডার সফল হলে হোম পেজে ফিরে যান
-                setTimeout(() => {
-                    switchAppPage('home-page');
-                    resetProductDetailForm();
-                }, 1500);
-                
-            } catch (error) {
-                console.error("Order placement failed: ", error);
-                
-                let errorMessage = 'Order failed. Please try again.';
-                if (error.message === "ZERO_BALANCE") {
-                    errorMessage = 'আপনার ওয়ালেটে কোন টাকা নেই। দয়া করে টাকা যোগ করুন।';
-                } else if (error.message === "INSUFFICIENT_BALANCE") {
-                    errorMessage = 'Insufficient balance to place this order.';
-                } else if (error.message === "INVALID_PHONE") {
-                    errorMessage = 'Please enter a valid mobile number.';
-                } else if (error.message === "MISSING_TRANSACTION_ID") {
-                    errorMessage = 'Please enter transaction ID.';
-                } else if (error.message === "MISSING_PAYMENT_METHOD") {
-                    errorMessage = 'Please select payment method.';
+
+                if (!transactionId || transactionId.length < 5) {
+                    throw new Error("MISSING_TRANSACTION_ID");
                 }
+
+                if (!paymentMethod) {
+                    throw new Error("MISSING_PAYMENT_METHOD");
+                }
+
+                const orderData = {
+                    uid: currentUser.uid,
+                    userEmail: currentUser.email,
+                    playerID: playerId,
+                    productName: rechargeName,
+                    productId: currentProduct.id,
+                    productItemId: productItemId,
+                    productType: currentProduct.isFixed ? 'fixed' : 'dynamic',
+                    price: rechargePrice,
+                    paymentMethod: paymentMethod,
+                    mobileNumber: mobileNumber,
+                    transactionId: transactionId,
+                    status: 'Pending',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                };
                 
-                showToast(errorMessage, 'error');
+                const newOrderRef = db.collection('orders').doc();
+                const userOrderRef = db.collection('users').doc(currentUser.uid).collection('orders').doc(newOrderRef.id);
+                
+                const batch = db.batch();
+                batch.set(newOrderRef, orderData);
+                batch.set(userOrderRef, orderData);
+                
+                await batch.commit();
+                showToast('Order placed successfully! Payment verification pending.', 'success');
             }
+            
+            // অর্ডার সফল হলে হোম পেজে ফিরে যান
+            setTimeout(() => {
+                switchAppPage('home-page');
+                resetProductDetailForm();
+            }, 1500);
+            
+        } catch (error) {
+            console.error("Order placement failed: ", error);
+            
+            let errorMessage = 'Order failed. Please try again.';
+            if (error.message === "ZERO_BALANCE") {
+                errorMessage = 'আপনার ওয়ালেটে কোন টাকা নেই। দয়া করে টাকা যোগ করুন।';
+            } else if (error.message === "INSUFFICIENT_BALANCE") {
+                errorMessage = 'Insufficient balance to place this order.';
+            } else if (error.message === "INVALID_PHONE") {
+                errorMessage = 'Please enter a valid mobile number.';
+            } else if (error.message === "MISSING_TRANSACTION_ID") {
+                errorMessage = 'Please enter transaction ID.';
+            } else if (error.message === "MISSING_PAYMENT_METHOD") {
+                errorMessage = 'Please select payment method.';
+            }
+            
+            showToast(errorMessage, 'error');
         }
+    }
 
-        // Make copyNumber function available globally
-        window.copyNumber = copyNumber;
+    // Make copyNumber function available globally
+    window.copyNumber = copyNumber;
 
-        // Setup all password toggles
-        setupAllPasswordToggles();
-        
-        // Initialize when DOM is loaded
-        window.addEventListener('load', () => {
-            console.log("App initialized successfully");
-            // Firebase authentication চেক করার পর আপনা-আপনি hide হবে
-        });
+    // Setup all password toggles
+    setupAllPasswordToggles();
+    
+    // Initialize when DOM is loaded
+    window.addEventListener('load', () => {
+        console.log("App initialized successfully");
+        // লোডার দৃশ্যমান থাকবে, Firebase authentication চেক করার পর আপনা-আপনি hide হবে
     });
-    </script>
+});
+</script>
 </body>
     </html>
