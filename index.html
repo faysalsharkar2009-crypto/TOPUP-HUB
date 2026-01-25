@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Primary SEO Meta Tags -->
-    <title>Topup Hub – Fast & Secure Game Top Up Service</title>
-    <meta name="description" content="Topup Hub offers fast, secure, and affordable game top up services for Free Fire, PUBG, and other popular games in Bangladesh." />
+    <title>TOPUP HUB - Best Free Fire Diamond Topup in Bangladesh | Instant Free Fire Topup</title>
+    <meta name="description" content="আমাদের ওয়েবসাইটে দিনরাত ২৪ ঘন্টা অর্ডার করতে পারবেন, মাত্র ৩০ সেকেন্ডে রোবটের মাধ্যমে ডেলিভারি দেওয়া হয়।." />
     <meta name="keywords" content="game topup, free fire topup, pubg topup, bangladesh gaming, game recharge, gaming credits, mobile topup, diamond topup" />
     <meta name="author" content="Topup Hub" />
     <meta name="robots" content="index, follow" />
@@ -101,7 +101,7 @@
             display: none !important;
         }
 
-        /* Initial Loader */
+        /* Initial Loader - UPDATED with Progress Bar */
         #initial-loader {
             position: fixed;
             top: 0;
@@ -117,13 +117,39 @@
             gap: 20px;
         }
 
-        .loader-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
+        .loader-progress-bar {
+            width: 250px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loader-progress {
+            height: 100%;
+            width: 0%;
+            background: white;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            animation: shimmer 1.5s infinite;
+            width: 50px;
+        }
+
+        @keyframes shimmer {
+            0% { left: -50px; }
+            100% { left: 100%; }
         }
 
         .loader-text {
@@ -494,6 +520,19 @@
             box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
         }
 
+        /* Button Spinner for Verify Button */
+        .btn-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
         /* Signup Highlight - Updated */
         .signup-highlight {
             background: rgba(255, 107, 53, 0.05);
@@ -606,123 +645,170 @@
         .success-animation {
             animation: bounce 0.6s;
         }
+/* Main App View - Header - FIXED LOGO POSITION */
+.app-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 4px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 107, 53, 0.1);
+    height: 53px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    animation: slideInDown 0.5s ease;
+}
 
-        /* Main App View - Header */
-        .app-header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 4px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255, 107, 53, 0.1);
-            height: 53px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            animation: slideInDown 0.5s ease;
-        }
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 0 0 auto; /* Changed from flex: 1 */
+    min-width: 0;
+    position: relative;
+}
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex: 1;
-            min-width: 0;
-            position: relative;
-        }
+.back-button-header {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: var(--primary);
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: all 0.3s;
+    flex-shrink: 0;
+    z-index: 2;
+    position: relative;
+}
 
-        .back-button-header {
-            background: none;
-            border: none;
-            font-size: 18px;
-            color: var(--primary);
-            cursor: pointer;
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            transition: all 0.3s;
-            flex-shrink: 0;
-            z-index: 2;
-            position: relative;
-        }
+.back-button-header:hover {
+    background: rgba(255, 107, 53, 0.1);
+    transform: translateX(-2px);
+}
 
-        .back-button-header:hover {
-            background: rgba(255, 107, 53, 0.1);
-            transform: translateX(-2px);
-        }
+/* Fixed Logo Styles */
+.app-logo {
+    height: 45px;
+    width: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: visible; /* Changed from hidden */
+    flex-shrink: 0;
+    background: transparent; /* Remove background from container */
+}
 
-        .app-logo {
-            height: 45px;
-            width: 190px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
+.app-logo img {
+    height: 45px !important; /* Force height */
+    width: 180px !important; /* Force width */
+    object-fit: cover !important; /* Changed from contain to cover */
+    border-radius: 0px;
+    background: transparent !important; /* Remove background */
+    padding: 0px !important;
+    box-sizing: border-box;
+    transition: transform 0.3s ease;
+    display: block;
+    max-width: none !important; /* Remove max-width restriction */
+    min-width: 180px !important; /* Force minimum width */
+    min-height: 45px !important; /* Force minimum height */
+}
+.app-logo img:hover {
+    transform: scale(1.05);
+}
 
-        .app-logo img {
-            height: 100%;
-            width: 80%;
-            object-fit: cover;
-            border-radius: 0px;
-            background: linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%);
-            padding: 0px;
-            box-sizing: border-box;
-            transition: transform 0.3s ease;
-        }
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    flex: 0 0 auto; /* Added */
+}
 
-        .app-logo img:hover {
-            transform: scale(1.05);
-        }
+/* Ensure auth view doesn't show header */
+#auth-view .app-header {
+    display: none !important;
+}
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
-        }
-        /* Ensure auth view doesn't show header */
-        #auth-view .app-header {
-            display: none !important;
-        }
+/* Make wallet balance more prominent */
+.wallet-balance {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primary-light), rgba(255, 107, 53, 0.15));
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 700;
+    border: 1px solid var(--primary);
+    color: var(--primary-dark);
+    font-size: 14px;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
+}
 
-        /* Make wallet balance more prominent */
-        .wallet-balance {
-            display: flex;
-            align-items: center;
-            background: linear-gradient(135deg, var(--primary-light), rgba(255, 107, 53, 0.15));
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: 700;
-            border: 1px solid var(--primary);
-            color: var(--primary-dark);
-            font-size: 14px;
-            white-space: nowrap;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
-        }
+.wallet-balance:hover {
+    background: rgba(255, 107, 53, 0.2);
+    transform: translateY(-1px);
+}
 
-        .wallet-balance:hover {
-            background: rgba(255, 107, 53, 0.2);
-            transform: translateY(-1px);
-        }
+.wallet-balance i {
+    margin-right: 8px;
+}font-size: 11px;
+    }
+    
+    .profile-icon-header {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+}
 
-        .wallet-balance i {
-            margin-right: 8px;
-        }
-
+@media (max-width: 380px) {
+    .app-header {
+        grid-template-columns: 35px 1fr auto;
+        padding: 4px 6px;
+        gap: 4px;
+    }
+    
+    .header-left {
+        width: 35px;
+    }
+    
+    .back-button-header {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        padding: 6px;
+    }
+    
+    .app-logo {
+        width: 120px;
+        height: 30px;
+    }
+    
+    .wallet-balance {
+        min-width: 70px;
+        padding: 4px 6px;
+        font-size: 10px;
+    }
+    
+    .wallet-balance i {
+        display: none; /* Hide icon on very small screens */
+    }
+}
         .profile-icon-header {
             width: 40px;
             height: 40px;
@@ -737,6 +823,7 @@
             border: 2px solid var(--primary);
             transition: all 0.3s;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .profile-icon-header:hover {
@@ -1646,10 +1733,19 @@
             margin-top: 15px;
             cursor: pointer;
             transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .verify-btn:hover {
             opacity: 0.9;
+        }
+
+        .verify-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         #toast {
@@ -2209,12 +2305,36 @@
                 font-size: 10px;
             }
         }
+
+        @media (max-width: 380px) {
+            .wallet-balance {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            
+            .wallet-balance i {
+                margin-right: 4px;
+                font-size: 12px;
+            }
+            
+            .header-center {
+                flex: 0.8;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .wallet-balance {
+                max-width: 100px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Initial Loader -->
+    <!-- Initial Loader - UPDATED with Progress Bar -->
     <div id="initial-loader">
-        <div class="loader-spinner"></div>
+        <div class="loader-progress-bar">
+            <div class="loader-progress" id="loader-progress"></div>
+        </div>
         <div class="loader-text">Loading TOPUP HUB...</div>
     </div>
 
@@ -2348,12 +2468,14 @@
     
     <!-- Main Application View -->
     <div id="app-view" class="d-none">
-        <!-- Updated Header with Back Button and Logo -->
+        <!-- UPDATED Header with better layout -->
         <header class="app-header">
             <div class="header-left">
                 <button class="back-button-header d-none" id="header-back-button">
                     <i class="fas fa-arrow-left"></i>
                 </button>
+            </div>
+            <div class="header-center">
                 <div class="app-logo">
                     <img src="https://i.ibb.co.com/BH4jgFWW/1767122546090.png" 
                          alt="TOPUP HUB Logo" 
@@ -2362,7 +2484,7 @@
                 </div>
             </div>
             <div class="header-right">
-                <div class="wallet-balance">
+                <div class="wallet-balance" id="wallet-balance-container">
                     <i class="fas fa-wallet"></i>
                     <span id="wallet-balance-value">৳ 0.00</span>
                 </div>
@@ -3161,6 +3283,10 @@ document.addEventListener('DOMContentLoaded', () => {
         facebook_link: "https://facebook.com/topuphub"
     };
     
+    // Preload status
+    let preloadComplete = false;
+    let preloadStarted = false;
+    
     // ফিক্সড প্রোডাক্ট ডেটা
     const fixedProductsData = {
         'fixed-level-up': {
@@ -3368,6 +3494,27 @@ document.addEventListener('DOMContentLoaded', () => {
         return playerId.length >= 3 && playerId.length <= 20;
     }
 
+    // --- PRELOADING FUNCTIONS ---
+    async function preloadHomeData() {
+        if (preloadStarted) return;
+        preloadStarted = true;
+        
+        try {
+            // Preload essential data in parallel
+            await Promise.all([
+                loadSettings(),
+                loadContactInfo(),
+                loadSupportInfo(),
+                loadProductItems()
+            ]);
+            
+            preloadComplete = true;
+            console.log("Home data preloaded successfully");
+        } catch (error) {
+            console.error("Preload error:", error);
+        }
+    }
+
     // --- VIEW/PAGE SWITCHING LOGIC ---
     function showAuthSubView(viewId) {
         ['login-view', 'signup-view', 'forgot-password-view'].forEach(id => {
@@ -3513,9 +3660,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- AUTHENTICATION ---
     auth.onAuthStateChanged(async user => {
         const initialLoader = document.getElementById('initial-loader');
+        const progressBar = document.getElementById('loader-progress');
         
         if (user) {
             try {
+                // Start preloading immediately
+                if (!preloadStarted) {
+                    preloadHomeData();
+                }
+                
+                // Start progress animation
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 2;
+                    if (progressBar) {
+                        progressBar.style.width = `${Math.min(progress, 90)}%`;
+                    }
+                    
+                    if (progress >= 100) {
+                        clearInterval(progressInterval);
+                    }
+                }, 30);
+                
                 const userDoc = await db.collection('users').doc(user.uid).get();
                 
                 if (!userDoc.exists) {
@@ -3549,24 +3715,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 currentUser = user;
                 
-                // Update profile picture
-                updateProfilePicture();
+                // Wait for preloading to complete
+                if (!preloadComplete) {
+                    // Check every 100ms if preload is complete
+                    const checkPreload = setInterval(() => {
+                        if (preloadComplete) {
+                            clearInterval(checkPreload);
+                            completeLogin();
+                        }
+                    }, 100);
+                } else {
+                    completeLogin();
+                }
                 
-                // Hide initial loader
-                initialLoader.style.display = 'none';
-                
-                // Show app view immediately
-                document.getElementById('auth-view').classList.add('d-none');
-                document.getElementById('app-view').classList.remove('d-none');
-                
-                // Initialize app
-                await initializeApp();
-                
-                // Switch to home page
-                switchAppPage('home-page');
-                
-                // Show welcome toast
-                showToast('Welcome back!', 'success');
+                function completeLogin() {
+                    // Update profile picture
+                    updateProfilePicture();
+                    
+                    // Complete progress to 100%
+                    if (progressBar) {
+                        progressBar.style.width = '100%';
+                    }
+                    
+                    // Hide initial loader after a short delay
+                    setTimeout(() => {
+                        initialLoader.style.display = 'none';
+                        
+                        // Show app view
+                        document.getElementById('auth-view').classList.add('d-none');
+                        document.getElementById('app-view').classList.remove('d-none');
+                        
+                        // Initialize app (already preloaded, so this will be fast)
+                        initializeApp();
+                        
+                        // Switch to home page
+                        switchAppPage('home-page');
+                        
+                        // Show welcome toast
+                        showToast('Welcome back!', 'success');
+                    }, 300);
+                }
                 
             } catch (error) {
                 console.error("Error checking user:", error);
@@ -3870,16 +4058,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FIRESTORE DATA & APP LOGIC ---
     async function initializeApp() {
         try {
-            await loadSettings();
-            await loadContactInfo();
-            await loadSupportInfo();
-            await initializeFixedProducts();
-            await loadProductItems();
-            await loadDynamicProducts();
-            listenToUserData();
-            setupAllPasswordToggles();
-            setupCopyButtons();
-            setupProductCardListeners();
+            // If preloaded, just setup listeners
+            if (preloadComplete) {
+                await initializeFixedProducts();
+                await loadDynamicProducts();
+                listenToUserData();
+                setupAllPasswordToggles();
+                setupCopyButtons();
+                setupProductCardListeners();
+                console.log("App initialized quickly (preloaded)");
+            } else {
+                // Load everything
+                await Promise.all([
+                    loadSettings(),
+                    loadContactInfo(),
+                    loadSupportInfo(),
+                    loadProductItems(),
+                    initializeFixedProducts()
+                ]);
+                
+                await loadDynamicProducts();
+                listenToUserData();
+                setupAllPasswordToggles();
+                setupCopyButtons();
+                setupProductCardListeners();
+                console.log("App initialized fully");
+            }
+            
+            preloadComplete = true;
         } catch (error) {
             console.error("Error initializing app:", error);
             showToast('Error loading app data', 'error');
@@ -4874,7 +5080,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Deposit Form Submission
+    // Deposit Form Submission - UPDATED with loading state
     document.querySelectorAll('.verify-btn').forEach(button => {
         button.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -4906,6 +5112,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // Show loading state
+            const originalText = button.innerHTML;
+            button.innerHTML = '<div class="btn-spinner"></div> Processing...';
+            button.disabled = true;
+
             const depositData = {
                 uid: currentUser.uid,
                 userEmail: currentUser.email,
@@ -4926,13 +5137,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 batch.set(userSubDocRef, depositData);
                 
                 await batch.commit();
+                
+                // Success animation
+                button.innerHTML = '<i class="fas fa-check"></i> Success!';
+                button.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    button.style.background = '';
+                }, 2000);
+                
                 showToast('Deposit request submitted successfully!', 'success');
+                
+                // Clear form
                 paymentBox.querySelector('.deposit-amount').value = '';
                 paymentBox.querySelector('.sender-number').value = '';
                 paymentBox.querySelector('.transaction-id').value = '';
-                switchAppPage('my-transaction-page');
+                
+                // Navigate after delay
+                setTimeout(() => {
+                    switchAppPage('my-transaction-page');
+                }, 1500);
+                
             } catch (error) {
                 console.error("Error submitting deposit: ", error);
+                
+                // Error state
+                button.innerHTML = '<i class="fas fa-times"></i> Failed!';
+                button.style.background = 'linear-gradient(135deg, #dc3545, #c82333)';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    button.style.background = '';
+                }, 2000);
+                
                 showToast('Failed to submit deposit request. Please try again.', 'error');
             }
         });
@@ -5169,7 +5409,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize when DOM is loaded
     window.addEventListener('load', () => {
         console.log("App initialized successfully");
-        // লোডার দৃশ্যমান থাকবে, Firebase authentication চেক করার পর আপনা-আপনি hide হবে
+        // Start preloading immediately (even before login)
+        preloadHomeData();
     });
 });
 </script>
